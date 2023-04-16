@@ -1,0 +1,17 @@
+8291-1/00 - Atividades de cobrança e informações cadastrais
+
+Esta subclasse compreende:
+
+- as atividades de cobrança de faturas e de dívidas para clientes e a transferência aos clientes
+dos pagamentos recebidos:
+
+- as atividades de compilação de informações, como históricos de crédito, de emprego, para
+empresas clientes:
+
+- 0 fornecimento de informações sobre a capacidade de endividamento de pessoas e de
+empresas a instituições financeiras, ao comércio e a empresas de outras atividades que
+necessitam avaliar a capacidade de crédito de pessoas e empresas
+
+Esta subclasse não compreende:
+
+- os serviços advocatícios (6911-7/01)
