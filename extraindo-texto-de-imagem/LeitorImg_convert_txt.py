@@ -10,10 +10,10 @@ pytesseract.pytesseract.tesseract_cmd = (r'C:\Program Files\Tesseract-OCR\tesser
 
 # Lendo arquivo de imagem e extraindo o texto desta imagem
 
-img = cv2.imread('teste.jpg')
+img = cv2.imread('19052023-1.jpg')
 config = r'--oem 3 --psm 6 --psm 10'
 
-resultado = pytesseract.image_to_string(img, lang='por')
+resultado = pytesseract.image_to_string(img, lang='por+por_3')
 resultado = resultado.replace('.', '')
 resultado = resultado.replace('/n','')
 
@@ -21,6 +21,6 @@ print(resultado)
 
 # Criando arquivo transcricao.txt a partir a leitura da imagem
 
-with open("transcricao.txt", 'w') as arquivo:
+with open("transcricao.txt", 'w', encoding='utf-8') as arquivo:
     arquivo.write(resultado)
 
