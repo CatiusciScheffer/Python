@@ -34,16 +34,16 @@ def abrirTlPrincipal():
     telaPrincipal.resizable(False, False)
     telaPrincipal.mainloop()
 
-
+def entrarNoSistema():
+    fecharTlLogin()
+    abrirTlPrincipal()
 
 def cadastrarUsuarioDb():
     conexao = conectarBD()
     cursor = conexao.cursor()
 
     nomeUsuario, senhaUsuario = getValuesEntry()
-    # nomeUsuario = inputLoginUsuario.get()
-    # senhaUsuario = inputLoginSenha.get()
-    
+        
     senhaUsuario = converterSenhaHash(senhaUsuario)
 
     # Inserir os valores no banco de dados
@@ -61,9 +61,8 @@ def verificarUsuarioExistente():
     conexao = conectarBD()
     cursor = conexao.cursor()
     
-    nomeUsuario = inputLoginUsuario.get()
-    #senhaUsuario = inputLoginSenha.get()
-    
+    nomeUsuario, senhaUsuario = getValuesEntry()
+        
     # Executar a consulta para verificar se os valores já existem
     cursor.execute("SELECT nomeUsuario FROM tb_usuarios WHERE nomeUsuario=?", (nomeUsuario,))
     result = cursor.fetchone()
@@ -124,7 +123,7 @@ BtnEntrar = Button(
     image = imgBtnEntrar,
     borderwidth = 0,
     highlightthickness = 0,
-    command = verificarUsuarioExistente,
+    command = entrarNoSistema,
     relief = "flat")
 
 BtnEntrar.place(
