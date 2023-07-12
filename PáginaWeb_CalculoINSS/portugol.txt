@@ -1,0 +1,13 @@
+- se menor ou igual a C2 -> sal*7,5%
+
+- se maior que B2 
+	se menor A4 
+		primeiraFaixa -> (SAL-B2 * 9%)-E2
+		return primeiraFaixa
+	else:
+		continue
+
+- se maior que B3 
+	e menor A5 -> (SAL-B3 * 12%)-E3
+- se maior que B4 
+	e menor A5 -> (SAL-B3 * 12%)-E3

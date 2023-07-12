@@ -2,7 +2,6 @@ from tkinter import *
 import sqlite3
 from tkinter import messagebox, END
 import hashlib
-import viewPrincipal
 
     
 def conectarBD():
@@ -17,26 +16,33 @@ def getValuesEntry():
 
 def converterSenhaHash(senhaUsuarioHash):
   senhaUsuarioHash = hashlib.sha256(senhaUsuarioHash.encode()).hexdigest()
-
+  return senhaUsuarioHash
   
 def limparCamposTlLogin():
   inputLoginUsuario.delete(0, END)
   inputLoginSenha.delete(0, END)
   
 
-"""def fecharTlLogin():
-  telaLogin.destroy()"""
+def fecharTlLogin():
+   telaLogin.destroy()
 
   
 def abrirTlPrincipal():
-    viewPrincipal.telaPrincipal.mainloop()
+    telaPrincipal = Tk()
+    telaPrincipal.title('Sistema Ordens de Serviços')
+    telaPrincipal.geometry("900x600")
+    telaPrincipal.resizable(False, False)
+    telaPrincipal.mainloop()
 
 
-def cadastrarUsuarioDb(nomeUsuario, senhaUsuario):
+
+def cadastrarUsuarioDb():
     conexao = conectarBD()
     cursor = conexao.cursor()
 
     nomeUsuario, senhaUsuario = getValuesEntry()
+    # nomeUsuario = inputLoginUsuario.get()
+    # senhaUsuario = inputLoginSenha.get()
     
     senhaUsuario = converterSenhaHash(senhaUsuario)
 
@@ -46,19 +52,22 @@ def cadastrarUsuarioDb(nomeUsuario, senhaUsuario):
 
     
     limparCamposTlLogin()
-    messagebox.showinfo('Usuário cadastrado cpm sucesso!')
-    #fecharTlLogin()
+    messagebox.showinfo('Cadastro de Usuário',f'Usuário(a) {nomeUsuario} cadastrado com sucesso!')
+    fecharTlLogin()
     abrirTlPrincipal()
+    
     
 def verificarUsuarioExistente():
     conexao = conectarBD()
     cursor = conexao.cursor()
     
-    nomeUsuario, senhaUsuario = getValuesEntry()
-
+    nomeUsuario = inputLoginUsuario.get()
+    #senhaUsuario = inputLoginSenha.get()
+    
     # Executar a consulta para verificar se os valores já existem
-    cursor.execute("SELECT * FROM tb_usuarios WHERE nomeUsuario=? AND senhaUsuario=?", (nomeUsuario, senhaUsuario))
+    cursor.execute("SELECT nomeUsuario FROM tb_usuarios WHERE nomeUsuario=?", (nomeUsuario,))
     result = cursor.fetchone()
+    print(result)
 
     # Fechar a conexão com o banco de dados
     cursor.close()
@@ -66,101 +75,66 @@ def verificarUsuarioExistente():
 
     # Verificar o resultado da consulta
     if result is not None:
-        #fecharTlLogin()
+        fecharTlLogin()
         abrirTlPrincipal()
         return True  # Retorna True se o usuário já existir
     else:
         cadastrarUsuarioDb()
         return False  # Retorna False se o usuário não existir   
 
-background = None
-background_img = None
-img0 = None
-img1 = None
-inputLoginSenha_img = None
-inputLoginUsuario_img = None
-
-def carregarImagens():
-    global background_img
-    background_img = PhotoImage(file="./background.png")
-
-def criarImagemFundo():
-    global background
-    background = canvas.create_image(350.0, 200.0, image=background_img)
-
-def criarCanvas():
-    global canvas
-    canvas = Canvas(
-        telaLogin,
-        bg="#ffffff",
-        height=400,
-        width=700,
-        bd=0,
-        highlightthickness=0,
-        relief="ridge"
-    )
-    canvas.place(x=0, y=0)
-
-    # Aguardar o carregamento da imagem antes de criar a imagem de fundo
-    canvas.after(10, criarImagemFundo)
-
-# Restante do código...
 
 telaLogin = Tk()
-carregarImagens()
-criarCanvas()
+telaLogin.title('Sistema Ordens de Serviços')
+telaLogin.geometry("700x400")
+telaLogin.configure(bg="#ffffff")
 
 
+canvas = Canvas(
+    telaLogin,
+    bg="#ffffff",
+    height=400,
+    width=700,
+    bd=0,
+    highlightthickness=0,
+    relief="ridge"
+)
+canvas.place(x=0, y=0)
 
-background_img = PhotoImage(file="./background.png")
+
+background_img = PhotoImage(file="./img/imgBgLogin.png")
 background = canvas.create_image(
     350.0, 200.0,
     image=background_img)
 
-img0 = PhotoImage(file="./img0.png")
-b0 = Button(
-    image = img0,
+imgBtnCadastrar = PhotoImage(file="./img/imgBtnCadastrar.png")
+BtnCadastrar = Button(
+    image = imgBtnCadastrar,
     borderwidth = 0,
     highlightthickness = 0,
     command = verificarUsuarioExistente,
     relief = "flat")
 
-b0.place(
+BtnCadastrar.place(
     x = 472, y = 305,
     width = 103,
     height = 32)
 
-img1 = PhotoImage(file="./img1.png")
-b1 = Button(
-    image = img1,
+imgBtnEntrar = PhotoImage(file="./img/imgBtnEntrar.png")
+BtnEntrar = Button(
+    image = imgBtnEntrar,
     borderwidth = 0,
     highlightthickness = 0,
     command = verificarUsuarioExistente,
     relief = "flat")
 
-b1.place(
+BtnEntrar.place(
     x = 472, y = 261,
     width = 103,
     height = 32)
 
-inputLoginSenha_img = PhotoImage(file="./img_textBox0.png")
-inputLoginSenha_bg = canvas.create_image(
-    523.5, 164.0,
-    image = inputLoginSenha_img)
-
-inputLoginSenha = Entry(
-    bd = 0,
-    bg = "#d9d9d9",
-    highlightthickness = 0)
-
-inputLoginSenha.place(
-    x = 414.0, y = 148,
-    width = 219.0,
-    height = 30)
-
-inputLoginUsuario_img = PhotoImage(file="./img_textBox1.png")
+inputLoginUsuario_img = PhotoImage(file="./img/img_textBox0.png")
 inputLoginUsuario_bg = canvas.create_image(
-    523.5, 226.0,
+    523.5, 164.0,
     image = inputLoginUsuario_img)
 
 inputLoginUsuario = Entry(
@@ -169,6 +143,21 @@ inputLoginUsuario = Entry(
     highlightthickness = 0)
 
 inputLoginUsuario.place(
+    x = 414.0, y = 148,
+    width = 219.0,
+    height = 30)
+
+inputLoginSenha_img = PhotoImage(file="./img/img_textBox1.png")
+inputLoginSenha_bg = canvas.create_image(
+    523.5, 226.0,
+    image = inputLoginSenha_img)
+
+inputLoginSenha = Entry(
+    bd = 0,
+    bg = "#d9d9d9",
+    highlightthickness = 0)
+
+inputLoginSenha.place(
     x = 414.0, y = 210,
     width = 219.0,
     height = 30)
