@@ -29,25 +29,12 @@ class LoginGUI:
             350.0, 200.0,
             image=background_img)
 
-        imgBtnCadastrar = PhotoImage(file="./img/imgBtnCadastrar.png")
-        BtnCadastrar = Button(
-            image = imgBtnCadastrar,
-            borderwidth = 0,
-            highlightthickness = 0,
-            command = self.verificar_usuario_existente,
-            relief = "flat")
-
-        BtnCadastrar.place(
-            x = 472, y = 305,
-            width = 103,
-            height = 32)
-
         imgBtnEntrar = PhotoImage(file="./img/imgBtnEntrar.png")
         BtnEntrar = Button(
             image = imgBtnEntrar,
             borderwidth = 0,
             highlightthickness = 0,
-            command = self.abrir_tl_principal,
+            command = self.verificar_usuario_existente,
             relief = "flat")
 
         BtnEntrar.place(
@@ -90,15 +77,18 @@ class LoginGUI:
 
 
     def verificar_usuario_existente(self):
-        username = self.input_login_usuario.get()
-        password = self.input_login_senha.get()
+        username = self.input_login_usuario.get().strip().upper()
+        password = self.input_login_senha.get().strip().upper()
 
         if self.user_manager.authenticate_user(username, password):
             self.fechar_tl_login()
             self.abrir_tl_principal()
+            print(f'usuário já existe autenitic')
+            pass
         else:
             self.user_manager.register_user(username, password)
             self.mostrar_alerta("Cadastro de Usuário", f"Usuário(a) {username} cadastrado com sucesso!")
+            self.fechar_tl_login()
 
     def fechar_tl_login(self):
         self.tela_login.destroy()
