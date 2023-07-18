@@ -1,0 +1,46 @@
+criar tabelas abaixo com sqlite3, usando vscode:
+1) tabela de tb_ordens_servicos com as colunas:
+- os_id: prymary key, integer, autoincement;
+- os_dtServico: date formato dd/mm/aaaa, not null, não pode aceitar data inferior a 30 dias da data atual do sistema, defaul=data atual;
+- os_codCliente: integer,not null, valor deve existir na tb_cliente com relação pelo item cli_codCliente;
+- os_Cliente: text, not null, vai buscar na o valor cli_nomeCliente na tb_cliente para preencher automaticamente conforme o os_codCliente preenche este item automáticamente;
+- os_observacao: tipo campo para texto longos, not null;
+- os_codServico: integer,not null, valor deve existir na tb_servicos_vlr com relação pelo item serv_codServ;
+- os_descServico:text, not null, vai buscar na tb_servicos_vlr, conforme o os_codServico preenche este item automáticamente com o valor contido em serv_descrServico;
+- os_qtd: float, not null, defalt=0;
+- os_vlrUnit: float, not null default=0, vai ter uma relação com a tabela tb_servicos_vlr com o item serv_vlrUnit;
+- os_total: float, vai multiplicar os valores de os_qtd e  serv_vlrUnit;
+- os_usuario: text, vai ter automáticamente o valor do nomeUsuario da tabela tb_usuarios que estiver logado no sistema neste momento;
+
+2)tabela tb_servicos_vlr:
+- serv_id: prymary key, integer, autoincement;
+- serv_codServ: integer, not null;
+- serv_descrServico: text, texto até 50 caracteres, not null;
+- serv_vlrUnit: float, not nul;
+
+3) tabela tb_cliente:
+- cli_id: prymary key, integer, autoincement;
+- cli_codCliente: integer, not null;
+- cli_nomeCliente: text, até 50 caracteres, not null;
+- cli_qtdNFisenta: integer, pode receber apenas os valores de 0 a 10, not null, defaul=0;
+
+4) tabela tb_usuarios não preciso criar pois já foi criada assim:
+def criarTbCadastroUsuario():
+  conexao = lite.connect('db_OrdemServicos.db')
+  cursor = conexao.cursor()
+  
+  #Verfificar se a tb existe
+  cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='tb_usuarios'")
+  result = cursor.fetchone()
+  
+  if result is None:
+    #se a tabelanão existe, crie
+    cursor.execute("CREATE TABLE tb_usuarios(id INTEGER PRIMARY KEY AUTOINCREMENT,nomeUsuario TEXT, senhaUsuario TEXT)")
+    conexao.commit()
+  else:
+    #como a tabela já existe pause
+    pass
+
+tabelas acima devem ser criadas com a mesma verificação feita na tb_usuarios,talvez com uma unica função para essa verificação
+
+
