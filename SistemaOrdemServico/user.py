@@ -6,10 +6,19 @@ class UserManager:
     def __init__(self, db_manager):
         self.db_manager = db_manager
 
+    # def register_user(self, username, password):
+    #     hashed_password = self._hash_password(password)
+    #     self.db_manager.execute("INSERT INTO tb_usuarios(nomeUsuario, senhaUsuario) VALUES (?, ?)",
+    #                             (username, hashed_password))
+    
     def register_user(self, username, password):
-        hashed_password = self._hash_password(password)
-        self.db_manager.execute("INSERT INTO tb_usuarios(nomeUsuario, senhaUsuario) VALUES (?, ?)",
-                                (username, hashed_password))
+        if not username or not password:
+            messagebox.showinfo("Erro de Preenchimento", "Preencha todos os campos!")
+            self.register_user()
+        else:
+            hashed_password = self._hash_password(password)
+            self.db_manager.execute("INSERT INTO tb_usuarios(nomeUsuario, senhaUsuario) VALUES (?, ?)",
+                                    (username, hashed_password))
     
     def authenticate_user(self, username, password):
         hashed_password = self._hash_password(password)
