@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import Tk, Button, Entry, PhotoImage, Canvas, ttk
 from tkinter import messagebox, END
 from user import UserManager
+from manipulacaoOrdemServico import ManipularOrdemServicos
+
 
 
 
@@ -9,6 +11,7 @@ class LoginGUI:
     def __init__(self, db_manager):
         self.db_manager = db_manager
         self.user_manager = UserManager(db_manager)
+        self.manipular_ordens = ManipularOrdemServicos(db_manager)
 
         self.tela_login = Tk()
         self.tela_login.title('Sistema Ordens de Serviços')
@@ -104,6 +107,7 @@ class LoginGUI:
 
         telaPrincipal.geometry("1000x720")
         telaPrincipal.configure(bg = "#ffffff")
+        
         canvas = Canvas(
             telaPrincipal,
             bg = "#ffffff",
@@ -150,7 +154,7 @@ class LoginGUI:
             image = img_tlPrincipal_btnInsert,
             borderwidth = 0,
             highlightthickness = 0,
-            #command = btn_clicked,
+            command = self.inserirOrdemServico,
             relief = "flat")
 
         btnInsertOS_tlPrincipal.place(
@@ -189,7 +193,7 @@ class LoginGUI:
             image = img_tlPrincipal_btnFinanceiro,
             borderwidth = 0,
             highlightthickness = 0,
-            #command = btn_clicked,
+            #command = getValuesTlPrincipal,
             relief = "flat")
 
         btnFinanceiro_tlPrincipal.place(
@@ -202,12 +206,12 @@ class LoginGUI:
             120.0, 84.0,
             image = input_DataOS_img)
 
-        input_DataOS = Entry(
+        self.input_DataOS = Entry(
             bd = 0,
             bg = "#d9d9d9",
             highlightthickness = 0)
 
-        input_DataOS.place(
+        self.input_DataOS.place(
             x = 69.0, y = 71,
             width = 102.0,
             height = 24)
@@ -217,12 +221,12 @@ class LoginGUI:
             168.0, 119.0,
             image = input_CodServ_img)
 
-        input_CodServ = Entry(
+        self.input_CodServ = Entry(
             bd = 0,
             bg = "#d9d9d9",
             highlightthickness = 0)
 
-        input_CodServ.place(
+        self.input_CodServ.place(
             x = 115.0, y = 106,
             width = 106.0,
             height = 24)
@@ -232,12 +236,12 @@ class LoginGUI:
             151.0, 155.0,
             image = input_Quantidade_img)
 
-        input_Quantidade = Entry(
+        self.input_Quantidade = Entry(
             bd = 0,
             bg = "#d9d9d9",
             highlightthickness = 0)
 
-        input_Quantidade.place(
+        self.input_Quantidade.place(
             x = 110.0, y = 142,
             width = 82.0,
             height = 24)
@@ -247,12 +251,12 @@ class LoginGUI:
             348.5, 155.0,
             image = input_VlrUnitario_img)
 
-        input_VlrUnitario = Entry(
+        self.input_VlrUnitario = Entry(
             bd = 0,
             bg = "#8a8a8a",
             highlightthickness = 0)
 
-        input_VlrUnitario.place(
+        self.input_VlrUnitario.place(
             x = 304.0, y = 142,
             width = 89.0,
             height = 24)
@@ -262,12 +266,12 @@ class LoginGUI:
             534.5, 155.0,
             image = input_VlrTotal_img)
 
-        input_VlrTotal = Entry(
+        self.input_VlrTotal = Entry(
             bd = 0,
             bg = "#8a8a8a",
             highlightthickness = 0)
 
-        input_VlrTotal.place(
+        self.input_VlrTotal.place(
             x = 490.0, y = 142,
             width = 89.0,
             height = 24)
@@ -277,12 +281,12 @@ class LoginGUI:
             711.5, 155.0,
             image = input_Faturado_img)
 
-        input_Faturado = Entry(
+        self.input_Faturado = Entry(
             bd = 0,
             bg = "#8a8a8a",
             highlightthickness = 0)
 
-        input_Faturado.place(
+        self.input_Faturado.place(
             x = 667.0, y = 142,
             width = 89.0,
             height = 24)
@@ -292,12 +296,12 @@ class LoginGUI:
             550.0, 119.0,
             image = input_TipoServ_img)
 
-        input_TipoServ = Entry(
+        self.input_TipoServ = Entry(
             bd = 0,
             bg = "#8a8a8a",
             highlightthickness = 0)
 
-        input_TipoServ.place(
+        self.input_TipoServ.place(
             x = 344.0, y = 106,
             width = 412.0,
             height = 24)
@@ -307,12 +311,12 @@ class LoginGUI:
             319.0, 84.0,
             image = input_CodCliente_img)
 
-        input_CodCliente = Entry(
+        self.input_CodCliente = Entry(
             bd = 0,
             bg = "#d9d9d9",
             highlightthickness = 0)
 
-        input_CodCliente.place(
+        self.input_CodCliente.place(
             x = 277.0, y = 71,
             width = 84.0,
             height = 24)
@@ -322,12 +326,12 @@ class LoginGUI:
             595.5, 84.0,
             image = input_Cliente_img)
 
-        input_Cliente = Entry(
+        self.input_Cliente = Entry(
             bd = 0,
             bg = "#8a8a8a",
             highlightthickness = 0)
 
-        input_Cliente.place(
+        self.input_Cliente.place(
             x = 435.0, y = 71,
             width = 321.0,
             height = 24)
@@ -337,12 +341,12 @@ class LoginGUI:
             291.0, 244.5,
             image = input_DescrServ_img)
 
-        input_DescrServ = tk.Text(
+        self.input_DescrServ = tk.Text(
             bd = 0,
             bg = "#d9d9d9",
             highlightthickness = 0)
 
-        input_DescrServ.place(
+        self.input_DescrServ.place(
             x = 30.0, y = 196,
             width = 522.0,
             height = 95)
@@ -417,12 +421,68 @@ class LoginGUI:
         treeview.configure(xscrollcommand=scrollbar_x.set)
         scrollbar_x.place(x=14, y=690, width=973)
 
+        
+            
+            
+            
+            
         # Iniciar o loop principal do Tkinter
         telaPrincipal.mainloop()
+       
+    
+        
+    def inserirOrdemServico(self):
+        os_dtServico = self.input_DataOS.get()
+        os_codCliente = self.input_CodCliente.get().strip()
+        os_cliente = self.input_Cliente.get().strip().upper()
+        os_observacao = self.input_TipoServ.get().strip().upper()
+        os_codServico = self.input_CodServ.get().strip()
+        os_descServico = self.input_DescrServ.get("1.0", "end")
+        os_qtd = int(self.input_Quantidade.get())
+        os_vlrUnit = int(self.input_VlrUnitario.get())
+        
+        # Verificar se o cliente existe na tabela tb_cliente
+        resultado_cliente = self.manipular_ordens.verificaSeClienteCadastrado(os_codCliente)
+        if resultado_cliente is None:
+            print(f"Cliente com código {os_codCliente} não existe na tabela tb_cliente.")
+            return
 
+        # Acessar o valor correto do cliente
+        os_cliente = resultado_cliente[0]
+
+        # Verificar se o serviço existe na tabela tb_servicos_vlr
+        os_descServico = self.manipular_ordens.verificaSeServicoCadastrado(os_codServico)
+        if os_descServico is None:
+            print(f"Serviço com código {os_codServico} não existe na tabela tb_servicos_vlr.")
+            return
+
+        # Buscar valor unitário
+        os_vlrUnit = self.manipular_ordens.pegandoValorUnitarioPeloCodServico(os_codServico)
+
+
+ 
+
+        # Executar a instrução INSERT
+        self.db_manager.execute("INSERT INTO tb_ordens_servicos (os_dtServico, os_codCliente, os_cliente, os_observacao, os_codServico, os_descServico, os_qtd, os_vlrUnit) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    (os_dtServico, os_codCliente, os_cliente, os_observacao, os_codServico, os_descServico, os_qtd, os_vlrUnit))
+
+        # Salvar a transação
+        self.db_manager.connection.commit()
+        print("Ordem de serviço inserida com sucesso.")
+            
 
     def mostrar_alerta(self, titulo, mensagem):
         messagebox.showinfo(titulo, mensagem)
 
     def run(self):
         self.tela_login.mainloop()
+        
+    
+        
+        
+        
+        
+        
+        
+        
+        

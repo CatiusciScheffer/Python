@@ -1,15 +1,10 @@
 import hashlib
-from database import DatabaseManager
+#from database import DatabaseManager
 from tkinter import messagebox
 
 class UserManager:
     def __init__(self, db_manager):
         self.db_manager = db_manager
-
-    # def register_user(self, username, password):
-    #     hashed_password = self._hash_password(password)
-    #     self.db_manager.execute("INSERT INTO tb_usuarios(nomeUsuario, senhaUsuario) VALUES (?, ?)",
-    #                             (username, hashed_password))
     
     def register_user(self, username, password):
         if not username or not password:

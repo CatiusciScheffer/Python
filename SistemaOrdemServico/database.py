@@ -17,15 +17,40 @@ class DatabaseManager:
             self.connection.close()
 
     def execute(self, query, params=None):
+        if not self.connection:
+            self.connect()
+
         if params:
             self.cursor.execute(query, params)
         else:
             self.cursor.execute(query)
+
         self.connection.commit()
 
     def fetch_one(self, query, params=None):
+        if not self.connection:
+            self.connect()
+
         if params:
             self.cursor.execute(query, params)
         else:
             self.cursor.execute(query)
+
         return self.cursor.fetchone()
+
+    def fetch_all(self, query, params=None):
+        if not self.connection:
+            self.connect()
+
+        if params:
+            self.cursor.execute(query, params)
+        else:
+            self.cursor.execute(query)
+
+        return self.cursor.fetchall()
+
+    def get_cursor(self):
+        if not self.connection:
+            self.connect()
+
+        return self.cursor
