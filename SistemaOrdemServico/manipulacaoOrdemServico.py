@@ -5,14 +5,53 @@ class ManipularOrdemServicos():
     def __init__(self, db_manager):
         self.db_manager = db_manager
         
+    def selecionarCliente(self):
+        cursor = self.db_manager.get_cursor()
+        clientesCadastrados = cursor.execute('SELECT cli_codCliente, cli_nomeCliente FROM tb_cliente ORDER BY cli_codCliente ASC;')
+        clientesCadastrados = cursor.fetchall()
+        
+        listandoClientesOS = []
+        
+        for cliente in clientesCadastrados:
+            listandoClientesOS.append(cliente)
+            
+        return listandoClientesOS   
+    
+    def selecionarDescricaoServico(self):
+        cursor = self.db_manager.get_cursor()
+        servicosCadastrados = cursor.execute('SELECT serv_descrServico FROM tb_servicos_vlr;')
+        servicosCadastrados = cursor.fetchall()
+        
+        listandoServicosOS = []
+        
+        for servico in servicosCadastrados:
+            listandoServicosOS.append(servico)
+            
+        return listandoServicosOS
+    
+    def novoTeste(self):
+        
+        cursor = self.db_manager.get_cursor()
+        servicosCadastrados = cursor.execute('SELECT serv_codServ, serv_descrServico, serv_vlrUnit FROM tb_servicos_vlr;')
+        servicosCadastrados = cursor.fetchall()
+        
+        listandoServicosOS = []
+        
+        for servico in servicosCadastrados:
+            listandoServicosOS.append(servico)
+            
+        return listandoServicosOS
+    
+    
+    
     def verificaSeClienteCadastrado(self, codCliente):
         cursor = self.db_manager.get_cursor()
         cursor.execute("SELECT cli_nomeCliente FROM tb_cliente WHERE cli_codCliente=?", (codCliente,))
         resultado = cursor.fetchone()
         if resultado is not None:
-            print(resultado)
             return resultado
         else:
+            print(f"Cliente com código {codCliente} não existe na tabela tb_cliente.")
             return None
 
     def verificaSeServicoCadastrado(self, codServico):
@@ -23,15 +62,6 @@ class ManipularOrdemServicos():
             return resultado[0]
         else:
             return None
-
-    def pegandoValorUnitarioPeloCodServico(self, codServico):
-        cursor = self.db_manager.get_cursor()
-        cursor.execute("SELECT serv_vlrUnit FROM tb_servicos_vlr WHERE serv_codServ=?", (codServico,))
-        resultado = cursor.fetchone()
-        if resultado is not None:
-            return resultado[0]
-        else:
-            return 0.0
 
     def criarOrdemServico(self, os_dtServico, os_codCliente, os_cliente, os_observacao, os_codServico, os_descServico, os_qtd, os_vlrUnit):
         
@@ -59,10 +89,6 @@ class ManipularOrdemServicos():
         # Salvar a transação
         self.db_manager.commit()
         print("Ordem de serviço inserida com sucesso.")
-
-
-
-
 
 
 

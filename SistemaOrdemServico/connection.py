@@ -23,6 +23,7 @@ def criarTabela(tb_nome, tb_sql):
     else:
         # Como a tabela já existe, não é necessário fazer nada
         print(f"Tabela {tb_nome} já existe.")
+        
 
 # Criar tabela tb_usuario
 tb_usuarios_sql = """
@@ -44,9 +45,10 @@ CREATE TABLE IF NOT EXISTS tb_ordens_servicos (
     os_observacao TEXT NOT NULL,
     os_codServico INTEGER NOT NULL,
     os_descServico TEXT,
-    os_qtd REAL NOT NULL DEFAULT 0,
-    os_vlrUnit REAL,
-    os_total REAL,
+    os_qtd INT NOT NULL DEFAULT 0,
+    os_vlrUnit REAL DEFAULT 0.0,
+    os_total REAL DEFAULT 0.0,
+    os_faturado INTEGER NOT NULL DEFAULT 0,
     os_usuario TEXT,
     FOREIGN KEY (os_codCliente) REFERENCES tb_cliente(cli_codCliente),
     FOREIGN KEY (os_codServico) REFERENCES tb_servicos_vlr(serv_codServ)
@@ -57,11 +59,11 @@ criarTabela("tb_ordens_servicos", tb_ordens_servicos_sql)
 
 # Criar tabela tb_servicos_vlr
 tb_servicos_vlr_sql = """
-CREATE TABLE IF NOT EXISTS tb_ordens_servicos (
+CREATE TABLE IF NOT EXISTS tb_servicos_vlr (
     serv_id INTEGER PRIMARY KEY AUTOINCREMENT,
     serv_codServ INTEGER NOT NULL,
     serv_descrServico TEXT NOT NULL,
-    serv_vlrUnit REAL NOT NULL
+    serv_vlrUnit REAL NOT NULL DEFAULT 0.0
 );
 """
 

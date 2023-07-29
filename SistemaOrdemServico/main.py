@@ -3,10 +3,10 @@ from gui import LoginGUI
 
 def main():
     db_manager = DatabaseManager("db_OrdemServicos.db")
-    db_manager.connect()
+    db_manager.connect('')
 
     login_gui = LoginGUI(db_manager)
-    login_gui.run()
+    login_gui.tela_login.mainloop()
 
     db_manager.close()
 

@@ -5,10 +5,12 @@ class DatabaseManager:
         self.db_name = db_name
         self.connection = None
         self.cursor = None
+        self.connected_user = None  # Variável para armazenar o username do usuário conectado
 
-    def connect(self):
+    def connect(self, username):
         self.connection = sqlite3.connect(self.db_name)
         self.cursor = self.connection.cursor()
+        self.connected_user = username  # Armazena o username do usuário conectado
 
     def close(self):
         if self.cursor:
@@ -54,3 +56,8 @@ class DatabaseManager:
             self.connect()
 
         return self.cursor
+
+    def get_connected_user(self):
+        return self.connected_user
+    
+    
