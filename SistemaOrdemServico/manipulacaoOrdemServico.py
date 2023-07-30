@@ -5,9 +5,9 @@ class ManipularOrdemServicos():
     def __init__(self, db_manager):
         self.db_manager = db_manager
         
-    def selecionarCliente(self):
+    def buscarValoresTBCliente(self):
         cursor = self.db_manager.get_cursor()
-        clientesCadastrados = cursor.execute('SELECT cli_codCliente, cli_nomeCliente FROM tb_cliente ORDER BY cli_codCliente ASC;')
+        clientesCadastrados = cursor.execute('SELECT cli_codCliente, cli_nomeCliente, cli_qtdNFisenta FROM tb_cliente;')
         clientesCadastrados = cursor.fetchall()
         
         listandoClientesOS = []
@@ -17,19 +17,7 @@ class ManipularOrdemServicos():
             
         return listandoClientesOS   
     
-    def selecionarDescricaoServico(self):
-        cursor = self.db_manager.get_cursor()
-        servicosCadastrados = cursor.execute('SELECT serv_descrServico FROM tb_servicos_vlr;')
-        servicosCadastrados = cursor.fetchall()
-        
-        listandoServicosOS = []
-        
-        for servico in servicosCadastrados:
-            listandoServicosOS.append(servico)
-            
-        return listandoServicosOS
-    
-    def novoTeste(self):
+    def buscarValoresTBServicosValore(self):
         
         cursor = self.db_manager.get_cursor()
         servicosCadastrados = cursor.execute('SELECT serv_codServ, serv_descrServico, serv_vlrUnit FROM tb_servicos_vlr;')
@@ -42,7 +30,17 @@ class ManipularOrdemServicos():
             
         return listandoServicosOS
     
-    
+    def buscarValoreTBOrdensServico(self):
+        cursor = self.db_manager.get_cursor()
+        servicosCadastrados = cursor.execute('SELECT os_id, os_dtServico, os_codCliente, os_cliente, os_observacao, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_faturado, os_usuario FROM tb_ordens_servicos;')
+        servicosCadastrados = cursor.fetchall()
+        
+        listandoOrdensServicos = []
+        
+        for ordens_servico in servicosCadastrados:
+            listandoOrdensServicos.append(ordens_servico)
+            
+        return listandoOrdensServicos
     
     def verificaSeClienteCadastrado(self, codCliente):
         cursor = self.db_manager.get_cursor()
@@ -63,32 +61,14 @@ class ManipularOrdemServicos():
         else:
             return None
 
-    def criarOrdemServico(self, os_dtServico, os_codCliente, os_cliente, os_observacao, os_codServico, os_descServico, os_qtd, os_vlrUnit):
+    
+    def inserirOrdemServico(self, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado):
         
-        # Verificar se o cliente existe na tabela tb_cliente
-        os_cliente = self.verificaSeClienteCadastrado(os_codCliente)
-        if os_cliente is None:
-            print(f"Cliente com código {os_codCliente} não existe na tabela tb_cliente.")
-            pass
+        cursor = self.db_manager.get_cursor()
+      
+        cursor.execute("INSERT INTO tb_ordens_servicos (os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado) VALUES (?, ?, ?, ?, ?, ?, ?, ? ,?, ?)", (os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado))
 
-        # Verificar se o serviço existe na tabela tb_servicos_vlr
-        os_descServico = self.verificaSeServicoCadastrado(os_codServico)
-        if os_descServico is None:
-            print(f"Serviço com código {os_codServico} não existe na tabela tb_servicos_vlr.")
-            pass
-
-        # Verificar usuário logado e preencher os_usuario com o nome do usuário
-
-        # Buscar valor unitário
-        os_vlrUnit = self.pegandoValorUnitarioPeloCodServico(os_vlrUnit)
-
-        # Executar a instrução INSERT
-        self.db_manager.execute("INSERT INTO tb_ordens_servicos (os_dtServico, os_codCliente, os_cliente, os_observacao, os_codServico, os_descServico, os_qtd, os_vlrUnit) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                    (os_dtServico, os_codCliente, os_cliente, os_observacao, os_codServico, os_descServico, os_qtd, os_vlrUnit))
-
-        # Salvar a transação
-        self.db_manager.commit()
-        print("Ordem de serviço inserida com sucesso.")
+               
 
 
 

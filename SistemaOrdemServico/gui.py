@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import Tk, Button, Entry, PhotoImage, Canvas, ttk, messagebox, END
-from datetime import datetime, timedelta
+from tkcalendar import DateEntry
 from user import UserManager
 from manipulacaoOrdemServico import ManipularOrdemServicos
+from datetime import datetime
 
 
 
@@ -34,19 +35,6 @@ class LoginGUI:
             350.0, 200.0,
             image=background_img)
 
-        imgBtnEntrar = PhotoImage(file="./img/img_tlLogin_BtnEntrar.png")
-        BtnEntrar = Button(
-            image = imgBtnEntrar,
-            borderwidth = 0,
-            highlightthickness = 0,
-            command = self.verificar_usuario_existente,
-            relief = "flat")
-
-        BtnEntrar.place(
-            x = 472, y = 261,
-            width = 103,
-            height = 32)
-
         input_login_usuario_img = PhotoImage(file="./img/img_tlLogin_inputUsuario.png")
         input_login_usuario_bg = canvas.create_image(
             523.5, 164.0,
@@ -76,27 +64,28 @@ class LoginGUI:
             x = 414.0, y = 210,
             width = 219.0,
             height = 30)
+        
+        imgBtnEntrar = PhotoImage(file="./img/img_tlLogin_BtnEntrar.png")
+        BtnEntrar = Button(
+            image = imgBtnEntrar,
+            borderwidth = 0,
+            highlightthickness = 0,
+            command = self.fechar_tl_login,
+            relief = "flat")
+
+        BtnEntrar.place(
+            x = 472, y = 261,
+            width = 103,
+            height = 32)
 
         self.tela_login.resizable(False, False)
         self.tela_login.mainloop()
         
-    def verificar_usuario_existente(self):
-        username = self.input_login_usuario.get().strip().upper()
-        password = self.input_login_senha.get().strip().upper()
-
-        if self.user_manager.checkUsernameAndPasswordRegistered(username, password):
-            self.fechar_tl_login()
-            self.abrir_tl_principal()
-            return username  # Retorna o nome do usuário logado
-        else:
-            self.user_manager.registerNewUser(username, password)
-            self.mostrar_alerta("Cadastro de Usuário", f"Usuário(a) {username} cadastrado com sucesso!")
-            self.fechar_tl_login()
-            self.abrir_tl_principal()
-            return username  # Retorna o nome do usuário logado
-
     def fechar_tl_login(self):
-        self.tela_login.destroy()
+        self.verificar_usuario_existente()
+        self.abrir_tl_principal()
+        
+    #####
 
     def abrir_tl_principal(self):
         
@@ -127,19 +116,19 @@ class LoginGUI:
             120.0, 84.0,
             image = input_DataOS_img)
         
-        self.input_DataOS = tk.Label(telaPrincipal, text=f"{datetime.now()}")
-        self.input_DataOS.pack()
+        # self.input_DataOS = tk.Label(telaPrincipal, text=f"{datetime.now()}")
+        # self.input_DataOS.pack()
         
-        # self.input_DataOS = Entry(
-        #     bd = 0,
-        #     bg = "#d9d9d9",
-        #     highlightthickness = 0)
+        self.input_DataOS = DateEntry(
+            bd=0,
+            bg="#d9d9d9",
+            highlightthickness=0,
+            date_pattern='dd/mm/yyyy')  # Defina o formato da data desejado
 
         self.input_DataOS.place(
-            x = 69.0, y = 71,
-            width = 102.0,
-            height = 24)
-
+            x=69.0, y=73,
+            width=102.0,
+            height=22)
         
         input_CodCliente_img = PhotoImage(file="./img/img_tlPrincipal_inputCodCliente.png")
         input_CodCliente_bg = canvas.create_image(
@@ -156,6 +145,10 @@ class LoginGUI:
             width = 84.0,
             height = 24)
 
+        # Associa a função atualizarValore aos eventos <FocusOut> e <Tab> do campo input_CodServ
+        self.input_CodCliente.bind("<FocusOut>", self.preencheCliente)
+        self.input_CodCliente.bind("<Tab>", self.preencheCliente)
+        
         input_Cliente_img = PhotoImage(file="./img/img_tlPrincipal_inputCliente.png")
         input_Cliente_bg = canvas.create_image(
             595.5, 84.0,
@@ -190,21 +183,22 @@ class LoginGUI:
         self.input_CodServ.bind("<FocusOut>", self.preencheDescrServicoEvalorUnitario)
         self.input_CodServ.bind("<Tab>", self.preencheDescrServicoEvalorUnitario)
 
-        input_TipoServ_img = PhotoImage(file="./img/img_tlPrincipal_inputTipoServ.png")
-        input_TipoServ_bg = canvas.create_image(
+        input_DescricaoServ_img = PhotoImage(file="./img/img_tlPrincipal_inputTipoServ.png")
+        input_DescricaoServ_bg = canvas.create_image(
             550.0, 119.0,
-            image = input_TipoServ_img)
+            image = input_DescricaoServ_img)
 
-        self.input_TipoServ = Entry(
+        self.input_DescricaoServ = Entry(
             bd = 0,
             bg = "#8a8a8a",
             highlightthickness = 0
         )
         
-        self.input_TipoServ.place(
+        self.input_DescricaoServ.place(
             x = 344.0, y = 108,
             width = 412.0,
             height = 22)
+        
         
         input_Quantidade_img = PhotoImage(file="./img/img_tlPrincipal_inputQuantidade.png")
         input_Quantidade_bg = canvas.create_image(
@@ -221,6 +215,10 @@ class LoginGUI:
             width = 82.0,
             height = 24)
         
+        # Associa a função atualizarValore aos eventos <FocusOut> e <Tab> do campo input_CodServ
+        self.input_Quantidade.bind("<FocusOut>", self.preencherValorTotal)
+        self.input_Quantidade.bind("<Tab>", self.preencherValorTotal)
+        
         input_VlrUnitario_img = PhotoImage(file="./img/img_tlPrincipal_inputVltUnitario.png")
         input_VlrUnitario_bg = canvas.create_image(
             348.5, 155.0,
@@ -236,9 +234,7 @@ class LoginGUI:
             width = 89.0,
             height = 24)
         
-    
-
-
+        
         input_VlrTotal_img = PhotoImage(file="./img/img_tlPrincipal_inputVltTotal.png")
         input_VlrTotal_bg = canvas.create_image(
             534.5, 155.0,
@@ -268,7 +264,21 @@ class LoginGUI:
             x = 667.0, y = 142,
             width = 89.0,
             height = 24)
+        
+        input_DescrCompl_img = PhotoImage(file="./img/img_tlPrincipal_textDescricaoServ.png")
+        input_DescrServ_bg = canvas.create_image(
+            291.0, 244.5,
+            image = input_DescrCompl_img)
 
+        self.input_DescrCompl = tk.Text(
+            bd = 0,
+            bg = "#d9d9d9",
+            highlightthickness = 0)
+
+        self.input_DescrCompl.place(
+            x = 30.0, y = 196,
+            width = 522.0,
+            height = 95)
 
         img_tlPrincipal_btnModificar = PhotoImage(file="./img/img_tlPrincipal_btnModify.png")
         btnModifyOS_tlPrincipal = Button(
@@ -301,7 +311,7 @@ class LoginGUI:
             image = img_tlPrincipal_btnInsert,
             borderwidth = 0,
             highlightthickness = 0,
-            command = self.inserirOrdemServico,
+            command = self.gravandoOrdemServico,
             relief = "flat")
 
         btnInsertOS_tlPrincipal.place(
@@ -348,24 +358,10 @@ class LoginGUI:
             width = 138,
             height = 60)
         
-        input_DescrServ_img = PhotoImage(file="./img/img_tlPrincipal_textDescricaoServ.png")
-        input_DescrServ_bg = canvas.create_image(
-            291.0, 244.5,
-            image = input_DescrServ_img)
-
-        self.input_DescrServ = tk.Text(
-            bd = 0,
-            bg = "#d9d9d9",
-            highlightthickness = 0)
-
-        self.input_DescrServ.place(
-            x = 30.0, y = 196,
-            width = 522.0,
-            height = 95)
-        
-        
-       
-        #criando Treeview
+        ####################################
+                #criando Treeview        
+        ####################################
+              
         # Função para centralizar o texto nas células da TreeView
         def center_aligned_text(tree):
             tree.tag_configure('center', anchor='center')
@@ -375,73 +371,142 @@ class LoginGUI:
             tree.tag_configure('right', anchor='e')
             
         # Criar a TreeView
-        treeview = ttk.Treeview(telaPrincipal)
+        self.treeview = ttk.Treeview(telaPrincipal)
 
-        treeview.pack(fill="both", expand=True)
+        self.treeview.pack(fill="both", expand=True)
 
         # Configurar as colunas com largura e alinhamento
-        treeview["columns"] = ("ID","Data", "CodCliente", "Cliente", "CodServ", "TipoServico", "QTD", "ValorUnit", "ValorTotal", "DescServicos", "Resp","Faturado")
-        treeview.column("#0", width=0, stretch=tk.NO)  # Coluna de ícones (não visível)
-        treeview.column("ID", width=50, anchor="center")
-        treeview.column("Data", width=70, anchor="center")
-        treeview.column("CodCliente", width=70, anchor="center")
-        treeview.column("Cliente", width=200, anchor="center")
-        treeview.column("CodServ", width=70, anchor="center")
-        treeview.column("TipoServico", width=146, anchor="w")
-        treeview.column("QTD", width=38, anchor="e")
-        treeview.column("ValorUnit", width=65, anchor="e")
-        treeview.column("ValorTotal", width=65, anchor="e")
-        treeview.column("DescServicos", width=200, anchor="w")
-        treeview.column("Resp", width=100, anchor="center")
-        treeview.column("Faturado", width=70, anchor="center")
+        self.treeview["columns"] = ("ID","Data", "CodCliente", "Cliente", "CodServ", "TipoServico", "QTD", "ValorUnit", "ValorTotal", "DescServicos", "Resp","Faturado")
+        self.treeview.column("#0", width=0, stretch=tk.NO)  # Coluna de ícones (não visível)
+        self.treeview.column("ID", width=50, anchor="center")
+        self.treeview.column("Data", width=70, anchor="center")
+        self.treeview.column("CodCliente", width=70, anchor="center")
+        self.treeview.column("Cliente", width=200, anchor="w")
+        self.treeview.column("CodServ", width=70, anchor="center")
+        self.treeview.column("TipoServico", width=146, anchor="w")
+        self.treeview.column("QTD", width=38, anchor="e")
+        self.treeview.column("ValorUnit", width=65, anchor="e")
+        self.treeview.column("ValorTotal", width=65, anchor="e")
+        self.treeview.column("DescServicos", width=200, anchor="w")
+        self.treeview.column("Resp", width=100, anchor="center")
+        self.treeview.column("Faturado", width=70, anchor="center")
 
         # Definir as colunas que serão exibidas
-        treeview.heading("#0", text="", anchor="w")  # Coluna de ícones (não visível)
-        treeview.heading("ID", text="ID", anchor="center")
-        treeview.heading("Data", text="Data", anchor="center")
-        treeview.heading("CodCliente", text="Cód.Cliente", anchor="center")
-        treeview.heading("Cliente", text="Cliente", anchor="center")
-        treeview.heading("CodServ", text="Cód.Serv.", anchor="center")
-        treeview.heading("TipoServico", text="Tipo Serviço", anchor="center")
-        treeview.heading("QTD", text="QTD", anchor="center")
-        treeview.heading("ValorUnit", text="Valor Unit.", anchor="center")
-        treeview.heading("ValorTotal", text="Valor Total", anchor="center")
-        treeview.heading("DescServicos", text="Descrição dos Serviços", anchor="center")
-        treeview.heading("Resp", text="Responsável", anchor="center")
-        treeview.heading("Faturado", text="Faturado", anchor="center")
+        self.treeview.heading("#0", text="", anchor="w")  # Coluna de ícones (não visível)
+        self.treeview.heading("ID", text="ID", anchor="center")
+        self.treeview.heading("Data", text="Data", anchor="center")
+        self.treeview.heading("CodCliente", text="Cód.Cliente", anchor="center")
+        self.treeview.heading("Cliente", text="Cliente", anchor="center")
+        self.treeview.heading("CodServ", text="Cód.Serv.", anchor="center")
+        self.treeview.heading("TipoServico", text="Tipo Serviço", anchor="center")
+        self.treeview.heading("QTD", text="QTD", anchor="center")
+        self.treeview.heading("ValorUnit", text="Valor Unit.", anchor="center")
+        self.treeview.heading("ValorTotal", text="Valor Total", anchor="center")
+        self.treeview.heading("DescServicos", text="Descrição dos Serviços", anchor="center")
+        self.treeview.heading("Resp", text="Responsável", anchor="center")
+        self.treeview.heading("Faturado", text="Faturado", anchor="center")
 
         # Aplicar formatação de alinhamento
-        center_aligned_text(treeview)
-        right_aligned_text(treeview)
+        center_aligned_text(self.treeview)
+        right_aligned_text(self.treeview)
 
-        # Inserir alguns dados de exemplo na TreeView
-        treeview.insert("", "end", values=(1, "2023-07-21", "001", "Cliente A", "101", "Manutenção", "2", "50.00", "100.00", "Manutenção do equipamento", "Amanda","Sim"))
-        treeview.insert("", "end", values=(2, "2023-07-22", "002", "Cliente B", "102", "Instalação", "1", "150.00", "150.00", "Instalação do sistema", "Elisete","Não"))
-        treeview.insert("", "end", values=(3, "2023-07-23", "003", "Cliente C", "103", "Consultoria", "3", "80.00", "240.00", "Consultoria em TI", "Catiusci Pagnonceli Chaves Scheffer","Sim"))
+        # # Inserir alguns dados de exemplo na TreeView
+        # self.treeview.insert("", "end", values=(1, "2023-07-21", "001", "Cliente A", "101", "Manutenção", "2", "50.00", "100.00", "Manutenção do equipamento", "Amanda","Sim"))
+        # self.treeview.insert("", "end", values=(2, "2023-07-22", "002", "Cliente B", "102", "Instalação", "1", "150.00", "150.00", "Instalação do sistema", "Elisete","Não"))
+        # self.treeview.insert("", "end", values=(3, "2023-07-23", "003", "Cliente C", "103", "Consultoria", "3", "80.00", "240.00", "Consultoria em TI", "Catiusci Pagnonceli Chaves Scheffer","Sim"))
 
         # Posicionar a TreeView na janela principal usando o place()
-        treeview.place(x=13, y=322, height=369, width=957)
+        self.treeview.place(x=13, y=322, height=369, width=957)
 
         # Adicionar barra de rolagem vertical
-        scrollbar_y = ttk.Scrollbar(telaPrincipal, orient="vertical", command=treeview.yview)
-        treeview.configure(yscrollcommand=scrollbar_y.set)
+        scrollbar_y = ttk.Scrollbar(telaPrincipal, orient="vertical", command=self.treeview.yview)
+        self.treeview.configure(yscrollcommand=scrollbar_y.set)
         scrollbar_y.place(x=969, y=323, height=367)
 
         # Adicionar barra de rolagem horizontal
-        scrollbar_x = ttk.Scrollbar(telaPrincipal, orient="horizontal", command=treeview.xview)
-        treeview.configure(xscrollcommand=scrollbar_x.set)
+        scrollbar_x = ttk.Scrollbar(telaPrincipal, orient="horizontal", command=self.treeview.xview)
+        self.treeview.configure(xscrollcommand=scrollbar_x.set)
         scrollbar_x.place(x=14, y=690, width=973)
-            
+        
+        self.mostrarOrdensServicoTelaPrincipal()    
             
         # Iniciar o loop principal do Tkinter
         telaPrincipal.resizable(False, False)
         telaPrincipal.mainloop()
-     
-     
+    
+    def verificar_usuario_existente(self):
+        input_usuario = self.input_login_usuario.get().strip().upper()
+        input_senha = self.input_login_senha.get().strip().upper()
+        print(f'usuario{input_usuario}, senha{input_senha}')
+
+        if self.user_manager.checkUsernameAndPasswordRegistered(input_usuario, input_senha):
+            self.tela_login.destroy()
+            #self.abrir_tl_principal()
+            self.username = input_usuario
+            return self.username  # Retorna o nome do usuário logado
+        else:
+            self.user_manager.registerNewUser(input_usuario, input_senha)
+            self.mostrar_alerta("Cadastro de Usuário", f"Usuário(a) {input_usuario} cadastrado com sucesso!")
+            self.tela_login.destroy()
+            #self.abrir_tl_principal()
+            self.username = input_usuario
+            return self.username  # Retorna o nome do usuário logado
+ 
+    
+    def pegandoValoresTelaPrincipalOS(self):
+        dtServico = self.input_DataOS.get()
+        codCliente = int(self.input_CodCliente.get().strip())
+        cliente = self.input_Cliente.get().strip().upper()
+        codServico = int(self.input_CodServ.get().strip())
+        descrServico = self.input_DescricaoServ.get().strip().upper()
+        descComplementar = self.input_DescrCompl.get('1.0', 'end-1c')  # Usar '1.0' e 'end-1c' para er todo o conteúdo
+        quantidade = int(self.input_Quantidade.get())
+        vlrUnit = float(self.input_VlrUnitario.get())
+        total = float(self.input_VlrTotal.get())
+        faturado = self.input_Faturado.get()
+
+        os_values = {
+            'dtServico': dtServico,
+            'codCliente': codCliente,
+            'cliente': cliente,
+            'codServico': codServico,
+            'descrServico': descrServico,
+            'descComplementar': descComplementar,
+            'quantidade': quantidade,
+            'vlrUnit': vlrUnit,
+            'total': total,
+            'os_faturado': faturado
+        }
+        return os_values
+
+
+    
+    def preencheCliente(self, event):
+        if event.keysym == "Tab":
+
+            l_codCliente = self.manipular_ordens.buscarValoresTBCliente()
+            
+            input_codCliente = int(self.input_CodCliente.get())
+            
+            for index, cliente in enumerate(l_codCliente):
+                
+                codCliente = int(cliente[0])
+                nomeCliente = str(cliente[1])
+                
+                if codCliente == input_codCliente:
+                    self.input_Cliente.delete(0, "end")
+                    self.input_Cliente.insert(0, nomeCliente)
+                    self.input_Faturado.delete(0, "end")
+                    self.input_Faturado.insert(0, 'NÃO')
+                    break
+                else:
+                    pass
+    
+       
     def preencheDescrServicoEvalorUnitario(self, event):
         if event.keysym == "Tab":
 
-            l_codServDescrServVlrUnit = self.manipular_ordens.novoTeste()
+            l_codServDescrServVlrUnit = self.manipular_ordens.buscarValoresTBServicosValore()
             
             input_codServ = int(self.input_CodServ.get())
             
@@ -450,78 +515,71 @@ class LoginGUI:
                 codServ = int(servicos[0])
                 descrServ = str(servicos[1])
                 valorUnit = float(servicos[2])
-                print(f'codigo {codServ}, descrição{descrServ}, vlr unitario{valorUnit}')
-
+                
                 if codServ == input_codServ:
-                    self.input_TipoServ.delete(0, "end")
-                    self.input_TipoServ.insert(0, descrServ)
+                    self.input_DescricaoServ.delete(0, "end")
+                    self.input_DescricaoServ.insert(0, descrServ)
                     self.input_VlrUnitario.delete(0, "end")
                     self.input_VlrUnitario.insert(0, valorUnit)
+                    
                     break
                 else:
                     pass
-
-
+                
     
+
+    def preencherValorTotal(self, event):
+        
+        if event.keysym == "Tab":
             
-    
-    def getValuesInputsOS(self):
-        os_dtServico = self.input_DataOS.get()
-        os_codCliente = int(self.input_CodCliente.get().strip())
-        os_cliente = self.input_Cliente.get().strip().upper()
-        os_observacao = self.input_TipoServ.get().strip().upper()
-        os_codServico = int(self.input_CodServ.get().strip())
-        os_descServico = self.input_DescrServ.get("1.0", "end")
-        os_qtd = int(self.input_Quantidade.get())
-        os_vlrUnit = float(self.input_VlrUnitario.get())
-        os_total = float(self.input_VlrTotal.get())
-        os_faturado = self.input_VlrUnitario.get()
-        #os_usuario = self.tela_login.input_login_usuario.get()
-        
-        os_values = {
-            'dtServico': os_dtServico,
-            'codCliente': os_codCliente,
-            'cliente': os_cliente,
-            'observacao': os_observacao,
-            'codServico': os_codServico,
-            'descServico': os_descServico,
-            'quantidade': os_qtd,
-            'vlrUnit': os_vlrUnit,
-            'total': os_total,
-            'os_faturado': os_faturado            
-        }
-        return os_values
-    
-    
-    
-        
-    def inserirOrdemServico(self):
-        valoresOS = self.getValuesInputsOS()
-        os_cliente = valoresOS['cliente']
-        
-        # Verificar se o cliente existe na tabela tb_cliente
-        os_cliente_result = self.manipular_ordens.verificaSeClienteCadastrado(valoresOS['codCliente'])
+            quantidade = int(self.input_Quantidade.get())
+            vlrUnitario = float(self.input_VlrUnitario.get())
+            
+            calcularVlrTotal = quantidade * vlrUnitario
+            
+            self.input_VlrTotal.delete(0, "end")
+            self.input_VlrTotal.insert(0, calcularVlrTotal)
 
-        # Verificar se o cliente foi encontrado
-        if os_cliente_result is not None:
-            os_cliente = os_cliente_result[0]  # Extrair o valor único do cliente da tupla
-            self.atualizar_valor_cliente(os_cliente)  # Atualiza o valor do cliente no Label
-        else:
-            print(f"Cliente com código {valoresOS['codCliente']} não existe na tabela tb_cliente.")
-            return
+    def gravandoOrdemServico(self):
+        dictInputValoresTelaPrincipal = self.pegandoValoresTelaPrincipalOS()
 
-        # Buscar valor unitário
-        os_vlrUnit = self.manipular_ordens.pegandoValorUnitarioPeloCodServico(valoresOS['vlrUnit'])
-        
+        dtServico = dictInputValoresTelaPrincipal['dtServico']
+        codCliente = dictInputValoresTelaPrincipal['codCliente']
+        cliente = dictInputValoresTelaPrincipal['cliente']
+        codServico = dictInputValoresTelaPrincipal['codServico']
+        descServico = dictInputValoresTelaPrincipal['descrServico']
+        qtd = dictInputValoresTelaPrincipal['quantidade']
+        vlrUnit = dictInputValoresTelaPrincipal['vlrUnit']
+        total = dictInputValoresTelaPrincipal['total']
+        descrComplementar = dictInputValoresTelaPrincipal['descComplementar']
+        faturado = dictInputValoresTelaPrincipal['os_faturado']
 
-        # Executar a instrução INSERT
-        self.db_manager.execute("INSERT INTO tb_ordens_servicos (os_dtServico, os_codCliente, os_cliente, os_observacao, os_codServico, os_descServico, os_qtd, os_vlrUnit) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                    (valoresOS['dtServico'], valoresOS['codCliente'], os_cliente, valoresOS['observacao'], valoresOS['codServico'], valoresOS['descServico'], valoresOS['quantidade'], os_vlrUnit))
+        cursor = self.db_manager.get_cursor()
 
+        cursor.execute("INSERT INTO tb_ordens_servicos (os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado) VALUES (?, ?, ?, ?, ?, ?, ?, ? ,?, ?)", (dtServico, codCliente, cliente, codServico, descServico, qtd, vlrUnit, total, descrComplementar, faturado))
 
-        # Salvar a transação
+        # Confirmar a transação
         self.db_manager.connection.commit()
-        print("Ordem de serviço inserida com sucesso.")
+        
+        
+        
+
+
+    def mostrarOrdensServicoTelaPrincipal(self):
+        cursor = self.db_manager.get_cursor()
+
+        cursor.execute("SELECT * FROM tb_ordens_servicos")
+
+        resultados = cursor.fetchall()
+
+        # Iterar sobre os resultados e adicioná-los à Treeview
+        for resultado in resultados:
+            # resultado é uma tupla representando uma linha da tabela
+            # Descompactar os valores da tupla para obter os campos individuais
+            os_id, os_dtServico, os_codCliente, os_cliente, os_observacao, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_faturado = resultado
+
+            # Adicionar a linha à Treeview
+            self.treeview.insert("", "end", values=(os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado))
             
 
     def mostrar_alerta(self, titulo, mensagem):

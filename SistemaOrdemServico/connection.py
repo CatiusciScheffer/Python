@@ -39,17 +39,16 @@ criarTabela("tb_usuarios", tb_usuarios_sql)
 tb_ordens_servicos_sql = """
 CREATE TABLE IF NOT EXISTS tb_ordens_servicos (
     os_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    os_dtServico DATE NOT NULL DEFAULT (DATE('now', 'localtime', '-30 day')),
+    os_dtServico TEXT NOT NULL,
     os_codCliente INTEGER NOT NULL,
     os_cliente TEXT NOT NULL,
-    os_observacao TEXT NOT NULL,
     os_codServico INTEGER NOT NULL,
-    os_descServico TEXT,
-    os_qtd INT NOT NULL DEFAULT 0,
-    os_vlrUnit REAL DEFAULT 0.0,
-    os_total REAL DEFAULT 0.0,
-    os_faturado INTEGER NOT NULL DEFAULT 0,
-    os_usuario TEXT,
+    os_descServico TEXT NOT NULL,
+    os_qtd INT NOT NULL,
+    os_vlrUnit REAL NOT NULL,
+    os_total REAL NOT NULL,
+    os_descrComplementar TEXT,
+    os_faturado TEXT,
     FOREIGN KEY (os_codCliente) REFERENCES tb_cliente(cli_codCliente),
     FOREIGN KEY (os_codServico) REFERENCES tb_servicos_vlr(serv_codServ)
 );
