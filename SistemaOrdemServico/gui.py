@@ -157,7 +157,8 @@ class LoginGUI:
         self.input_Cliente = Entry(
             bd = 0,
             bg = "#8a8a8a",
-            highlightthickness = 0)
+            highlightthickness = 0,
+            state="readonly")
 
         self.input_Cliente.place(
             x = 435.0, y = 73,
@@ -191,7 +192,8 @@ class LoginGUI:
         self.input_DescricaoServ = Entry(
             bd = 0,
             bg = "#8a8a8a",
-            highlightthickness = 0
+            highlightthickness = 0,
+            state='readonly'
         )
         
         self.input_DescricaoServ.place(
@@ -234,7 +236,6 @@ class LoginGUI:
             width = 89.0,
             height = 24)
         
-        
         input_VlrTotal_img = PhotoImage(file="./img/img_tlPrincipal_inputVltTotal.png")
         input_VlrTotal_bg = canvas.create_image(
             534.5, 155.0,
@@ -243,27 +244,29 @@ class LoginGUI:
         self.input_VlrTotal = Entry(
             bd = 0,
             bg = "#8a8a8a",
-            highlightthickness = 0)
+            highlightthickness = 0,
+            state='readonly')
 
         self.input_VlrTotal.place(
-            x = 490.0, y = 142,
-            width = 89.0,
-            height = 24)
+            x = 490.0, y = 144,
+            width = 90.0,
+            height = 22)
 
         input_Faturado_img = PhotoImage(file="./img/img_tlPrincipal_inputFaturado.png")
-        input_Faturado_bg = canvas.create_image(
-            711.5, 155.0,
-            image = input_Faturado_img)
+        input_Faturado_bg = canvas.create_image(711.5, 155.0, image=input_Faturado_img)
 
         self.input_Faturado = Entry(
-            bd = 0,
-            bg = "#8a8a8a",
-            highlightthickness = 0)
+            bd=0,
+            bg="#8a8a8a",
+            highlightthickness=0,
+            state="readonly"
+        )
 
         self.input_Faturado.place(
-            x = 667.0, y = 142,
-            width = 89.0,
-            height = 24)
+            x=667.0, y=144,
+            width=90.0,
+            height=22
+        )
         
         input_DescrCompl_img = PhotoImage(file="./img/img_tlPrincipal_textDescricaoServ.png")
         input_DescrServ_bg = canvas.create_image(
@@ -280,6 +283,9 @@ class LoginGUI:
             width = 522.0,
             height = 95)
 
+        ########### CRIANDO BOTÕES TELA PRINCIPAL ###########
+        
+        #### BOTÃO MODIFICAR ####
         img_tlPrincipal_btnModificar = PhotoImage(file="./img/img_tlPrincipal_btnModify.png")
         btnModifyOS_tlPrincipal = Button(
             image = img_tlPrincipal_btnModificar,
@@ -293,6 +299,7 @@ class LoginGUI:
             width = 103,
             height = 40)
 
+        #### BOTÃO DELETAR ####
         img_tlPrincipal_btnDelete = PhotoImage(file="./img/img_tlPrincipal_btnDelete.png")
         btnDeleteOS_tlPrincipal = Button(
             image = img_tlPrincipal_btnDelete,
@@ -306,6 +313,7 @@ class LoginGUI:
             width = 103,
             height = 40)
 
+        #### BOTÃO INSERT ####
         img_tlPrincipal_btnInsert = PhotoImage(file="./img/img_tlPrincipal_btnInsert.png")
         btnInsertOS_tlPrincipal = Button(
             image = img_tlPrincipal_btnInsert,
@@ -319,6 +327,7 @@ class LoginGUI:
             width = 81,
             height = 97)
 
+        #### BOTÃO CADASTRAR CLIENTE ####
         img_tlPrincipal_btnCadCliente = PhotoImage(file="./img/img_tlPrincipal_btnCadCliente.png")
         btnCadCliente_tlPrincipal = Button(
             image = img_tlPrincipal_btnCadCliente,
@@ -332,6 +341,7 @@ class LoginGUI:
             width = 138,
             height = 60)
 
+        #### BOTÃO CADASTRAR SERVIÇO ####
         img_tlPrincipal_btnCadServico = PhotoImage(file="./img/img_tlPrincipal_btnCadServico.png")
         btnCadServ_tlPrincipal = Button(
             image = img_tlPrincipal_btnCadServico,
@@ -345,6 +355,7 @@ class LoginGUI:
             width = 138,
             height = 60)
 
+        #### BOTÃO FINANCEIRO ####
         img_tlPrincipal_btnFinanceiro = PhotoImage(file="./img/img_tlPrincipal_btnFinanceiro.png")
         btnFinanceiro_tlPrincipal = Button(
             image = img_tlPrincipal_btnFinanceiro,
@@ -358,9 +369,7 @@ class LoginGUI:
             width = 138,
             height = 60)
         
-        ####################################
-                #criando Treeview        
-        ####################################
+        ############# CRIANDO TREEVIEW #############
               
         # Função para centralizar o texto nas células da TreeView
         def center_aligned_text(tree):
@@ -376,20 +385,21 @@ class LoginGUI:
         self.treeview.pack(fill="both", expand=True)
 
         # Configurar as colunas com largura e alinhamento
-        self.treeview["columns"] = ("ID","Data", "CodCliente", "Cliente", "CodServ", "TipoServico", "QTD", "ValorUnit", "ValorTotal", "DescServicos", "Resp","Faturado")
+        self.treeview["columns"] = ("ID","Data", "CodCliente", "Cliente", "CodServ", "DescrServico", "QTD", "ValorUnit", "ValorTotal", "DescComplementar", "Faturado")
+        
         self.treeview.column("#0", width=0, stretch=tk.NO)  # Coluna de ícones (não visível)
         self.treeview.column("ID", width=50, anchor="center")
         self.treeview.column("Data", width=70, anchor="center")
         self.treeview.column("CodCliente", width=70, anchor="center")
         self.treeview.column("Cliente", width=200, anchor="w")
         self.treeview.column("CodServ", width=70, anchor="center")
-        self.treeview.column("TipoServico", width=146, anchor="w")
+        self.treeview.column("DescrServico", width=146, anchor="w")
         self.treeview.column("QTD", width=38, anchor="e")
         self.treeview.column("ValorUnit", width=65, anchor="e")
         self.treeview.column("ValorTotal", width=65, anchor="e")
-        self.treeview.column("DescServicos", width=200, anchor="w")
-        self.treeview.column("Resp", width=100, anchor="center")
+        self.treeview.column("DescComplementar", width=200, anchor="w")
         self.treeview.column("Faturado", width=70, anchor="center")
+        #self.treeview.column("Resp", width=100, anchor="center")
 
         # Definir as colunas que serão exibidas
         self.treeview.heading("#0", text="", anchor="w")  # Coluna de ícones (não visível)
@@ -398,22 +408,17 @@ class LoginGUI:
         self.treeview.heading("CodCliente", text="Cód.Cliente", anchor="center")
         self.treeview.heading("Cliente", text="Cliente", anchor="center")
         self.treeview.heading("CodServ", text="Cód.Serv.", anchor="center")
-        self.treeview.heading("TipoServico", text="Tipo Serviço", anchor="center")
+        self.treeview.heading("DescrServico", text="Descrição Serviço", anchor="center")
         self.treeview.heading("QTD", text="QTD", anchor="center")
         self.treeview.heading("ValorUnit", text="Valor Unit.", anchor="center")
         self.treeview.heading("ValorTotal", text="Valor Total", anchor="center")
-        self.treeview.heading("DescServicos", text="Descrição dos Serviços", anchor="center")
-        self.treeview.heading("Resp", text="Responsável", anchor="center")
+        self.treeview.heading("DescComplementar", text="Descrição Complementar", anchor="center")
         self.treeview.heading("Faturado", text="Faturado", anchor="center")
+        #self.treeview.heading("Resp", text="Responsável", anchor="center")
 
         # Aplicar formatação de alinhamento
         center_aligned_text(self.treeview)
         right_aligned_text(self.treeview)
-
-        # # Inserir alguns dados de exemplo na TreeView
-        # self.treeview.insert("", "end", values=(1, "2023-07-21", "001", "Cliente A", "101", "Manutenção", "2", "50.00", "100.00", "Manutenção do equipamento", "Amanda","Sim"))
-        # self.treeview.insert("", "end", values=(2, "2023-07-22", "002", "Cliente B", "102", "Instalação", "1", "150.00", "150.00", "Instalação do sistema", "Elisete","Não"))
-        # self.treeview.insert("", "end", values=(3, "2023-07-23", "003", "Cliente C", "103", "Consultoria", "3", "80.00", "240.00", "Consultoria em TI", "Catiusci Pagnonceli Chaves Scheffer","Sim"))
 
         # Posicionar a TreeView na janela principal usando o place()
         self.treeview.place(x=13, y=322, height=369, width=957)
@@ -428,7 +433,8 @@ class LoginGUI:
         self.treeview.configure(xscrollcommand=scrollbar_x.set)
         scrollbar_x.place(x=14, y=690, width=973)
         
-        self.mostrarOrdensServicoTelaPrincipal()    
+        self.mostrarOrdensServicoTelaPrincipal()
+        self.resize_columns()    
             
         # Iniciar o loop principal do Tkinter
         telaPrincipal.resizable(False, False)
@@ -470,7 +476,7 @@ class LoginGUI:
             'codCliente': codCliente,
             'cliente': cliente,
             'codServico': codServico,
-            'descrServico': descrServico,
+            'descServico': descrServico,
             'descComplementar': descComplementar,
             'quantidade': quantidade,
             'vlrUnit': vlrUnit,
@@ -479,7 +485,11 @@ class LoginGUI:
         }
         return os_values
 
-
+    def _preencherFaturado(self, faturado):
+        self.input_Faturado.configure(state="normal")
+        self.input_Faturado.delete(0, END)
+        self.input_Faturado.insert(0, faturado)
+        self.input_Faturado.configure(state="readonly")        
     
     def preencheCliente(self, event):
         if event.keysym == "Tab":
@@ -494,15 +504,26 @@ class LoginGUI:
                 nomeCliente = str(cliente[1])
                 
                 if codCliente == input_codCliente:
-                    self.input_Cliente.delete(0, "end")
+                    self.input_Cliente.configure(state="normal")
+                    self.input_Cliente.delete(0, END)
                     self.input_Cliente.insert(0, nomeCliente)
-                    self.input_Faturado.delete(0, "end")
-                    self.input_Faturado.insert(0, 'NÃO')
+                    self.input_Cliente.configure(state="readonly")
+                    self._preencherFaturado('NÃO')
                     break
                 else:
                     pass
     
-       
+    def _preencherDescricaoServicos(self, descricao):
+        self.input_DescricaoServ.configure(state="normal")
+        self.input_DescricaoServ.delete(0, END)
+        self.input_DescricaoServ.insert(0, descricao)
+        self.input_DescricaoServ.configure(state="readonly")
+    
+    def _preencherValorUnitario(self, valor_unitario):
+        self.input_VlrUnitario.delete(0, END)
+        self.input_VlrUnitario.insert(0, valor_unitario)  
+        
+                    
     def preencheDescrServicoEvalorUnitario(self, event):
         if event.keysym == "Tab":
 
@@ -517,11 +538,8 @@ class LoginGUI:
                 valorUnit = float(servicos[2])
                 
                 if codServ == input_codServ:
-                    self.input_DescricaoServ.delete(0, "end")
-                    self.input_DescricaoServ.insert(0, descrServ)
-                    self.input_VlrUnitario.delete(0, "end")
-                    self.input_VlrUnitario.insert(0, valorUnit)
-                    
+                    self._preencherDescricaoServicos(descrServ)
+                    self._preencherValorUnitario(valorUnit)
                     break
                 else:
                     pass
@@ -537,8 +555,11 @@ class LoginGUI:
             
             calcularVlrTotal = quantidade * vlrUnitario
             
-            self.input_VlrTotal.delete(0, "end")
+            self.input_VlrTotal.configure(state="normal")
+            self.input_VlrTotal.delete(0, END)
             self.input_VlrTotal.insert(0, calcularVlrTotal)
+            self.input_VlrTotal.configure(state="readonly")
+            
 
     def gravandoOrdemServico(self):
         dictInputValoresTelaPrincipal = self.pegandoValoresTelaPrincipalOS()
@@ -547,7 +568,7 @@ class LoginGUI:
         codCliente = dictInputValoresTelaPrincipal['codCliente']
         cliente = dictInputValoresTelaPrincipal['cliente']
         codServico = dictInputValoresTelaPrincipal['codServico']
-        descServico = dictInputValoresTelaPrincipal['descrServico']
+        descServico = dictInputValoresTelaPrincipal['descServico']
         qtd = dictInputValoresTelaPrincipal['quantidade']
         vlrUnit = dictInputValoresTelaPrincipal['vlrUnit']
         total = dictInputValoresTelaPrincipal['total']
@@ -560,6 +581,9 @@ class LoginGUI:
 
         # Confirmar a transação
         self.db_manager.connection.commit()
+        
+        self.mostrarOrdensServicoTelaPrincipal()
+        self.resize_columns()
         
         
         
@@ -576,11 +600,26 @@ class LoginGUI:
         for resultado in resultados:
             # resultado é uma tupla representando uma linha da tabela
             # Descompactar os valores da tupla para obter os campos individuais
-            os_id, os_dtServico, os_codCliente, os_cliente, os_observacao, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_faturado = resultado
+            os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado = resultado
 
             # Adicionar a linha à Treeview
+            #self.treeview.insert("", "end", values=(os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado))
+            # Corrigindo a ordem dos valores passados na função insert() da Treeview
+            #self.treeview.insert("", "end", values=(os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado, os_descServico))
             self.treeview.insert("", "end", values=(os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado))
+
+    def resize_columns(self):
+        for col in self.treeview["columns"]:
+            self.treeview.heading(col, text=col, anchor="center")  # Redefinir o texto do cabeçalho para alinhar corretamente
+
+            # Calcular a largura ideal da coluna com base no maior comprimento do conteúdo da coluna
+            col_width = max(len(self.treeview.set(row, col)) for row in self.treeview.get_children()) * 10
             
+            # Definir uma largura mínima para a coluna
+            col_width = max(col_width, 100)
+
+            self.treeview.column(col, width=col_width)  # Redimensionar a coluna
+    
 
     def mostrar_alerta(self, titulo, mensagem):
         messagebox.showinfo(titulo, mensagem)
