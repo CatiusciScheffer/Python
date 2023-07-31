@@ -5,8 +5,6 @@ from user import UserManager
 from manipulacaoOrdemServico import ManipularOrdemServicos
 from datetime import datetime
 
-
-
 class LoginGUI:
     def __init__(self, db_manager):
         self.db_manager = db_manager
@@ -58,7 +56,8 @@ class LoginGUI:
         self.input_login_senha = Entry(
             bd = 0,
             bg = "#d9d9d9",
-            highlightthickness = 0)
+            highlightthickness = 0,
+            show="☺")
 
         self.input_login_senha.place(
             x = 414.0, y = 210,
@@ -85,7 +84,6 @@ class LoginGUI:
         self.verificar_usuario_existente()
         self.abrir_tl_principal()
         
-    #####
 
     def abrir_tl_principal(self):
         
@@ -319,7 +317,7 @@ class LoginGUI:
             image = img_tlPrincipal_btnInsert,
             borderwidth = 0,
             highlightthickness = 0,
-            command = self.gravandoOrdemServico,
+            command = self.gravarOSatualizatreevieew,
             relief = "flat")
 
         btnInsertOS_tlPrincipal.place(
@@ -347,7 +345,7 @@ class LoginGUI:
             image = img_tlPrincipal_btnCadServico,
             borderwidth = 0,
             highlightthickness = 0,
-            #command = btn_clicked,
+            command = self.abrir_cadastroServicos,
             relief = "flat")
 
         btnCadServ_tlPrincipal.place(
@@ -369,7 +367,7 @@ class LoginGUI:
             width = 138,
             height = 60)
         
-        ############# CRIANDO TREEVIEW #############
+        ############# CRIANDO TREEVIEW ORDEM DE SERVIÇOS #############
               
         # Função para centralizar o texto nas células da TreeView
         def center_aligned_text(tree):
@@ -440,6 +438,78 @@ class LoginGUI:
         telaPrincipal.resizable(False, False)
         telaPrincipal.mainloop()
     
+    def abrir_cadastroServicos(self):
+        tlServicos = Tk()
+        tlServicos.title('Lista Serviços Cadastrados')
+        tlServicos.geometry("800x720")
+        tlServicos.configure(bg="#ffffff")
+                
+        canvas = Canvas(
+            tlServicos,
+            bg="#ffffff",
+            height=720,
+            width=800,
+            bd=0,
+            highlightthickness=0,
+            relief="ridge"
+                )
+        canvas.place(x=0, y=0)
+
+
+    ############### TREEVIEW LISTA SERVIÇOS ###############
+        def center_aligned_text(tree):
+            tree.tag_configure('center', anchor='center')
+
+        # Função para alinhar o texto à direita nas células da TreeView
+        def right_aligned_text(tree):
+            tree.tag_configure('right', anchor='e')
+                            
+        # Criar a TreeView
+        self.treeview_tlServicos = ttk.Treeview(tlServicos)
+
+        self.treeview_tlServicos.pack(fill="both", expand=True)
+
+        # Configurar as colunas com largura e alinhamento
+        self.treeview_tlServicos["columns"] = ("ID","CodServ", "DescrServico", "ValorUnit", )
+                
+        self.treeview_tlServicos.column("#0", width=0, stretch=tk.NO)  # Coluna de ícones (não visível)
+        self.treeview_tlServicos.column("ID", width=30, anchor="center")
+        self.treeview_tlServicos.column("CodServ", width=70, anchor="center")
+        self.treeview_tlServicos.column("DescrServico", width=250, anchor="w")
+        self.treeview_tlServicos.column("ValorUnit", width=70, anchor="e")
+
+
+        # Definir as colunas que serão exibidas
+        self.treeview_tlServicos.heading("#0", text="", anchor="w")  # Coluna de ícones (não visível)
+        self.treeview_tlServicos.heading("ID", text="ID", anchor="center")
+        self.treeview_tlServicos.heading("CodServ", text="Cód.Serv.", anchor="center")
+        self.treeview_tlServicos.heading("DescrServico", text="Descrição Serviço", anchor="center")
+        self.treeview_tlServicos.heading("ValorUnit", text="Valor Unit.", anchor="center")
+
+
+        # Aplicar formatação de alinhamento
+        center_aligned_text(self.treeview_tlServicos)
+        right_aligned_text(self.treeview_tlServicos)
+
+        # Posicionar a TreeView na janela principal usando o place()
+        self.treeview_tlServicos.place(x=13, y=13, height=690, width=770)
+
+        # Adicionar barra de rolagem vertical
+        scrollbar_y = ttk.Scrollbar(tlServicos, orient="vertical", command=self.treeview_tlServicos.yview)
+        self.treeview_tlServicos.configure(yscrollcommand=scrollbar_y.set)
+        scrollbar_y.place(x=969, y=323, height=690)
+
+        # Adicionar barra de rolagem horizontal
+        scrollbar_x = ttk.Scrollbar(tlServicos, orient="horizontal", command=self.treeview_tlServicos.xview)
+        self.treeview_tlServicos.configure(xscrollcommand=scrollbar_x.set)
+        scrollbar_x.place(x=14, y=690, width=770)
+        
+        self.mostrarTabelaCadastroServicos()
+        tlServicos.resizable(False, False)
+        tlServicos.mainloop()
+    
+    ############## FUNÇÕES TELA LOGIN ##############
+    
     def verificar_usuario_existente(self):
         input_usuario = self.input_login_usuario.get().strip().upper()
         input_senha = self.input_login_senha.get().strip().upper()
@@ -452,13 +522,14 @@ class LoginGUI:
             return self.username  # Retorna o nome do usuário logado
         else:
             self.user_manager.registerNewUser(input_usuario, input_senha)
-            self.mostrar_alerta("Cadastro de Usuário", f"Usuário(a) {input_usuario} cadastrado com sucesso!")
+            self.mostrar_alerta("Cadastro de Usuário", f" ☻ Usuário(a) {input_usuario} cadastrado com sucesso!")
             self.tela_login.destroy()
             #self.abrir_tl_principal()
             self.username = input_usuario
             return self.username  # Retorna o nome do usuário logado
  
     
+    ############## FUNÇÕES TELA PRINCIPAL ORDEM DE SERVIÇOS ##############
     def pegandoValoresTelaPrincipalOS(self):
         dtServico = self.input_DataOS.get()
         codCliente = int(self.input_CodCliente.get().strip())
@@ -544,8 +615,6 @@ class LoginGUI:
                 else:
                     pass
                 
-    
-
     def preencherValorTotal(self, event):
         
         if event.keysym == "Tab":
@@ -578,36 +647,66 @@ class LoginGUI:
         cursor = self.db_manager.get_cursor()
 
         cursor.execute("INSERT INTO tb_ordens_servicos (os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado) VALUES (?, ?, ?, ?, ?, ?, ?, ? ,?, ?)", (dtServico, codCliente, cliente, codServico, descServico, qtd, vlrUnit, total, descrComplementar, faturado))
-
+       
         # Confirmar a transação
         self.db_manager.connection.commit()
         
-        self.mostrarOrdensServicoTelaPrincipal()
         self.resize_columns()
+    
         
-        
-        
-
-
     def mostrarOrdensServicoTelaPrincipal(self):
         cursor = self.db_manager.get_cursor()
 
-        cursor.execute("SELECT * FROM tb_ordens_servicos")
+        # Adicione a cláusula ORDER BY para ordenar os registros pelo ID em ordem decrescente
+        cursor.execute("SELECT * FROM tb_ordens_servicos ORDER BY os_id ASC")
 
         resultados = cursor.fetchall()
 
-        # Iterar sobre os resultados e adicioná-los à Treeview
+        # Limpar a Treeview antes de adicionar os novos registros
+        self.treeview.delete(*self.treeview.get_children())
+
+        # Iterar sobre os resultados e adicioná-los à Treeview no início (índice "0")
         for resultado in resultados:
-            # resultado é uma tupla representando uma linha da tabela
-            # Descompactar os valores da tupla para obter os campos individuais
             os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado = resultado
+            self.treeview.insert("", "0", values=(os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado))
 
-            # Adicionar a linha à Treeview
-            #self.treeview.insert("", "end", values=(os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado))
-            # Corrigindo a ordem dos valores passados na função insert() da Treeview
-            #self.treeview.insert("", "end", values=(os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado, os_descServico))
-            self.treeview.insert("", "end", values=(os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado))
+        # Redimensionar as colunas para ajustar o conteúdo
+        self.resize_columns()
 
+    def gravarOSatualizatreevieew(self):
+        self.gravandoOrdemServico()
+        self.mostrarOrdensServicoTelaPrincipal()
+        self.mostrar_alerta('Sucesso', 'Serviço inserido com sucesso!')
+
+    
+    ############### FUNÇÕES TELA CADASTRO SERVIÇOS ###############
+    def mostrarTabelaCadastroServicos(self):
+        cursor = self.db_manager.get_cursor()
+
+        cursor.execute("SELECT serv_id, serv_codServ, serv_descrServico, serv_vlrUnit FROM tb_servicos_vlr")
+
+        resultados = cursor.fetchall()
+        print(resultados)
+        # Limpar a Treeview antes de adicionar os novos registros
+        #self.treeview_tlServicos.delete(*self.treeview_tlServicos.get_children())
+
+        # Iterar sobre os resultados e adicioná-los à Treeview no início (índice "0")
+        for resultado in resultados:
+            serv_id, serv_codServ, serv_descrServico, serv_vlrUnit = resultado
+            print(serv_id, serv_codServ, serv_descrServico, serv_vlrUnit, sep='\n')    
+            
+            self.treeview_tlServicos.insert("", "end", values=(serv_id, serv_codServ, serv_descrServico, serv_vlrUnit))
+
+    
+    #
+        
+    ############### FUNÇÕES GERAIS ###############
+    def mostrar_alerta(self, titulo, mensagem):
+        messagebox.showinfo(titulo, mensagem)
+
+    def run(self):
+        self.tela_login.mainloop()
+        
     def resize_columns(self):
         for col in self.treeview["columns"]:
             self.treeview.heading(col, text=col, anchor="center")  # Redefinir o texto do cabeçalho para alinhar corretamente
@@ -619,15 +718,6 @@ class LoginGUI:
             col_width = max(col_width, 100)
 
             self.treeview.column(col, width=col_width)  # Redimensionar a coluna
-    
-
-    def mostrar_alerta(self, titulo, mensagem):
-        messagebox.showinfo(titulo, mensagem)
-
-    def run(self):
-        self.tela_login.mainloop()
-        
-    
         
         
         

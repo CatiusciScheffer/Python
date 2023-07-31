@@ -30,18 +30,12 @@ class ManipularOrdemServicos():
             
         return listandoServicosOS
     
-    def buscarValoreTBOrdensServico(self):
+    def ordenarTBOrdensServico(self):
         cursor = self.db_manager.get_cursor()
-        servicosCadastrados = cursor.execute('SELECT os_id, os_dtServico, os_codCliente, os_cliente, os_observacao, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_faturado, os_usuario FROM tb_ordens_servicos;')
-        servicosCadastrados = cursor.fetchall()
         
-        listandoOrdensServicos = []
-        
-        for ordens_servico in servicosCadastrados:
-            listandoOrdensServicos.append(ordens_servico)
-            
-        return listandoOrdensServicos
-    
+        # Consulta SQL ordenando os dados pela coluna os_id em ordem decrescente
+        cursor.execute("SELECT os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado FROM tb_ordens_servicos ORDER BY os_id DESC;")
+
     def verificaSeClienteCadastrado(self, codCliente):
         cursor = self.db_manager.get_cursor()
         cursor.execute("SELECT cli_nomeCliente FROM tb_cliente WHERE cli_codCliente=?", (codCliente,))
