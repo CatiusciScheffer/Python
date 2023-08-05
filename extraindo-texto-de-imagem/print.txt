@@ -1,3 +1,11 @@
-conta corretas += 1
-conta todas += 1
-
+Tarifa de Devolução de Cheque - CH 000113 - D
+Encargos - Mora s/ Liquidação - CH - 000113
+Encargos - Multa s/ Liquidação - CH - 000113
+Tarifa de Devolução de Cheque - CH 000901 - D
+Encargos - Mora s/ Liquidação - CH - 000901
+Encargos - Multa s/ Liquidação - CH - 000901
+Tarifa de Devolução de Cheque - CH 001242 - D
+Tarifa de Devolução de Cheque - CH 000223 - D
+Encargos - Mora s/ Liquidação - CH - 000223
+Encargos - Multa s/ Liquidação - CH - 000223
+Tarifa de Devolução de Cheque - CH 001242 - D

@@ -1,9 +1,11 @@
 import tkinter as tk
-from tkinter import Tk, Button, Entry, PhotoImage, Canvas, ttk, messagebox, END
+from tkinter import Tk, Button, Entry, PhotoImage, Canvas, ttk, messagebox, END, Toplevel
+from tkinter.filedialog import askopenfilename
 from tkcalendar import DateEntry
 from user import UserManager
 from manipulacaoOrdemServico import ManipularOrdemServicos
 from datetime import datetime
+
 
 class LoginGUI:
     def __init__(self, db_manager):
@@ -31,7 +33,7 @@ class LoginGUI:
         background = canvas.create_image(
             350.0, 200.0,
             image=background_img)
-
+        
         input_login_usuario_img = PhotoImage(file="./img/img_tlLogin_inputUsuario.png")
         input_login_usuario_bg = canvas.create_image(
             523.5, 164.0,
@@ -75,13 +77,17 @@ class LoginGUI:
             x = 472, y = 261,
             width = 103,
             height = 32)
+        
+        #Faz entrar sem clique no botão enter, apenas clicando
+        BtnEntrar.bind("<Return>", self.fechar_tl_login)
 
         self.tela_login.resizable(False, False)
         self.tela_login.mainloop()
         
-    def fechar_tl_login(self):
+    def fechar_tl_login(self, event=None):
         self.verificar_usuario_existente()
         self.abrir_tl_principal()
+        
         
 
     def abrir_tl_principal(self):
@@ -106,7 +112,6 @@ class LoginGUI:
         background_tlPrincipal = canvas.create_image(
             500.0, 360.0,
             image=img_tlPrincipal_background)
-
 
         input_DataOS_img = PhotoImage(file="./img/img_tlPrincipal_inputData.png")
         input_DataOS_bg = canvas.create_image(
@@ -214,9 +219,6 @@ class LoginGUI:
             width = 82.0,
             height = 24)
         
-        # Associa a função atualizarValore aos eventos <FocusOut> e <Tab> do campo input_CodServ
-        self.input_Quantidade.bind("<FocusOut>", self.preencherValorTotal)
-        self.input_Quantidade.bind("<Tab>", self.preencherValorTotal)
         
         input_VlrUnitario_img = PhotoImage(file="./img/img_tlPrincipal_inputVltUnitario.png")
         input_VlrUnitario_bg = canvas.create_image(
@@ -232,6 +234,10 @@ class LoginGUI:
             x = 304.0, y = 142,
             width = 89.0,
             height = 24)
+        
+        # Associa a função atualizarValore aos eventos <FocusOut> e <Tab> do campo input_VlrTotal
+        self.input_VlrUnitario.bind("<FocusOut>", self.preencherValorTotal)
+        self.input_VlrUnitario.bind("<Tab>", self.preencherValorTotal)
         
         input_VlrTotal_img = PhotoImage(file="./img/img_tlPrincipal_inputVltTotal.png")
         input_VlrTotal_bg = canvas.create_image(
@@ -316,7 +322,7 @@ class LoginGUI:
             image = img_tlPrincipal_btnInsert,
             borderwidth = 0,
             highlightthickness = 0,
-            command = self.gravarOSatualizatreevieew,
+            command = self.atualizar_VizualizacaoTelaPrincipal,
             relief = "flat")
 
         btnInsertOS_tlPrincipal.place(
@@ -430,7 +436,7 @@ class LoginGUI:
         self.treeview.configure(xscrollcommand=scrollbar_x.set)
         scrollbar_x.place(x=14, y=690, width=973)
         
-        self.mostrarOrdensServicoTelaPrincipal()
+        self.mostrarOrdensServico_TelaPrincipal()
         self.resize_columns()    
             
         # Iniciar o loop principal do Tkinter
@@ -439,7 +445,7 @@ class LoginGUI:
     
     def abrir_cadastroServicos(self):
         
-        tlServicos = Tk()
+        tlServicos = Toplevel()
         tlServicos.title('Lista Serviços Cadastrados')
         tlServicos.geometry("837x577")
         tlServicos.configure(bg="#ffffff")
@@ -454,107 +460,133 @@ class LoginGUI:
             relief = "ridge")
         canvas.place(x = 0, y = 0)
         
-        self.background_img_tlCadServ = PhotoImage(file ="./img/img_tlCadServ_backgroundCadServ.png")
-        background_tlCadServ = canvas.create_image(
-            418.5, 288.5,
-            image=self.background_img_tlCadServ)
+        background_img_tlCadServ = PhotoImage(file="./img/img_tlCadServ_backgroundCadServ.png")
+        background = canvas.create_image(
+            417.5, 288.5,
+            image=background_img_tlCadServ)
 
-        img0 = PhotoImage(file ="./img/img_tlCadServ_btnModify.png")
-        b0 = Button(
-            image = img0,
+        
+        verificaInteger = tlServicos.register(self._verificarValor_Inteiro)
+        verificaFloat = tlServicos.register(self._verificarValor_Float)
+        verificaTexto = tlServicos.register(self._verificarValor_Texto)
+        
+        #### BOTÃO MODIFICAR SERVIÇOS ####
+        img_btnModify_tlCadServ = PhotoImage(file="./img/img_tlCadServ_btnModify.png")
+        btnModify_tlCadServ = Button(
+            tlServicos,
+            image = img_btnModify_tlCadServ,
             borderwidth = 0,
             highlightthickness = 0,
             #command = btn_clicked,
             relief = "flat")
 
-        b0.place(
+        btnModify_tlCadServ.place(
             x = 217, y = 115,
             width = 90,
             height = 30)
-
-        img1 = PhotoImage(file = "./img/img_tlCadServ_btnInsert.png")
-        b1 = Button(
-            image = img1,
+        
+        #### BOTÃO INSERIR SERVIÇOS ####
+        img_btnInsert_tlCadServ = PhotoImage(file = "./img/img_tlCadServ_btnInsert.png")
+        btnInsert_tlCadServ = Button(
+            tlServicos,
+            image = img_btnInsert_tlCadServ,
             borderwidth = 0,
             highlightthickness = 0,
-            #command = btn_clicked,
+            command = self.atualizar_VizualizacaoTelaCadServ,
             relief = "flat")
 
-        b1.place(
-            x = 696, y = 115,
-            width = 115,
-            height = 30)
-
-        img2 = PhotoImage(file = "./img/img_tlCadServ_btnDelete.png")
-        b2 = Button(
-            image = img2,
-            borderwidth = 0,
-            highlightthickness = 0,
-            #command = btn_clicked,
-            relief = "flat")
-
-        b2.place(
-            x = 545, y = 115,
-            width = 90,
-            height = 30)
-
-        img3 = PhotoImage(file = "./img/img_tlCadServ_btnPrint.png")
-        b3 = Button(
-            image = img3,
-            borderwidth = 0,
-            highlightthickness = 0,
-            #command = btn_clicked,
-            relief = "flat")
-
-        b3.place(
+        btnInsert_tlCadServ.place(
             x = 381, y = 115,
             width = 90,
             height = 30)
 
-        entry0_img = PhotoImage(file = "./img/img_tlCadServ_inputCodServ.png")
-        entry0_bg = canvas.create_image(
+        #### BOTÃO DELETAR SERVIÇOS ####
+        img_btnDelete_tlCadServ = PhotoImage(file = "./img/img_tlCadServ_btnDelete.png")
+        btnDelete_tlCadServ = Button(
+            tlServicos,
+            image = img_btnDelete_tlCadServ,
+            borderwidth = 0,
+            highlightthickness = 0,
+            command = self.deletarServico_TelaCadServ,
+            relief = "flat")
+
+        btnDelete_tlCadServ.place(
+            x = 545, y = 115,
+            width = 90,
+            height = 30)
+        
+        #### BOTÃO IMPRIMIR SERVIÇOS ####
+        img_btnPrint_tlCadServ = PhotoImage(file = "./img/img_tlCadServ_btnPrint.png")
+        btnPrint_tlCadServ = Button(
+            tlServicos,
+            image = img_btnPrint_tlCadServ,
+            borderwidth = 0,
+            highlightthickness = 0,
+            #command = btn_clicked,
+            relief = "flat")
+
+        btnPrint_tlCadServ.place(
+            x = 696, y = 115,
+            width = 115,
+            height = 30)
+
+        inputCodServ_tlCadServ_img = PhotoImage(file = f"./img/img_tlCadServ_inputCodServ.png")
+        inputCodServ_tlCadServ_bg = canvas.create_image(
             113.0, 85.0,
-            image = entry0_img)
+            image = inputCodServ_tlCadServ_img)
 
-        self.entry0 = Entry(
-            bd = 0,
-            bg = "#d9d9d9",
-            highlightthickness = 0)
+        self.inputCodServ_tlCadServ = Entry(
+            tlServicos,
+            bd=0,
+            bg="#d9d9d9",
+            highlightthickness=0,
+            validate="key",
+            validatecommand=(verificaInteger, "%P"))
 
-        self.entry0.place(
+        self.inputCodServ_tlCadServ.place(
             x = 85.0, y = 70,
             width = 56.0,
             height = 28)
-
-        entry1_img = PhotoImage(file = "./img/img_tlCadServ_inputVlrUnit.png")
-        entry1_bg = canvas.create_image(
-            763.5, 85.0,
-            image = entry1_img)
-
-        self.entry1 = Entry(
-            bd = 0,
-            bg = "#d9d9d9",
-            highlightthickness = 0)
-
-        self.entry1.place(
-            x = 719.0, y = 70,
-            width = 89.0,
-            height = 28)
-
-        entry2_img = PhotoImage(file = "./img/img_tlCadServ_inputTipoServ.png")
-        entry2_bg = canvas.create_image(
+        
+        inputDescServ_tlCadServ_img = PhotoImage(file = "./img/img_tlCadServ_inputTipoServ.png")
+        inputDescServ_tlCadServ_bg = canvas.create_image(
             426.0, 85.0,
-            image = entry2_img)
+            image = inputDescServ_tlCadServ_img)
 
-        self.entry2 = Entry(
+        self.inputDescServ_tlCadServ = Entry(
+            tlServicos,
             bd = 0,
             bg = "#d9d9d9",
-            highlightthickness = 0)
+            highlightthickness = 0,
+            validate="key",
+            validatecommand=(verificaTexto, "%P"))
 
-        self.entry2.place(
+        self.inputDescServ_tlCadServ.place(
             x = 220.0, y = 70,
             width = 412.0,
             height = 28)
+
+        inputVlrUnit_tlCadServ_img = PhotoImage(file = "./img/img_tlCadServ_inputVlrUnit.png")
+        inputVlrUnit_tlCadServ_bg = canvas.create_image(
+            763.5, 85.0,
+            image = inputVlrUnit_tlCadServ_img)
+        
+        
+        self.inputVlrUnit_tlCadServ = tk.Entry(
+            tlServicos,
+            bd=0,
+            bg="#d9d9d9",
+            highlightthickness=0,
+            validate="key",
+            validatecommand=(verificaFloat, "%P")
+        )
+
+        self.inputVlrUnit_tlCadServ.pack()
+            
+        self.inputVlrUnit_tlCadServ.place(
+            x = 719.0, y = 70,
+            width = 89.0,
+            height = 28)        
 
         ############### TREEVIEW LISTA SERVIÇOS ###############
         def center_aligned_text(tree):
@@ -586,20 +618,20 @@ class LoginGUI:
         right_aligned_text(self.treeview_tlServicos)
 
         # Posicionar a TreeView
-        self.treeview_tlServicos.place(x=12, y=177, height=386, width=813)
+        self.treeview_tlServicos.place(x=15, y=180, height=364.5, width=788.5)
 
         # Adicionar barra de rolagem vertical
         scrollbar_y = ttk.Scrollbar(tlServicos, orient="vertical", command=self.treeview_tlServicos.yview)
         self.treeview_tlServicos.configure(yscrollcommand=scrollbar_y.set)
-        scrollbar_y.place(x=800, y=177, height=386)
+        scrollbar_y.place(x=804, y=181, height=364)
 
         # Adicionar barra de rolagem horizontal
         scrollbar_x = ttk.Scrollbar(tlServicos, orient="horizontal", command=self.treeview_tlServicos.xview)
         self.treeview_tlServicos.configure(xscrollcommand=scrollbar_x.set)
-        scrollbar_x.place(x=12, y=535, width=813)
+        scrollbar_x.place(x=16, y=545, width=805)
         ########## FIM TABELA SERVICOS ##########
         
-        self.mostrarTabelaCadastroServicos()
+        self.mostrarServicos_TelaCadServ()
         tlServicos.resizable(False, False)
         tlServicos.mainloop()
     
@@ -725,7 +757,7 @@ class LoginGUI:
             self.input_VlrTotal.configure(state="readonly")
             
 
-    def gravandoOrdemServico(self):
+    def inserir_OrdemServico(self):
         dictInputValoresTelaPrincipal = self.pegandoValoresTelaPrincipalOS()
 
         dtServico = dictInputValoresTelaPrincipal['dtServico']
@@ -745,11 +777,10 @@ class LoginGUI:
        
         # Confirmar a transação
         self.db_manager.connection.commit()
-        
         self.resize_columns()
     
         
-    def mostrarOrdensServicoTelaPrincipal(self):
+    def mostrarOrdensServico_TelaPrincipal(self):
         cursor = self.db_manager.get_cursor()
 
         # Adicione a cláusula ORDER BY para ordenar os registros pelo ID em ordem decrescente
@@ -768,33 +799,116 @@ class LoginGUI:
         # Redimensionar as colunas para ajustar o conteúdo
         self.resize_columns()
 
-    def gravarOSatualizatreevieew(self):
-        self.gravandoOrdemServico()
-        self.mostrarOrdensServicoTelaPrincipal()
+    def atualizar_VizualizacaoTelaPrincipal(self):
+        self.inserir_OrdemServico()
+        self.mostrarOrdensServico_TelaPrincipal()
         self.mostrar_alerta('Sucesso', 'Serviço inserido com sucesso!')
 
     
     ############### FUNÇÕES TELA CADASTRO SERVIÇOS ###############
-    def mostrarTabelaCadastroServicos(self):
+    def _limparTelaCadServ(self):     
+        self.inputCodServ_tlCadServ.delete(0, 'end')
+        self.inputDescServ_tlCadServ.delete(0, 'end')
+        self.inputVlrUnit_tlCadServ.delete(0, 'end')
+             
+    def inserirServico_TelaCadServ(self):
+        
+        codServico = self.inputCodServ_tlCadServ.get().strip()
+        descServico = self.inputDescServ_tlCadServ.get().strip().upper()
+        vlrUnit = self.inputVlrUnit_tlCadServ.get()
+        vlrUnit = vlrUnit.replace(",", ".")
+        
+        # Verificar campos não preenchidos
+        if not codServico or not descServico or not vlrUnit:
+            messagebox.showerror("Campos Vazios", "Por favor, preencha todos os campos.")
+            return
+        
+        try:                
+                
+            cursor = self.db_manager.get_cursor()
+            
+            cursor.execute("INSERT INTO tb_servicos_vlr (serv_codServ, serv_descrServico, serv_vlrUnit) VALUES (?, ?, ?)", (codServico, descServico, vlrUnit))
+            
+            # Confirmar a transação
+            self.db_manager.connection.commit()
+                
+            messagebox.showinfo("Cadastro de Serviço", f"Serviço '{descServico}' cadastrado com sucesso!")
+                
+            
+                
+            self.resize_columns()
+                
+        except ValueError:
+            messagebox.showerror("Valor Inválido", "O valor unitário deve ser numérico.")
+            return
+        
+        self._limparTelaCadServ()
+        
+    def mostrarServicos_TelaCadServ(self):
         cursor = self.db_manager.get_cursor()
 
         cursor.execute("SELECT serv_id, serv_codServ, serv_descrServico, serv_vlrUnit FROM tb_servicos_vlr")
 
         resultados = cursor.fetchall()
-        print(resultados)
         # Limpar a Treeview antes de adicionar os novos registros
-        #self.treeview_tlServicos.delete(*self.treeview_tlServicos.get_children())
+        self.treeview_tlServicos.delete(*self.treeview_tlServicos.get_children())
 
         # Iterar sobre os resultados e adicioná-los à Treeview no início (índice "0")
         for resultado in resultados:
-            serv_id, serv_codServ, serv_descrServico, serv_vlrUnit = resultado
-            print(serv_id, serv_codServ, serv_descrServico, serv_vlrUnit, sep='\n')    
+            serv_id, serv_codServ, serv_descrServico, serv_vlrUnit = resultado   
             
             self.treeview_tlServicos.insert("", "end", values=(serv_id, serv_codServ, serv_descrServico, serv_vlrUnit))
+        
+        self._limparTelaCadServ()
+        
+    def deletarServico_TelaCadServ(self):
+        # Obtém o item selecionado na treeview
+        itemSelecionado = self.treeview_tlServicos.selection()
+        if not itemSelecionado:
+            # Se nenhum item foi selecionado, exibe uma mensagem de aviso
+            messagebox.showwarning("Nenhum item selecionado", "Por favor, selecione um item para deletar.")
+            return
+            
+        # Obtém os valores do item selecionado
+        item = self.treeview_tlServicos.item(itemSelecionado, 'values')
+        serv_id = item[0]
+        serv_descrServico = item[2]
+            
+        # Exibe uma mensagem de confirmação
+        confirmar = messagebox.askyesno("Confirmar exclusão", f"Tem certeza que deseja deletar o serviço '{serv_descrServico}'?")
+            
+        if confirmar:
+            # Deleta o item do banco de dados
+            if self._deletarServicoDoBanco(serv_id):
+                # Remove o item da treeview
+                self.treeview_tlServicos.delete(itemSelecionado)
+                messagebox.showinfo("Sucesso", f"O serviço '{serv_descrServico}' foi deletado com sucesso.")
+            else:
+                messagebox.showerror("Erro", "Ocorreu um erro ao tentar deletar o serviço.")
+        else:
+            # Caso o usuário cancele a exclusão
+            messagebox.showinfo("Cancelado", "A exclusão foi cancelada pelo usuário.")
+
+    def _deletarServicoDoBanco(self, serv_id):
+        try:
+            # Executa o comando SQL para deletar o registro com o serv_id especificado
+            self.db_manager.cursor.execute("DELETE FROM tb_servicos_vlr WHERE serv_id = ?", (serv_id,))
+            self.db_manager.connection.commit()
+            return True
+        except Exception as e:
+            print("Erro ao deletar serviço:", e)
+            return False
+
+
+        
+    
+    def atualizar_VizualizacaoTelaCadServ(self):
+        self.inserirServico_TelaCadServ()
+        self.mostrarServicos_TelaCadServ()
 
     
-    #
-        
+    
+    
     ############### FUNÇÕES GERAIS ###############
     def mostrar_alerta(self, titulo, mensagem):
         messagebox.showinfo(titulo, mensagem)
@@ -814,6 +928,24 @@ class LoginGUI:
 
             self.treeview.column(col, width=col_width)  # Redimensionar a coluna
         
+    def _verificarValor_Inteiro(self, valorInteiro):
+        if valorInteiro == '' or valorInteiro.isdigit():
+            return True
+        return False
+
+    def _verificarValor_Float(self, valor):
+        valor = valor.replace(",", ".")
+        
+        try:
+            valorFloat = float(valor)
+            return True
+        except ValueError:
+            return False
+        
+    def _verificarValor_Texto(self, valor):
+        # Aceitar apenas texto (não vazio)
+        return len(valor.strip()) > 0
+
         
         
         
