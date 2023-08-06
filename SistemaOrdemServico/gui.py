@@ -87,19 +87,20 @@ class LoginGUI:
     def fechar_tl_login(self, event=None):
         self.verificar_usuario_existente()
         self.abrir_tl_principal()
+        #self.tela_login.destroy()
         
         
 
     def abrir_tl_principal(self):
         
-        telaPrincipal = Tk()        
-        telaPrincipal.title(f"Cadasto de Serviços")
+        self.telaPrincipal = Tk()        
+        self.telaPrincipal.title(f"Cadasto de Serviços")
 
-        telaPrincipal.geometry("1000x720")
-        telaPrincipal.configure(bg = "#ffffff")
+        self.telaPrincipal.geometry("1000x720")
+        self.telaPrincipal.configure(bg = "#ffffff")
         
         canvas = Canvas(
-            telaPrincipal,
+            self.telaPrincipal,
             bg = "#ffffff",
             height = 720,
             width = 1000,
@@ -350,7 +351,7 @@ class LoginGUI:
             image = img_tlPrincipal_btnCadServico,
             borderwidth = 0,
             highlightthickness = 0,
-            command = self.abrir_cadastroServicos,
+            command = self.abrirTelaCadServ,
             relief = "flat")
 
         btnCadServ_tlPrincipal.place(
@@ -383,7 +384,7 @@ class LoginGUI:
             tree.tag_configure('right', anchor='e')
             
         # Criar a TreeView
-        self.treeview = ttk.Treeview(telaPrincipal)
+        self.treeview = ttk.Treeview(self.telaPrincipal)
 
         self.treeview.pack(fill="both", expand=True)
 
@@ -427,12 +428,12 @@ class LoginGUI:
         self.treeview.place(x=13, y=322, height=369, width=957)
 
         # Adicionar barra de rolagem vertical
-        scrollbar_y = ttk.Scrollbar(telaPrincipal, orient="vertical", command=self.treeview.yview)
+        scrollbar_y = ttk.Scrollbar(self.telaPrincipal, orient="vertical", command=self.treeview.yview)
         self.treeview.configure(yscrollcommand=scrollbar_y.set)
         scrollbar_y.place(x=969, y=323, height=367)
 
         # Adicionar barra de rolagem horizontal
-        scrollbar_x = ttk.Scrollbar(telaPrincipal, orient="horizontal", command=self.treeview.xview)
+        scrollbar_x = ttk.Scrollbar(self.telaPrincipal, orient="horizontal", command=self.treeview.xview)
         self.treeview.configure(xscrollcommand=scrollbar_x.set)
         scrollbar_x.place(x=14, y=690, width=973)
         
@@ -440,18 +441,18 @@ class LoginGUI:
         self.resize_columns()    
             
         # Iniciar o loop principal do Tkinter
-        telaPrincipal.resizable(False, False)
-        telaPrincipal.mainloop()
+        self.telaPrincipal.resizable(False, False)
+        self.telaPrincipal.mainloop()
     
-    def abrir_cadastroServicos(self):
+    def criar_TelaCadServ(self):
         
-        tlServicos = Toplevel()
-        tlServicos.title('Lista Serviços Cadastrados')
-        tlServicos.geometry("837x577")
-        tlServicos.configure(bg="#ffffff")
+        self.tlServicos = Toplevel(self.telaPrincipal)
+        self.tlServicos.title('Lista Serviços Cadastrados')
+        self.tlServicos.geometry("837x577")
+        self.tlServicos.configure(bg="#ffffff")
                 
         canvas = Canvas(
-            tlServicos,
+            self.tlServicos,
             bg = "#ffffff",
             height = 577,
             width = 837,
@@ -466,59 +467,59 @@ class LoginGUI:
             image=background_img_tlCadServ)
 
         
-        verificaInteger = tlServicos.register(self._verificarValor_Inteiro)
-        verificaFloat = tlServicos.register(self._verificarValor_Float)
-        verificaTexto = tlServicos.register(self._verificarValor_Texto)
+        verificaInteger = self.tlServicos.register(self._verificarValor_Inteiro)
+        verificaFloat = self.tlServicos.register(self._verificarValor_Float)
+        verificaTexto = self.tlServicos.register(self._verificarValor_Texto)
         
         #### BOTÃO MODIFICAR SERVIÇOS ####
         img_btnModify_tlCadServ = PhotoImage(file="./img/img_tlCadServ_btnModify.png")
         btnModify_tlCadServ = Button(
-            tlServicos,
+            self.tlServicos,
             image = img_btnModify_tlCadServ,
             borderwidth = 0,
             highlightthickness = 0,
-            #command = btn_clicked,
+            command = self.modificar,
             relief = "flat")
 
         btnModify_tlCadServ.place(
-            x = 217, y = 115,
+            x = 492, y = 115,
             width = 90,
             height = 30)
         
         #### BOTÃO INSERIR SERVIÇOS ####
         img_btnInsert_tlCadServ = PhotoImage(file = "./img/img_tlCadServ_btnInsert.png")
         btnInsert_tlCadServ = Button(
-            tlServicos,
+            self.tlServicos,
             image = img_btnInsert_tlCadServ,
             borderwidth = 0,
             highlightthickness = 0,
-            command = self.atualizar_VizualizacaoTelaCadServ,
+            command = self.inserirServico_CadServ,
             relief = "flat")
 
         btnInsert_tlCadServ.place(
-            x = 381, y = 115,
+            x = 390, y = 115,
             width = 90,
             height = 30)
 
         #### BOTÃO DELETAR SERVIÇOS ####
-        img_btnDelete_tlCadServ = PhotoImage(file = "./img/img_tlCadServ_btnDelete.png")
-        btnDelete_tlCadServ = Button(
-            tlServicos,
-            image = img_btnDelete_tlCadServ,
+        self.img_btnDelete_tlCadServ = PhotoImage(file = "./img/img_tlCadServ_btnDelete.png")
+        self.btnDelete_tlCadServ = Button(
+            self.tlServicos,
+            image = self.img_btnDelete_tlCadServ,
             borderwidth = 0,
             highlightthickness = 0,
             command = self.deletarServico_TelaCadServ,
             relief = "flat")
 
-        btnDelete_tlCadServ.place(
-            x = 545, y = 115,
+        self.btnDelete_tlCadServ.place(
+            x = 594, y = 115,
             width = 90,
             height = 30)
         
         #### BOTÃO IMPRIMIR SERVIÇOS ####
         img_btnPrint_tlCadServ = PhotoImage(file = "./img/img_tlCadServ_btnPrint.png")
         btnPrint_tlCadServ = Button(
-            tlServicos,
+            self.tlServicos,
             image = img_btnPrint_tlCadServ,
             borderwidth = 0,
             highlightthickness = 0,
@@ -529,14 +530,16 @@ class LoginGUI:
             x = 696, y = 115,
             width = 115,
             height = 30)
-
+        #botões que serão ocultos ao chamar a função de modificação:
+        self.botoesParaOcultar = [self.btnDelete_tlCadServ, btnInsert_tlCadServ, btnModify_tlCadServ, btnPrint_tlCadServ]
+        
         inputCodServ_tlCadServ_img = PhotoImage(file = f"./img/img_tlCadServ_inputCodServ.png")
         inputCodServ_tlCadServ_bg = canvas.create_image(
             113.0, 85.0,
             image = inputCodServ_tlCadServ_img)
 
         self.inputCodServ_tlCadServ = Entry(
-            tlServicos,
+            self.tlServicos,
             bd=0,
             bg="#d9d9d9",
             highlightthickness=0,
@@ -554,7 +557,7 @@ class LoginGUI:
             image = inputDescServ_tlCadServ_img)
 
         self.inputDescServ_tlCadServ = Entry(
-            tlServicos,
+            self.tlServicos,
             bd = 0,
             bg = "#d9d9d9",
             highlightthickness = 0,
@@ -573,7 +576,7 @@ class LoginGUI:
         
         
         self.inputVlrUnit_tlCadServ = tk.Entry(
-            tlServicos,
+            self.tlServicos,
             bd=0,
             bg="#d9d9d9",
             highlightthickness=0,
@@ -596,7 +599,7 @@ class LoginGUI:
         def right_aligned_text(tree):
             tree.tag_configure('right', anchor='e')
                             
-        self.treeview_tlServicos = ttk.Treeview(tlServicos)
+        self.treeview_tlServicos = ttk.Treeview(self.tlServicos)
 
         self.treeview_tlServicos.pack(fill="both", expand=True)
 
@@ -621,19 +624,19 @@ class LoginGUI:
         self.treeview_tlServicos.place(x=15, y=180, height=364.5, width=788.5)
 
         # Adicionar barra de rolagem vertical
-        scrollbar_y = ttk.Scrollbar(tlServicos, orient="vertical", command=self.treeview_tlServicos.yview)
+        scrollbar_y = ttk.Scrollbar(self.tlServicos, orient="vertical", command=self.treeview_tlServicos.yview)
         self.treeview_tlServicos.configure(yscrollcommand=scrollbar_y.set)
         scrollbar_y.place(x=804, y=181, height=364)
 
         # Adicionar barra de rolagem horizontal
-        scrollbar_x = ttk.Scrollbar(tlServicos, orient="horizontal", command=self.treeview_tlServicos.xview)
+        scrollbar_x = ttk.Scrollbar(self.tlServicos, orient="horizontal", command=self.treeview_tlServicos.xview)
         self.treeview_tlServicos.configure(xscrollcommand=scrollbar_x.set)
         scrollbar_x.place(x=16, y=545, width=805)
         ########## FIM TABELA SERVICOS ##########
         
-        self.mostrarServicos_TelaCadServ()
-        tlServicos.resizable(False, False)
-        tlServicos.mainloop()
+        self.mostrarTabelaServicos_TelaCadServ()
+        self.tlServicos.resizable(False, False)
+        self.tlServicos.mainloop()
     
     ############## FUNÇÕES TELA LOGIN ##############
     
@@ -806,12 +809,21 @@ class LoginGUI:
 
     
     ############### FUNÇÕES TELA CADASTRO SERVIÇOS ###############
+    def abrirTelaCadServ(self, event=None):
+        self.criar_TelaCadServ()
+        
+    
+    
+    
     def _limparTelaCadServ(self):     
         self.inputCodServ_tlCadServ.delete(0, 'end')
         self.inputDescServ_tlCadServ.delete(0, 'end')
         self.inputVlrUnit_tlCadServ.delete(0, 'end')
-             
-    def inserirServico_TelaCadServ(self):
+    
+    def fechar_TelaCadServ(self):
+        self.tlServicos.destroy()
+    
+    def inserirServico_CadServ(self):
         
         codServico = self.inputCodServ_tlCadServ.get().strip()
         descServico = self.inputDescServ_tlCadServ.get().strip().upper()
@@ -823,28 +835,21 @@ class LoginGUI:
             messagebox.showerror("Campos Vazios", "Por favor, preencha todos os campos.")
             return
         
-        try:                
-                
-            cursor = self.db_manager.get_cursor()
+        cursor = self.db_manager.get_cursor()
             
-            cursor.execute("INSERT INTO tb_servicos_vlr (serv_codServ, serv_descrServico, serv_vlrUnit) VALUES (?, ?, ?)", (codServico, descServico, vlrUnit))
-            
-            # Confirmar a transação
-            self.db_manager.connection.commit()
-                
-            messagebox.showinfo("Cadastro de Serviço", f"Serviço '{descServico}' cadastrado com sucesso!")
-                
-            
-                
-            self.resize_columns()
-                
-        except ValueError:
-            messagebox.showerror("Valor Inválido", "O valor unitário deve ser numérico.")
-            return
+        cursor.execute("INSERT INTO tb_servicos_vlr (serv_codServ, serv_descrServico, serv_vlrUnit) VALUES (?, ?, ?)", (codServico, descServico, vlrUnit))
         
+        self.db_manager.connection.commit()
+                
+        messagebox.showinfo("Cadastro de Serviço", f"Serviço '{descServico}' cadastrado com sucesso!")
+        
+        self.resize_columns()
         self._limparTelaCadServ()
-        
-    def mostrarServicos_TelaCadServ(self):
+        self.mostrarTabelaServicos_TelaCadServ()
+        self.fechar_TelaCadServ()
+        self.criar_TelaCadServ() 
+              
+    def mostrarTabelaServicos_TelaCadServ(self):
         cursor = self.db_manager.get_cursor()
 
         cursor.execute("SELECT serv_id, serv_codServ, serv_descrServico, serv_vlrUnit FROM tb_servicos_vlr")
@@ -859,7 +864,6 @@ class LoginGUI:
             
             self.treeview_tlServicos.insert("", "end", values=(serv_id, serv_codServ, serv_descrServico, serv_vlrUnit))
         
-        self._limparTelaCadServ()
         
     def deletarServico_TelaCadServ(self):
         # Obtém o item selecionado na treeview
@@ -874,13 +878,12 @@ class LoginGUI:
         serv_id = item[0]
         serv_descrServico = item[2]
             
-        # Exibe uma mensagem de confirmação
         confirmar = messagebox.askyesno("Confirmar exclusão", f"Tem certeza que deseja deletar o serviço '{serv_descrServico}'?")
             
         if confirmar:
-            # Deleta o item do banco de dados
+            
             if self._deletarServicoDoBanco(serv_id):
-                # Remove o item da treeview
+                
                 self.treeview_tlServicos.delete(itemSelecionado)
                 messagebox.showinfo("Sucesso", f"O serviço '{serv_descrServico}' foi deletado com sucesso.")
             else:
@@ -888,7 +891,11 @@ class LoginGUI:
         else:
             # Caso o usuário cancele a exclusão
             messagebox.showinfo("Cancelado", "A exclusão foi cancelada pelo usuário.")
-
+            
+        self.mostrarTabelaServicos_TelaCadServ()
+        self.fechar_TelaCadServ()
+        self.criar_TelaCadServ()  
+        
     def _deletarServicoDoBanco(self, serv_id):
         try:
             # Executa o comando SQL para deletar o registro com o serv_id especificado
@@ -899,16 +906,53 @@ class LoginGUI:
             print("Erro ao deletar serviço:", e)
             return False
 
-
+    def modificar(self):
         
+        # Obtém os valores do item selecionado
+        itemSelecionado = self.treeview_tlServicos.selection()
+        item = self.treeview_tlServicos.item(itemSelecionado, 'values')
+        serv_id = item[0]
+        serv_codServ = item[1]
+        serv_descServico = item[2]
+        serv_vlrUnit = item[3]
+        
+        self.inputCodServ_tlCadServ.delete(0, 'end')
+        self.inputCodServ_tlCadServ.insert(0, int(serv_codServ)) 
+        
+        self.inputDescServ_tlCadServ.delete(0, 'end')
+        self.inputDescServ_tlCadServ.insert(0, str(serv_descServico))
+        
+        self.inputVlrUnit_tlCadServ.delete(0, 'end')
+        self.inputVlrUnit_tlCadServ.insert(0,float(serv_vlrUnit))
+        
+        self.apagarBotoesTelaCadServ()
+        self.criarBotaoSalvarModificacoes(self.tlServicos)
+        
+        
+        # obter dados da linha selecionada da treeview 
+        # inserir este dados nos campos da tela
+        # modifica o que for preciso
+        #sumir com o botão modify e mostrar botão salvar alteração#
+        # fazer um update no banco de dados#
+        # 
+        # self.botoesParaOcultar#
     
-    def atualizar_VizualizacaoTelaCadServ(self):
-        self.inserirServico_TelaCadServ()
-        self.mostrarServicos_TelaCadServ()
-
-    
-    
-    
+    def apagarBotoesTelaCadServ(self):
+        for botao in self.botoesParaOcultar:
+            botao.place_forget()
+            
+            
+            
+    def _modificarServicoDoBanco(self, serv_id):
+        try:
+            # Executa o comando SQL para deletar o registro com o serv_id especificado
+            self.db_manager.cursor.execute("UPDATE FROM tb_servicos_vlr WHERE serv_id = ?", (serv_id,))
+            self.db_manager.connection.commit()
+            return True
+        except Exception as e:
+            print("Erro ao modificar serviço:", e)
+            return False    
+        
     ############### FUNÇÕES GERAIS ###############
     def mostrar_alerta(self, titulo, mensagem):
         messagebox.showinfo(titulo, mensagem)
@@ -934,7 +978,7 @@ class LoginGUI:
         return False
 
     def _verificarValor_Float(self, valor):
-        valor = valor.replace(",", ".")
+        valor = valor.replace(",", ".")      
         
         try:
             valorFloat = float(valor)
@@ -946,7 +990,20 @@ class LoginGUI:
         # Aceitar apenas texto (não vazio)
         return len(valor.strip()) > 0
 
-        
+    def criarBotaoSalvarModificacoes(self, janela):    
+        self.img_btnSalvarModificacoes = PhotoImage(file = "./img/img_btnSalvarModificacoes.png")
+        self.btnSalvarModificacoes = Button(
+            janela,
+            image = self.img_btnSalvarModificacoes,
+            borderwidth = 0,
+            highlightthickness = 0,
+            #command = ,
+            relief = "flat")
+
+        self.btnSalvarModificacoes.place(
+            x = 239, y = 115,
+            width = 139,
+            height = 30)
         
         
         
