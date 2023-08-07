@@ -907,14 +907,18 @@ class LoginGUI:
             return False
 
     def modificar(self):
-        
         # Obtém os valores do item selecionado
         itemSelecionado = self.treeview_tlServicos.selection()
         item = self.treeview_tlServicos.item(itemSelecionado, 'values')
-        serv_id = item[0]
+        serv_id = int(item[0])
         serv_codServ = item[1]
         serv_descServico = item[2]
         serv_vlrUnit = item[3]
+        print(serv_id, serv_codServ, serv_descServico, serv_vlrUnit)
+        
+        if len(item) < 4:
+            messagebox.showwarning("Nenhum item selecionado", "Por favor, selecione um item para deletar.")
+            return
         
         self.inputCodServ_tlCadServ.delete(0, 'end')
         self.inputCodServ_tlCadServ.insert(0, int(serv_codServ)) 
@@ -928,7 +932,6 @@ class LoginGUI:
         self.apagarBotoesTelaCadServ()
         self.criarBotaoSalvarModificacoes(self.tlServicos)
         
-        
         # obter dados da linha selecionada da treeview 
         # inserir este dados nos campos da tela
         # modifica o que for preciso
@@ -937,21 +940,49 @@ class LoginGUI:
         # 
         # self.botoesParaOcultar#
     
+    def salvarModificacoes(self):
+        codServico = self.inputCodServ_tlCadServ.get().strip()
+        descServico = self.inputDescServ_tlCadServ.get().strip().upper()
+        vlrUnit = self.inputVlrUnit_tlCadServ.get()
+        vlrUnit = vlrUnit.replace(",", ".")
+        
+        # Verificar campos não preenchidos
+        if not codServico or not descServico or not vlrUnit:
+            messagebox.showerror("Campos Vazios", "Por favor, preencha todos os campos.")
+            return
+        
+        itemSelecionado = self.treeview_tlServicos.selection()
+        item = self.treeview_tlServicos.item(itemSelecionado, 'values')
+        serv_id = item[0]
+        
+        
+        self._modificarServicoDoBanco(serv_id, codServico, descServico, vlrUnit)
+        self.resize_columns()
+        self._limparTelaCadServ()
+        self.mostrarTabelaServicos_TelaCadServ()
+        self.fechar_TelaCadServ()
+        self.criar_TelaCadServ() 
+        
+        
+        
+    
+    
     def apagarBotoesTelaCadServ(self):
         for botao in self.botoesParaOcultar:
             botao.place_forget()
             
             
             
-    def _modificarServicoDoBanco(self, serv_id):
+    def _modificarServicoDoBanco(self, serv_id, serv_codServ, serv_descrServico, serv_vlrUnit):
         try:
-            # Executa o comando SQL para deletar o registro com o serv_id especificado
-            self.db_manager.cursor.execute("UPDATE FROM tb_servicos_vlr WHERE serv_id = ?", (serv_id,))
+            # Executa o comando SQL para atualizar os outros campos sem alterar serv_id
+            self.db_manager.cursor.execute("UPDATE tb_servicos_vlr SET serv_codServ = ?, serv_descrServico = ?, serv_vlrUnit = ? WHERE serv_id = ?",
+                    (serv_codServ, serv_descrServico, serv_vlrUnit, serv_id))
             self.db_manager.connection.commit()
             return True
         except Exception as e:
             print("Erro ao modificar serviço:", e)
-            return False    
+            return False  
         
     ############### FUNÇÕES GERAIS ###############
     def mostrar_alerta(self, titulo, mensagem):
@@ -997,7 +1028,7 @@ class LoginGUI:
             image = self.img_btnSalvarModificacoes,
             borderwidth = 0,
             highlightthickness = 0,
-            #command = ,
+            command = self.salvarModificacoes,
             relief = "flat")
 
         self.btnSalvarModificacoes.place(
