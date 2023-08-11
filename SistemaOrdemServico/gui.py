@@ -4,7 +4,8 @@ from tkinter.filedialog import askopenfilename
 from tkcalendar import DateEntry
 from user import UserManager
 from manipulacaoOrdemServico import ManipularOrdemServicos
-from datetime import datetime
+from relatoriosPDF import ManipularCriacaodeRelatorios
+
 
 
 class LoginGUI:
@@ -12,6 +13,7 @@ class LoginGUI:
         self.db_manager = db_manager
         self.user_manager = UserManager(db_manager)
         self.manipular_ordens = ManipularOrdemServicos(db_manager)
+        self.manipular_relatorios = ManipularCriacaodeRelatorios(db_manager)
 
         self.tela_login = Tk()
         self.tela_login.title('Sistema Ordens de Serviços')
@@ -478,7 +480,7 @@ class LoginGUI:
             image = img_btnModify_tlCadServ,
             borderwidth = 0,
             highlightthickness = 0,
-            command = self.modificar,
+            command = self.habiltarEdicaoItemTreeviewTelaCadServ,
             relief = "flat")
 
         btnModify_tlCadServ.place(
@@ -523,7 +525,7 @@ class LoginGUI:
             image = img_btnPrint_tlCadServ,
             borderwidth = 0,
             highlightthickness = 0,
-            #command = btn_clicked,
+            command = self.gerarRelatorioCadServ,
             relief = "flat")
 
         btnPrint_tlCadServ.place(
@@ -531,7 +533,7 @@ class LoginGUI:
             width = 115,
             height = 30)
         #botões que serão ocultos ao chamar a função de modificação:
-        self.botoesParaOcultar = [self.btnDelete_tlCadServ, btnInsert_tlCadServ, btnModify_tlCadServ, btnPrint_tlCadServ]
+        self.botoesParaOcultar_TelaCadServ = [self.btnDelete_tlCadServ, btnInsert_tlCadServ, btnModify_tlCadServ, btnPrint_tlCadServ]
         
         inputCodServ_tlCadServ_img = PhotoImage(file = f"./img/img_tlCadServ_inputCodServ.png")
         inputCodServ_tlCadServ_bg = canvas.create_image(
@@ -810,10 +812,7 @@ class LoginGUI:
     
     ############### FUNÇÕES TELA CADASTRO SERVIÇOS ###############
     def abrirTelaCadServ(self, event=None):
-        self.criar_TelaCadServ()
-        
-    
-    
+        self.criar_TelaCadServ()   
     
     def _limparTelaCadServ(self):     
         self.inputCodServ_tlCadServ.delete(0, 'end')
@@ -825,80 +824,88 @@ class LoginGUI:
     
     def inserirServico_CadServ(self):
         
-        codServico = self.inputCodServ_tlCadServ.get().strip()
-        descServico = self.inputDescServ_tlCadServ.get().strip().upper()
-        vlrUnit = self.inputVlrUnit_tlCadServ.get()
-        vlrUnit = vlrUnit.replace(",", ".")
-        
-        # Verificar campos não preenchidos
-        if not codServico or not descServico or not vlrUnit:
-            messagebox.showerror("Campos Vazios", "Por favor, preencha todos os campos.")
-            return
-        
-        cursor = self.db_manager.get_cursor()
+        try:
+            codServico = self.inputCodServ_tlCadServ.get().strip()
+            descServico = self.inputDescServ_tlCadServ.get().strip().upper()
+            vlrUnit = self.inputVlrUnit_tlCadServ.get()
+            vlrUnit = vlrUnit.replace(",", ".")
             
-        cursor.execute("INSERT INTO tb_servicos_vlr (serv_codServ, serv_descrServico, serv_vlrUnit) VALUES (?, ?, ?)", (codServico, descServico, vlrUnit))
+            valoresDigitados = [codServico, descServico, vlrUnit]
+            
+            if not valoresDigitados[0] or not valoresDigitados[1] or not valoresDigitados[2]  :
+                    self.mostrar_alerta("Campos Vazios", "Por favor, preencha todos os campos.")
+                    self._atualizarTelaCadServ()
+                    return
+            
+            self._inserirServicoNoBanco(codServico, descServico, vlrUnit)
+            self.mostrar_alerta("Cadastro de Serviço", f"Serviço '{descServico}' cadastrado com sucesso!")
+            self._atualizarTelaCadServ()
+            return True
         
-        self.db_manager.connection.commit()
-                
-        messagebox.showinfo("Cadastro de Serviço", f"Serviço '{descServico}' cadastrado com sucesso!")
-        
-        self.resize_columns()
-        self._limparTelaCadServ()
-        self.mostrarTabelaServicos_TelaCadServ()
-        self.fechar_TelaCadServ()
-        self.criar_TelaCadServ() 
+        except Exception as e:
+            self.mostrar_alerta('Erro', f'Cadastro do Serviço não realizado!')
+            self._limparTelaCadServ()          
+            return False
+            
+    
+    def _inserirServicoNoBanco(self, codServico, descServico, vlrUnit):
+        try:
+            verificacodServico = self.inputCodServ_tlCadServ.get().strip()
+            if verificacodServico is None:
+                print(verificacodServico)
+                self.db_manager.cursor.execute("INSERT INTO tb_servicos_vlr (serv_codServ, serv_descrServico, serv_vlrUnit) VALUES (?, ?, ?)", (codServico, descServico, vlrUnit))
+                self.db_manager.connection.commit()
+                return
+            
+        except Exception as e:
+            print("Erro ao inserir serviço:", e)
+            return False
+    
+    
               
     def mostrarTabelaServicos_TelaCadServ(self):
         cursor = self.db_manager.get_cursor()
 
         cursor.execute("SELECT serv_id, serv_codServ, serv_descrServico, serv_vlrUnit FROM tb_servicos_vlr")
 
-        resultados = cursor.fetchall()
+        listandoServicos = cursor.fetchall()
         # Limpar a Treeview antes de adicionar os novos registros
         self.treeview_tlServicos.delete(*self.treeview_tlServicos.get_children())
 
-        # Iterar sobre os resultados e adicioná-los à Treeview no início (índice "0")
-        for resultado in resultados:
+        # Iterar sobre os listandoServicos e adicioná-los à Treeview no início (índice "0")
+        for resultado in listandoServicos:
             serv_id, serv_codServ, serv_descrServico, serv_vlrUnit = resultado   
             
             self.treeview_tlServicos.insert("", "end", values=(serv_id, serv_codServ, serv_descrServico, serv_vlrUnit))
-        
-        
+    
     def deletarServico_TelaCadServ(self):
-        # Obtém o item selecionado na treeview
-        itemSelecionado = self.treeview_tlServicos.selection()
-        if not itemSelecionado:
-            # Se nenhum item foi selecionado, exibe uma mensagem de aviso
-            messagebox.showwarning("Nenhum item selecionado", "Por favor, selecione um item para deletar.")
+        selected_item = self.treeview_tlServicos.selection()
+        
+        if not selected_item:
+            self.mostrar_alerta("Nenhum item selecionado", "Por favor, selecione um item para deletar.")
             return
             
-        # Obtém os valores do item selecionado
-        item = self.treeview_tlServicos.item(itemSelecionado, 'values')
-        serv_id = item[0]
-        serv_descrServico = item[2]
-            
-        confirmar = messagebox.askyesno("Confirmar exclusão", f"Tem certeza que deseja deletar o serviço '{serv_descrServico}'?")
-            
-        if confirmar:
-            
-            if self._deletarServicoDoBanco(serv_id):
-                
-                self.treeview_tlServicos.delete(itemSelecionado)
-                messagebox.showinfo("Sucesso", f"O serviço '{serv_descrServico}' foi deletado com sucesso.")
+        service_info = self.obter_informacoes_item_selecionado(selected_item)
+        
+        if self.confirmar_exclusao(service_info['serv_descrServico']):
+            if self._deletarServicoDoBanco(service_info['serv_id']):
+                self.treeview_tlServicos.delete(selected_item)
+                self.mostrar_sucesso(service_info['serv_descrServico'])
             else:
-                messagebox.showerror("Erro", "Ocorreu um erro ao tentar deletar o serviço.")
+                self.mostrar_erro("Ocorreu um erro ao tentar deletar o serviço.")
         else:
-            # Caso o usuário cancele a exclusão
-            messagebox.showinfo("Cancelado", "A exclusão foi cancelada pelo usuário.")
+            self.mostrar_alerta("Cancelado", "A exclusão foi cancelada pelo usuário.")
             
-        self.mostrarTabelaServicos_TelaCadServ()
-        self.fechar_TelaCadServ()
-        self.criar_TelaCadServ()  
+        self._atualizarTelaCadServ()
+
+    def obter_informacoes_item_selecionado(self, item):
+        values = self.treeview_tlServicos.item(item, 'values')
+        serv_id = values[0]
+        serv_descrServico = values[2]
+        return {'serv_id': serv_id, 'serv_descrServico': serv_descrServico}
         
     def _deletarServicoDoBanco(self, serv_id):
         try:
-            # Executa o comando SQL para deletar o registro com o serv_id especificado
             self.db_manager.cursor.execute("DELETE FROM tb_servicos_vlr WHERE serv_id = ?", (serv_id,))
             self.db_manager.connection.commit()
             return True
@@ -906,92 +913,212 @@ class LoginGUI:
             print("Erro ao deletar serviço:", e)
             return False
 
-    def modificar(self):
-        # Obtém os valores do item selecionado
-        itemSelecionado = self.treeview_tlServicos.selection()
-        item = self.treeview_tlServicos.item(itemSelecionado, 'values')
-        serv_id = int(item[0])
-        serv_codServ = item[1]
-        serv_descServico = item[2]
-        serv_vlrUnit = item[3]
-        print(serv_id, serv_codServ, serv_descServico, serv_vlrUnit)
-        
-        if len(item) < 4:
-            messagebox.showwarning("Nenhum item selecionado", "Por favor, selecione um item para deletar.")
-            return
-        
-        self.inputCodServ_tlCadServ.delete(0, 'end')
-        self.inputCodServ_tlCadServ.insert(0, int(serv_codServ)) 
-        
-        self.inputDescServ_tlCadServ.delete(0, 'end')
-        self.inputDescServ_tlCadServ.insert(0, str(serv_descServico))
-        
-        self.inputVlrUnit_tlCadServ.delete(0, 'end')
-        self.inputVlrUnit_tlCadServ.insert(0,float(serv_vlrUnit))
-        
-        self.apagarBotoesTelaCadServ()
-        self.criarBotaoSalvarModificacoes(self.tlServicos)
-        
-        # obter dados da linha selecionada da treeview 
-        # inserir este dados nos campos da tela
-        # modifica o que for preciso
-        #sumir com o botão modify e mostrar botão salvar alteração#
-        # fazer um update no banco de dados#
-        # 
-        # self.botoesParaOcultar#
     
-    def salvarModificacoes(self):
-        codServico = self.inputCodServ_tlCadServ.get().strip()
-        descServico = self.inputDescServ_tlCadServ.get().strip().upper()
-        vlrUnit = self.inputVlrUnit_tlCadServ.get()
-        vlrUnit = vlrUnit.replace(",", ".")
-        
-        # Verificar campos não preenchidos
-        if not codServico or not descServico or not vlrUnit:
-            messagebox.showerror("Campos Vazios", "Por favor, preencha todos os campos.")
-            return
-        
-        itemSelecionado = self.treeview_tlServicos.selection()
-        item = self.treeview_tlServicos.item(itemSelecionado, 'values')
-        serv_id = item[0]
-        
-        
-        self._modificarServicoDoBanco(serv_id, codServico, descServico, vlrUnit)
-        self.resize_columns()
-        self._limparTelaCadServ()
-        self.mostrarTabelaServicos_TelaCadServ()
-        self.fechar_TelaCadServ()
-        self.criar_TelaCadServ() 
-        
-        
-        
-    
-    
-    def apagarBotoesTelaCadServ(self):
-        for botao in self.botoesParaOcultar:
-            botao.place_forget()
+    def habiltarEdicaoItemTreeviewTelaCadServ(self): 
+        try:   
+            itemSelecionado = self.treeview_tlServicos.selection()
+            item = self.treeview_tlServicos.item(itemSelecionado, 'values')
+            serv_id = item[0]
+            serv_codServ = item[1]
+            serv_descServico = item[2]
+            serv_vlrUnit = item[3]
+                      
             
+            self.inputCodServ_tlCadServ.delete(0, 'end')
+            self.inputCodServ_tlCadServ.insert(0, int(serv_codServ)) 
             
+            self.inputDescServ_tlCadServ.delete(0, 'end')
+            self.inputDescServ_tlCadServ.insert(0, str(serv_descServico))
             
-    def _modificarServicoDoBanco(self, serv_id, serv_codServ, serv_descrServico, serv_vlrUnit):
+            self.inputVlrUnit_tlCadServ.delete(0, 'end')
+            self.inputVlrUnit_tlCadServ.insert(0, float(serv_vlrUnit))
+            
+            self._apagarListaBotoes(self.botoesParaOcultar_TelaCadServ)
+            self._criarBotaoSalvarModificacoes(self.tlServicos, self.salvarModificacoesTelaCadServ)
+            return True
+        
+        except Exception as e:
+            self.mostrar_alerta('Atenção', f'Selecione uma linha da tabela abaixo:')
+            self.fechar_TelaCadServ()
+            self.criar_TelaCadServ() 
+            return False
+        
+    def salvarModificacoesTelaCadServ(self):
+        """
+        Salva as modificações feitas na tela de cadastro de serviços.
+
+        Esta função captura os valores dos campos de entrada na tela de cadastro de serviços, valida se os campos
+        obrigatórios estão preenchidos, modifica o serviço no banco de dados, atualiza a tela de cadastro e limpa os campos.
+
+        Parâmetros:
+        Nenhum
+
+        Retorna:
+        bool: True se as modificações forem salvas com sucesso, False em caso de erro.
+        """
         try:
-            # Executa o comando SQL para atualizar os outros campos sem alterar serv_id
-            self.db_manager.cursor.execute("UPDATE tb_servicos_vlr SET serv_codServ = ?, serv_descrServico = ?, serv_vlrUnit = ? WHERE serv_id = ?",
-                    (serv_codServ, serv_descrServico, serv_vlrUnit, serv_id))
+            codServico = self.inputCodServ_tlCadServ.get().strip()
+            descServico = self.inputDescServ_tlCadServ.get().strip().upper()
+            vlrUnit = self.inputVlrUnit_tlCadServ.get()
+            vlrUnit = vlrUnit.replace(",", ".")
+
+            # Verificar se todos os campos obrigatórios estão preenchidos
+            if not codServico or not descServico or not vlrUnit:
+                self.mostrar_alerta("Campos Vazios", "Por favor, preencha todos os campos.")
+                return False
+
+            # Obter o serviço selecionado na tabela
+            itemSelecionado = self.treeview_tlServicos.selection()
+            item = self.treeview_tlServicos.item(itemSelecionado, 'values')
+            serv_id = item[0]
+
+            # Modificar o serviço no banco de dados
+            if self._modificarServicoDoBanco(serv_id, codServico, descServico, vlrUnit):
+                # Atualizar a tela de cadastro e limpar os campos
+                self._atualizarTelaCadServ()
+                self._limparTelaCadServ()
+                return True
+            else:
+                return False
+        except Exception as e:
+            self.mostrar_alerta("Erro", f"Erro ao salvar: {e}")
+            return False
+            
+                
+    def _modificarServicoDoBanco(self, serv_id, serv_codServ, serv_descrServico, serv_vlrUnit):
+        """
+        Modifica um serviço cadastrado no banco de dados.
+
+        Esta função atualiza as informações de um serviço no banco de dados, com base nos parâmetros fornecidos.
+
+        Parâmetros:
+        serv_id (int): O ID do serviço a ser modificado.
+        serv_codServ (str): O novo código do serviço.
+        serv_descrServico (str): A nova descrição do serviço.
+        serv_vlrUnit (float): O novo valor unitário do serviço.
+
+        Retorna:
+        bool: True se a modificação for bem-sucedida, False em caso de erro.
+        """
+        try:
+            self.db_manager.cursor.execute(
+                "UPDATE tb_servicos_vlr SET serv_codServ = ?, serv_descrServico = ?, serv_vlrUnit = ? WHERE serv_id = ?",
+                (serv_codServ, serv_descrServico, serv_vlrUnit, serv_id)
+            )
             self.db_manager.connection.commit()
             return True
         except Exception as e:
             print("Erro ao modificar serviço:", e)
-            return False  
+            return False
         
+    def _atualizarTelaCadServ(self):
+        """
+        Atualiza a tela de cadastro de serviços.
+
+        Esta função executa uma sequência de ações para atualizar a interface gráfica da tela de cadastro de serviços.
+        Isso inclui redimensionar as colunas da tabela, mostrar a tabela de serviços, fechar e recriar a tela de cadastro.
+
+        Parâmetros:
+        Nenhum
+
+        Retorna:
+        None
+        """
+        self.resize_columns()  # Redimensiona as colunas da tabela
+        self.mostrarTabelaServicos_TelaCadServ()  # Mostra a tabela de serviços
+        self.fechar_TelaCadServ()  # Fecha a tela de cadastro de serviços
+        self.criar_TelaCadServ()  # Recria a tela de cadastro de serviços 
+    
+    def gerarRelatorioCadServ(self):
+        """
+        Gera um relatório em PDF dos serviços cadastrados.
+
+        Esta função utiliza um nome de arquivo predefinido para gerar um relatório em PDF dos serviços cadastrados,
+        utilizando o método 'gerarRelatorio' da classe.
+
+        Parâmetros:
+        Nenhum
+
+        Retorna:
+        None
+        """
+        nome_arquivo = 'Relatório dos Serviços Cadastrados.pdf'
+        self.gerarRelatorio(nome_arquivo)
+            
     ############### FUNÇÕES GERAIS ###############
+    
+    def gerarRelatorio(self, nome_arquivo):
+        """
+        Gera um relatório em um arquivo PDF que abre diretamente no navegador padrão.
+
+        Essa função utiliza o nome do arquivo fornecido para gerar um relatório em PDF.
+
+        Parâmetros:
+        nome_arquivo (str): O nome do arquivo de saída para o relatório em PDF.
+
+        Retorna:
+        None
+        """
+        self.manipular_relatorios.gerarRelatorioCadServ(nome_arquivo) 
+    
+    def _apagarListaBotoes(self, listaBotoesParaApagar):
+        """
+        Remove os botões presentes na lista da visualização.
+
+        Essa função percorre a lista de botões fornecida e utiliza o método `place_forget()` para remover cada botão da visualização da interface gráfica.
+
+        Parâmetros:
+        listaBotoesParaApagar (list): Uma lista contendo os botões a serem removidos.
+
+        Retorna:
+        None
+        """
+        for botao in listaBotoesParaApagar:
+            botao.place_forget()
+            
     def mostrar_alerta(self, titulo, mensagem):
+        """
+        Mostra uma caixa de diálogo de alerta com um título e mensagem.
+
+        Esta função exibe uma caixa de diálogo com o título e a mensagem fornecidos, informando o usuário sobre alguma informação ou evento.
+
+        Parâmetros:
+        titulo (str): O título da caixa de diálogo de alerta.
+        mensagem (str): A mensagem a ser exibida na caixa de diálogo.
+
+        Retorna:
+        None
+        """
         messagebox.showinfo(titulo, mensagem)
 
     def run(self):
+        """
+        Inicia a execução da interface gráfica.
+
+        Essa função inicia o loop principal da interface gráfica, permitindo que a janela de login e seus elementos interajam com o usuário e respondam a eventos até que a janela seja fechada.
+
+        Parâmetros:
+        Nenhum
+
+        Retorna:
+        None
+        """
         self.tela_login.mainloop()
         
     def resize_columns(self):
+        """
+        Redimensiona dinamicamente as colunas de um widget Treeview para acomodar o conteúdo.
+
+        Para cada coluna do widget Treeview, esta função redefine o texto do cabeçalho para centralizar
+        corretamente e calcula a largura ideal da coluna com base no maior comprimento do conteúdo da coluna.
+        Uma largura mínima também é definida para garantir que a coluna seja sempre visível.
+
+        Parâmetros:
+        Nenhum
+
+        Retorna:
+        None
+        """
         for col in self.treeview["columns"]:
             self.treeview.heading(col, text=col, anchor="center")  # Redefinir o texto do cabeçalho para alinhar corretamente
 
@@ -1002,41 +1129,119 @@ class LoginGUI:
             col_width = max(col_width, 100)
 
             self.treeview.column(col, width=col_width)  # Redimensionar a coluna
+
         
     def _verificarValor_Inteiro(self, valorInteiro):
+        """
+        Verifica se um valor é uma representação válida de um número inteiro.
+
+        Esta função verifica se o valor é uma string vazia ou se contém apenas dígitos, indicando um número inteiro.
+
+        Parâmetros:
+        valorInteiro (str): O valor a ser verificado.
+
+        Retorna:
+        bool: True se o valor for uma representação válida de um número inteiro, False caso contrário.
+        """
         if valorInteiro == '' or valorInteiro.isdigit():
             return True
         return False
 
     def _verificarValor_Float(self, valor):
-        valor = valor.replace(",", ".")      
+        """
+        Verifica se um valor pode ser convertido para um número de ponto flutuante (float).
+
+        Esta função substitui vírgulas por pontos na string do valor e tenta convertê-la em float.
+        
+        Parâmetros:
+        valor (str): O valor a ser verificado.
+
+        Retorna:
+        bool: True se o valor puder ser convertido para float, False caso contrário.
+        """
+        valor = valor.replace(",", ".")  # Substitui vírgulas por pontos para lidar com formatação
         
         try:
-            valorFloat = float(valor)
+            valorFloat = float(valor)  # Tenta converter o valor para float
             return True
         except ValueError:
-            return False
+            return False  # Retorna False se a conversão falhar (valor não é um número válido)
         
     def _verificarValor_Texto(self, valor):
         # Aceitar apenas texto (não vazio)
         return len(valor.strip()) > 0
 
-    def criarBotaoSalvarModificacoes(self, janela):    
-        self.img_btnSalvarModificacoes = PhotoImage(file = "./img/img_btnSalvarModificacoes.png")
+    def _criarBotaoSalvarModificacoes(self, janela, comando):
+        """
+        Cria e posiciona um botão para salvar modificações na tela ativa no momento.
+
+        Parâmetros:
+        janela (Tk): A janela da interface gráfica onde o botão será colocado.
+        comando (function): A função que será executada quando o botão for clicado.
+
+        Retorna:
+        None
+        """
+        # Carrega a imagem do botão "Salvar Modificações" a partir de um arquivo
+        self.img_btnSalvarModificacoes = PhotoImage(file="./img/img_btnSalvarModificacoes.png")
+
+        # Cria um botão usando a imagem carregada e configura seus atributos
         self.btnSalvarModificacoes = Button(
             janela,
-            image = self.img_btnSalvarModificacoes,
-            borderwidth = 0,
-            highlightthickness = 0,
-            command = self.salvarModificacoes,
-            relief = "flat")
+            image=self.img_btnSalvarModificacoes,
+            borderwidth=0,
+            highlightthickness=0,
+            command=comando,
+            relief="flat"
+        )
 
+        # Posiciona o botão na janela usando coordenadas e define as dimensões
         self.btnSalvarModificacoes.place(
-            x = 239, y = 115,
-            width = 139,
-            height = 30)
+            x=239, y=115,
+            width=139,
+            height=30
+        )
         
+    def confirmar_exclusao(self, variavelMSGErro):
+        """
+        Exibe uma caixa de diálogo de confirmação para verificar se o usuário deseja excluir.
+
+        Parâmetros:
+        variavelMSGErro (str): A mensagem utiliza o valor da variável para confirmar as exclusão.
+
+        Retorna:
+        bool: True se o usuário confirmar a exclusão, False caso contrário.
+        """
         
+        resposta = messagebox.askyesno("Confirmar exclusão", f"Tem certeza que deseja excluir '{variavelMSGErro}'?")
+        
+        return resposta
+
+    def mostrar_sucesso(self, variavelMSGErro):
+        """
+        Mostra uma mensagem de sucesso após a exclusão bem-sucedida.
+
+        Parâmetros:
+        variavelMSGErro (str): A mensagem utiliza o valor da variável para mostrar o sucesso na exclusão.
+
+        Retorna:
+        None
+        """
+        self.mostrar_alerta("Sucesso", f"O serviço '{variavelMSGErro}' foi deletado com sucesso.")
+
+    def mostrar_erro(self, mensagem):
+        """
+        Mostra uma mensagem de erro em uma caixa de diálogo.
+
+        Parâmetros:
+        mensagem (str): A mensagem de erro a ser exibida.
+
+        Retorna:
+        None
+        """
+        self.mostrar_alerta("Erro", mensagem)
+
+     
         
         
         

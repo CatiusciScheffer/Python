@@ -1,4 +1,4 @@
-import sqlite3
+#import sqlite3
 from database import DatabaseManager
 
 class ManipularOrdemServicos():
@@ -48,7 +48,7 @@ class ManipularOrdemServicos():
 
     def verificaSeServicoCadastrado(self, codServico):
         cursor = self.db_manager.get_cursor()
-        cursor.execute("SELECT serv_descrServico FROM tb_servicos_vlr WHERE serv_codServ=?", (codServico,))
+        cursor.execute("SELECT serv_codServ FROM tb_servicos_vlr WHERE serv_codServ=?", (codServico,))
         resultado = cursor.fetchone()
         if resultado is not None:
             return resultado[0]
