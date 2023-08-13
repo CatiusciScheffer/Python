@@ -480,7 +480,7 @@ class LoginGUI:
             image = img_btnModify_tlCadServ,
             borderwidth = 0,
             highlightthickness = 0,
-            command = self.habiltarEdicaoItemTreeviewTelaCadServ,
+            command = self.ModificarItemSelecionadoDaTabela,
             relief = "flat")
 
         btnModify_tlCadServ.place(
@@ -495,7 +495,7 @@ class LoginGUI:
             image = img_btnInsert_tlCadServ,
             borderwidth = 0,
             highlightthickness = 0,
-            command = self.inserirServico_CadServ,
+            command = self.cadastrarServico_TelaCadServico,
             relief = "flat")
 
         btnInsert_tlCadServ.place(
@@ -812,143 +812,281 @@ class LoginGUI:
     
     ############### FUNÇÕES TELA CADASTRO SERVIÇOS ###############
     def abrirTelaCadServ(self, event=None):
+        """
+        Abre a tela de cadastro de serviços.
+
+        Este método é chamado para criar e exibir a tela de cadastro de serviços.
+
+        Parâmetros:
+        event (Tkinter event, opcional): Evento que disparou a abertura da tela.
+
+        Retorna:
+        Nenhum
+        
+        Observação: event=None É um parâmetro que permite que você passe um objeto de evento associado à função. Ele é opcional, o que significa que você não precisa fornecê-lo quando chama a função. Se não for fornecido, o valor padrão é None.
+        """
         self.criar_TelaCadServ()   
     
-    def _limparTelaCadServ(self):     
-        self.inputCodServ_tlCadServ.delete(0, 'end')
-        self.inputDescServ_tlCadServ.delete(0, 'end')
-        self.inputVlrUnit_tlCadServ.delete(0, 'end')
-    
     def fechar_TelaCadServ(self):
+        """
+        Fecha a tela de cadastro de serviços.
+
+        Este método é chamado para destruir a janela da tela de cadastro de serviços.
+
+        Parâmetros:
+        Nenhum
+
+        Retorna:
+        Nenhum
+        """
         self.tlServicos.destroy()
     
-    def inserirServico_CadServ(self):
+    def pegandoValoresTelaCadServico(self):
+        """
+        Obtém os valores dos campos da tela de cadastro de serviços.
+
+        Este método obtém os valores dos campos de entrada na tela de cadastro de serviços.
+
+        Parâmetros:
+        Nenhum
+
+        Retorna:
+        tuple: Uma tupla contendo o código de serviço, descrição do serviço e valor unitário.
+        """
+        codServico = self.inputCodServ_tlCadServ.get()
+        descServico = self.inputDescServ_tlCadServ.get()
+        vlrUnit = self.inputVlrUnit_tlCadServ.get()
+        return codServico, descServico, vlrUnit
+    
+    def _limparTelaCadServ(self):
+        """
+        Limpa os campos de entrada na tela de cadastro de serviços.
         
+        Este método é responsável por apagar o conteúdo dos campos de entrada na tela de cadastro de serviços.
+
+        Parâmetros:
+        Nenhum
+
+        Retorna:
+        Nenhum
+        
+        Observação: Se for fechando a aplicação antes de chamar está função _limparTelaCadServ, pode haver um problema relacionado ao ciclo de vida da aplicação.
+        """
+        self.inputCodServ_tlCadServ.delete(0, 'end')  # Limpar campo de código
+        self.inputDescServ_tlCadServ.delete(0, 'end')  # Limpar campo de descrição
+        self.inputVlrUnit_tlCadServ.delete(0, 'end')  # Limpar campo de valor unitário
+        
+    def _verificaSeCamposTelaServicosPreenchidos(self):
+        """
+        Verifica se os campos da tela de cadastro de serviços estão preenchidos.
+
+        Esta função verifica se os campos de código de serviço, descrição de serviço e valor unitário da tela de cadastro de serviços estão preenchidos.
+
+        Parâmetros:
+        Nenhum
+
+        Retorna:
+        bool: True se todos os campos estão preenchidos, False se algum campo estiver vazio.
+        """
+        codServico, descServico, vlrUnit = self.pegandoValoresTelaCadServico()
+        
+        # Retorna True se todos os campos estiverem preenchidos, caso contrário, retorna False
+        return bool(codServico and descServico and vlrUnit)
+    
+    def _verificarSeCodigoServicoJaExiste(self):
+        """
+        Verifica se um código de serviço já existe no banco de dados.
+
+        Esta função verifica se um código de serviço já está cadastrado no banco de dados da tabela 'tb_servicos_vlr'.
+
+        Parâmetros:
+        Nenhum
+
+        Retorna:
+        bool: True se o código de serviço já existe no banco de dados, False se não existe.
+        """
+        codServico = self.inputCodServ_tlCadServ.get()
+        
+        return self.manipular_ordens.verificaSeServicoCadastrado(codServico) is not None    
+    
+    def verificarSeCodigoServicoJaExiste(self, codServico):
+        if self._verificarSeCodigoServicoJaExiste():
+            self.mostrar_alerta("Valor Inválido", f"Código {codServico} já existe.")
+            self._atualizarTelaCadServ()
+            return False
+    # FUNÇÃO BOTÃO INSERIR TELA CADASTRO DE SERVIÇOS    
+    def cadastrarServico_TelaCadServico(self):
+        """
+        Insere um novo serviço na tela de cadastro de serviços.
+
+        Esta função verifica os campos preenchidos na tela de cadastro de serviços, verifica se o código de serviço já existe no banco de dados, insere o novo serviço no banco e atualiza a tela.
+
+        Parâmetros:
+        Nenhum
+
+        Retorna:
+        bool: True se o serviço for inserido com sucesso, False em caso de erro.
+        """
         try:
-            codServico = self.inputCodServ_tlCadServ.get().strip()
-            descServico = self.inputDescServ_tlCadServ.get().strip().upper()
-            vlrUnit = self.inputVlrUnit_tlCadServ.get()
+            # Verifica se os campos obrigatórios estão preenchidos
+            if not self._verificaSeCamposTelaServicosPreenchidos():
+                self.mostrar_alerta("Campos Vazios", "Por favor, preencha todos os campos.")
+                self._atualizarTelaCadServ()
+                return False
+            
+            codServico, descServico, vlrUnit = self.pegandoValoresTelaCadServico()
+            codServico = codServico.strip()
+            descServico = descServico.strip().upper()
             vlrUnit = vlrUnit.replace(",", ".")
             
-            valoresDigitados = [codServico, descServico, vlrUnit]
+            # Verifica se o código de serviço já existe no banco de dados
+            if self._verificarSeCodigoServicoJaExiste():
+                self.mostrar_alerta("Valor Inválido", f"Código {codServico} já existe.")
+                self._atualizarTelaCadServ()
+                return False
             
-            if not valoresDigitados[0] or not valoresDigitados[1] or not valoresDigitados[2]  :
-                    self.mostrar_alerta("Campos Vazios", "Por favor, preencha todos os campos.")
-                    self._atualizarTelaCadServ()
-                    return
-            
-            self._inserirServicoNoBanco(codServico, descServico, vlrUnit)
-            self.mostrar_alerta("Cadastro de Serviço", f"Serviço '{descServico}' cadastrado com sucesso!")
-            self._atualizarTelaCadServ()
-            return True
-        
+            # Insere o novo serviço no banco de dados
+            if self.manipular_ordens.inserirServicoDB(codServico, descServico, vlrUnit):
+            # if self._inserirServicoNoBanco(codServico, descServico, vlrUnit):
+                self.mostrar_alerta("Cadastro de Serviço", f"Serviço '{descServico}' cadastrado com sucesso!")
+                self._atualizarTelaCadServ()
+                return True
         except Exception as e:
             self.mostrar_alerta('Erro', f'Cadastro do Serviço não realizado!')
-            self._limparTelaCadServ()          
-            return False
-            
+        return False
     
-    def _inserirServicoNoBanco(self, codServico, descServico, vlrUnit):
-        try:
-            verificacodServico = self.inputCodServ_tlCadServ.get().strip()
-            if verificacodServico is None:
-                print(verificacodServico)
-                self.db_manager.cursor.execute("INSERT INTO tb_servicos_vlr (serv_codServ, serv_descrServico, serv_vlrUnit) VALUES (?, ?, ?)", (codServico, descServico, vlrUnit))
-                self.db_manager.connection.commit()
-                return
-            
-        except Exception as e:
-            print("Erro ao inserir serviço:", e)
-            return False
-    
-    
-              
+    # MOSTRAR A TABELA NA TELA CADASTRO DE SERVIÇOS        
     def mostrarTabelaServicos_TelaCadServ(self):
-        cursor = self.db_manager.get_cursor()
+        """
+        Preenche a tabela (Treeview) na tela de cadastro de serviços com dados da consulta.
 
-        cursor.execute("SELECT serv_id, serv_codServ, serv_descrServico, serv_vlrUnit FROM tb_servicos_vlr")
+        Este método preenche a tabela de serviços na tela de cadastro de serviços com os dados obtidos da consulta à tabela de serviços e valores.
 
-        listandoServicos = cursor.fetchall()
-        # Limpar a Treeview antes de adicionar os novos registros
+        Parâmetros:
+        Nenhum
+
+        Retorna:
+        Nenhum
+        """
+        # Limpa os dados existentes na tabela
         self.treeview_tlServicos.delete(*self.treeview_tlServicos.get_children())
 
-        # Iterar sobre os listandoServicos e adicioná-los à Treeview no início (índice "0")
+        # Realiza a consulta à tabela de serviços e valores
+        listandoServicos = self.manipular_ordens.consultaTabelaServicosValores()
+
+        # Itera sobre os resultados da consulta e insere na tabela
         for resultado in listandoServicos:
-            serv_id, serv_codServ, serv_descrServico, serv_vlrUnit = resultado   
-            
+            serv_id, serv_codServ, serv_descrServico, serv_vlrUnit = resultado
+
+            # Insere uma nova linha na tabela com os valores obtidos
             self.treeview_tlServicos.insert("", "end", values=(serv_id, serv_codServ, serv_descrServico, serv_vlrUnit))
-    
+
+    #FUNÇÃO BOTÃO DELETAR NA TELA CADATRO DE SERVIÇOS
     def deletarServico_TelaCadServ(self):
+        """
+        Deleta um serviço da tabela na tela de cadastro de serviços.
+
+        Este método permite a exclusão de um serviço selecionado da tabela na tela de cadastro de serviços.
+        Ele confirma a exclusão com o usuário, realiza a exclusão no banco de dados e atualiza a tabela.
+
+        Parâmetros:
+        Nenhum
+
+        Retorna:
+        Nenhum
+        """
+        # Obtém o item selecionado na tabela
         selected_item = self.treeview_tlServicos.selection()
         
+        # Verifica se algum item foi selecionado
         if not selected_item:
             self.mostrar_alerta("Nenhum item selecionado", "Por favor, selecione um item para deletar.")
+            self._atualizarTelaCadServ()
             return
-            
-        service_info = self.obter_informacoes_item_selecionado(selected_item)
         
-        if self.confirmar_exclusao(service_info['serv_descrServico']):
-            if self._deletarServicoDoBanco(service_info['serv_id']):
+        # Obtém informações do item selecionado
+        serv_id, serv_codServ, serv_descServico, serv_vlrUnit = self.pegandoValoresLinhaSelecionadaDaTabelaServicos()
+        
+        # Confirmação de exclusão com o usuário
+        if self.confirmar_exclusao(serv_descServico):
+            # Deleta o serviço do banco de dados
+            if self.manipular_ordens.deletarServicoDB(serv_id):
+                # Remove o item da tabela
                 self.treeview_tlServicos.delete(selected_item)
-                self.mostrar_sucesso(service_info['serv_descrServico'])
+                self.mostrar_sucesso(serv_codServ, serv_descServico, serv_vlrUnit)
             else:
                 self.mostrar_erro("Ocorreu um erro ao tentar deletar o serviço.")
         else:
             self.mostrar_alerta("Cancelado", "A exclusão foi cancelada pelo usuário.")
-            
+        
+        # Atualiza a tela de cadastro de serviços
         self._atualizarTelaCadServ()
 
-    def obter_informacoes_item_selecionado(self, item):
-        values = self.treeview_tlServicos.item(item, 'values')
-        serv_id = values[0]
-        serv_descrServico = values[2]
-        return {'serv_id': serv_id, 'serv_descrServico': serv_descrServico}
-        
-    def _deletarServicoDoBanco(self, serv_id):
-        try:
-            self.db_manager.cursor.execute("DELETE FROM tb_servicos_vlr WHERE serv_id = ?", (serv_id,))
-            self.db_manager.connection.commit()
-            return True
-        except Exception as e:
-            print("Erro ao deletar serviço:", e)
-            return False
-
+    ###FUNÇÕES PARA MODIFICAR
+    def pegandoValoresLinhaSelecionadaDaTabelaServicos(self):
+        itemSelecionado = self.treeview_tlServicos.selection()
+        item = self.treeview_tlServicos.item(itemSelecionado, 'values')
+        serv_id, serv_codServ, serv_descServico, serv_vlrUnit = item
+        return serv_id, serv_codServ, serv_descServico, serv_vlrUnit
     
-    def habiltarEdicaoItemTreeviewTelaCadServ(self): 
-        try:   
-            itemSelecionado = self.treeview_tlServicos.selection()
-            item = self.treeview_tlServicos.item(itemSelecionado, 'values')
-            serv_id = item[0]
-            serv_codServ = item[1]
-            serv_descServico = item[2]
-            serv_vlrUnit = item[3]
-                      
+    def _desabilitar_inputCodServ(self):
+        # Desabilitar o campo
+        self.inputCodServ_tlCadServ.config(state="disabled")
+        # Alterar a cor de fundo para uma cor mais escura
+        self.inputCodServ_tlCadServ.config(bg="#bfbfbf")
+    
+    # FUNÇÃO BOTÃO MODIFICAR TELA CADASTRO DE SERVIÇOS
+    def ModificarItemSelecionadoDaTabela(self): 
+        """
+        Habilita a edição de um item selecionado na tabela da tela de cadastro de serviços.
+
+        Este método permite que um item selecionado na tabela de serviços da tela de cadastro seja editado.
+        Ele preenche os campos de entrada com os valores do item selecionado e desabilita o campo de código.
+
+        Parâmetros:
+        Nenhum
+
+        Retorna:
+        bool: True se a edição for habilitada com sucesso, False em caso de erro.
+        """
+        try:
+            # Obtém os valores da linha selecionada na tabela de serviços
+            serv_id, serv_codServ, serv_descServico, serv_vlrUnit = self.pegandoValoresLinhaSelecionadaDaTabelaServicos()
             
+            # Preenche o campo de código com o valor do item selecionado
             self.inputCodServ_tlCadServ.delete(0, 'end')
             self.inputCodServ_tlCadServ.insert(0, int(serv_codServ)) 
             
+            # Desabilita o campo de código
+            self._desabilitar_inputCodServ()
+            
+            # Preenche o campo de descrição com o valor do item selecionado
             self.inputDescServ_tlCadServ.delete(0, 'end')
             self.inputDescServ_tlCadServ.insert(0, str(serv_descServico))
             
+            # Preenche o campo de valor unitário com o valor do item selecionado
             self.inputVlrUnit_tlCadServ.delete(0, 'end')
             self.inputVlrUnit_tlCadServ.insert(0, float(serv_vlrUnit))
             
+            # Remove os botões anteriores e cria um botão "Salvar Modificações"
             self._apagarListaBotoes(self.botoesParaOcultar_TelaCadServ)
-            self._criarBotaoSalvarModificacoes(self.tlServicos, self.salvarModificacoesTelaCadServ)
+            self._criarBotaoSalvarModificacoes(self.tlServicos, self.validarModificacoesTelaCadServ)
+            
             return True
         
         except Exception as e:
+            # Exibe uma mensagem de alerta e recria a tela caso ocorra um erro
             self.mostrar_alerta('Atenção', f'Selecione uma linha da tabela abaixo:')
             self.fechar_TelaCadServ()
             self.criar_TelaCadServ() 
             return False
-        
-    def salvarModificacoesTelaCadServ(self):
+    
+    # FUNÇÃO BOTÃO SALVAR MODIFICAÇÕES    
+    def validarModificacoesTelaCadServ(self):
         """
         Salva as modificações feitas na tela de cadastro de serviços.
 
-        Esta função captura os valores dos campos de entrada na tela de cadastro de serviços, valida se os campos
-        obrigatórios estão preenchidos, modifica o serviço no banco de dados, atualiza a tela de cadastro e limpa os campos.
+        Esta função captura os valores dos campos de entrada na tela de cadastro de serviços, valida se os campos obrigatórios estão preenchidos, modifica o serviço no banco de dados, atualiza a tela de cadastro e limpa os campos.
 
         Parâmetros:
         Nenhum
@@ -957,26 +1095,24 @@ class LoginGUI:
         bool: True se as modificações forem salvas com sucesso, False em caso de erro.
         """
         try:
-            codServico = self.inputCodServ_tlCadServ.get().strip()
-            descServico = self.inputDescServ_tlCadServ.get().strip().upper()
-            vlrUnit = self.inputVlrUnit_tlCadServ.get()
-            vlrUnit = vlrUnit.replace(",", ".")
-
+            codServico, descServico, vlrUnit = self.pegandoValoresTelaCadServico()
+            codServico = codServico.strip()
+            descServico = descServico.strip().upper()
+            vlrUnit = vlrUnit.replace(",", ".")           
+            
             # Verificar se todos os campos obrigatórios estão preenchidos
             if not codServico or not descServico or not vlrUnit:
                 self.mostrar_alerta("Campos Vazios", "Por favor, preencha todos os campos.")
                 return False
-
+            
             # Obter o serviço selecionado na tabela
-            itemSelecionado = self.treeview_tlServicos.selection()
-            item = self.treeview_tlServicos.item(itemSelecionado, 'values')
-            serv_id = item[0]
-
+            serv_id, serv_codServ, serv_descServico, serv_vlrUnit = self.pegandoValoresLinhaSelecionadaDaTabelaServicos()
+            
             # Modificar o serviço no banco de dados
-            if self._modificarServicoDoBanco(serv_id, codServico, descServico, vlrUnit):
+            if self.manipular_ordens.editarServicoPeloIDServicosValoresDB(serv_id, codServico, descServico, vlrUnit):
                 # Atualizar a tela de cadastro e limpar os campos
-                self._atualizarTelaCadServ()
                 self._limparTelaCadServ()
+                self._atualizarTelaCadServ()
                 return True
             else:
                 return False
@@ -984,33 +1120,37 @@ class LoginGUI:
             self.mostrar_alerta("Erro", f"Erro ao salvar: {e}")
             return False
             
-                
-    def _modificarServicoDoBanco(self, serv_id, serv_codServ, serv_descrServico, serv_vlrUnit):
+    def _criarBotaoSalvarModificacoes(self, janela, comando):
         """
-        Modifica um serviço cadastrado no banco de dados.
-
-        Esta função atualiza as informações de um serviço no banco de dados, com base nos parâmetros fornecidos.
+        Cria e posiciona um botão para salvar modificações na tela ativa no momento.
 
         Parâmetros:
-        serv_id (int): O ID do serviço a ser modificado.
-        serv_codServ (str): O novo código do serviço.
-        serv_descrServico (str): A nova descrição do serviço.
-        serv_vlrUnit (float): O novo valor unitário do serviço.
+        janela (Tk): A janela da interface gráfica onde o botão será colocado.
+        comando (function): A função que será executada quando o botão for clicado.
 
         Retorna:
-        bool: True se a modificação for bem-sucedida, False em caso de erro.
+        None
         """
-        try:
-            self.db_manager.cursor.execute(
-                "UPDATE tb_servicos_vlr SET serv_codServ = ?, serv_descrServico = ?, serv_vlrUnit = ? WHERE serv_id = ?",
-                (serv_codServ, serv_descrServico, serv_vlrUnit, serv_id)
-            )
-            self.db_manager.connection.commit()
-            return True
-        except Exception as e:
-            print("Erro ao modificar serviço:", e)
-            return False
-        
+        # Carrega a imagem do botão "Salvar Modificações" a partir de um arquivo
+        self.img_btnSalvarModificacoes = PhotoImage(file="./img/img_btnSalvarModificacoes.png")
+
+        # Cria um botão usando a imagem carregada e configura seus atributos
+        self.btnSalvarModificacoes = Button(
+            janela,
+            image=self.img_btnSalvarModificacoes,
+            borderwidth=0,
+            highlightthickness=0,
+            command=comando,
+            relief="flat"
+        )
+
+        # Posiciona o botão na janela usando coordenadas e define as dimensões
+        self.btnSalvarModificacoes.place(
+            x=239, y=115,
+            width=139,
+            height=30
+        )            
+    
     def _atualizarTelaCadServ(self):
         """
         Atualiza a tela de cadastro de serviços.
@@ -1170,37 +1310,6 @@ class LoginGUI:
     def _verificarValor_Texto(self, valor):
         # Aceitar apenas texto (não vazio)
         return len(valor.strip()) > 0
-
-    def _criarBotaoSalvarModificacoes(self, janela, comando):
-        """
-        Cria e posiciona um botão para salvar modificações na tela ativa no momento.
-
-        Parâmetros:
-        janela (Tk): A janela da interface gráfica onde o botão será colocado.
-        comando (function): A função que será executada quando o botão for clicado.
-
-        Retorna:
-        None
-        """
-        # Carrega a imagem do botão "Salvar Modificações" a partir de um arquivo
-        self.img_btnSalvarModificacoes = PhotoImage(file="./img/img_btnSalvarModificacoes.png")
-
-        # Cria um botão usando a imagem carregada e configura seus atributos
-        self.btnSalvarModificacoes = Button(
-            janela,
-            image=self.img_btnSalvarModificacoes,
-            borderwidth=0,
-            highlightthickness=0,
-            command=comando,
-            relief="flat"
-        )
-
-        # Posiciona o botão na janela usando coordenadas e define as dimensões
-        self.btnSalvarModificacoes.place(
-            x=239, y=115,
-            width=139,
-            height=30
-        )
         
     def confirmar_exclusao(self, variavelMSGErro):
         """
@@ -1217,7 +1326,7 @@ class LoginGUI:
         
         return resposta
 
-    def mostrar_sucesso(self, variavelMSGErro):
+    def mostrar_sucesso(self, *variavelMSGErro):
         """
         Mostra uma mensagem de sucesso após a exclusão bem-sucedida.
 
@@ -1227,7 +1336,7 @@ class LoginGUI:
         Retorna:
         None
         """
-        self.mostrar_alerta("Sucesso", f"O serviço '{variavelMSGErro}' foi deletado com sucesso.")
+        self.mostrar_alerta("Sucesso", f"O serviço {variavelMSGErro} foi deletado com sucesso.")
 
     def mostrar_erro(self, mensagem):
         """
