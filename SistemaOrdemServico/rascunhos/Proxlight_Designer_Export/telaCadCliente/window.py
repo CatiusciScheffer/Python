@@ -23,7 +23,7 @@ background_img = PhotoImage(file = f"background.png")
 background = canvas.create_image(
     390.5, 311.0,
     image=background_img)
-
+### notas isentas
 entry0_img = PhotoImage(file = f"img_textBox0.png")
 entry0_bg = canvas.create_image(
     710.5, 80.0,
@@ -39,6 +39,7 @@ entry0.place(
     width = 89.0,
     height = 28)
 
+# codigo cliente
 entry1_img = PhotoImage(file = f"img_textBox1.png")
 entry1_bg = canvas.create_image(
     122.0, 80.0,
@@ -54,6 +55,7 @@ entry1.place(
     width = 84.0,
     height = 28)
 
+# nome cliente
 entry2_img = PhotoImage(file = f"img_textBox2.png")
 entry2_bg = canvas.create_image(
     414.5, 80.0,
@@ -68,7 +70,7 @@ entry2.place(
     x = 254.0, y = 65,
     width = 321.0,
     height = 28)
-
+# modificar
 img0 = PhotoImage(file = f"img0.png")
 b0 = Button(
     image = img0,
