@@ -90,9 +90,7 @@ class LoginGUI:
         self.verificar_usuario_existente()
         self.abrir_tl_principal()
         #self.tela_login.destroy()
-        
-        
-
+    
     def abrir_tl_principal(self):
         
         self.telaPrincipal = Tk()        
@@ -832,7 +830,7 @@ class LoginGUI:
         self.treeview_tlClientes.configure(xscrollcommand=scrollbar_x.set)
         scrollbar_x.place(x=14, y=591, width=751)
         ########## FIM TABELA CLIENTES ##########
-        
+        self.mostrarTabelaClientes_TelaCadClientes()
         self.tlClientes.resizable(False, False)
         self.tlClientes.mainloop()
         
@@ -867,7 +865,7 @@ class LoginGUI:
         descrServico = self.input_DescricaoServ.get().strip().upper()
         descComplementar = self.input_DescrCompl.get('1.0', 'end-1c')  # Usar '1.0' e 'end-1c' para er todo o conteúdo
         quantidade = int(self.input_Quantidade.get())
-        vlrUnit = float(self.input_VlrUnitario.get())
+        vlrUnit = self.input_VlrUnitario.get()
         total = float(self.input_VlrTotal.get())
         faturado = self.input_Faturado.get()
 
@@ -927,7 +925,7 @@ class LoginGUI:
     def preencheDescrServicoEvalorUnitario(self, event):
         if event.keysym == "Tab":
 
-            l_codServDescrServVlrUnit = self.manipular_ordens.buscarValoresTBServicosValore()
+            l_codServDescrServVlrUnit = self.manipular_ordens.consultarCompletaTabelaServicosValores()
             
             input_codServ = int(self.input_CodServ.get())
             
@@ -935,7 +933,7 @@ class LoginGUI:
                 
                 codServ = int(servicos[0])
                 descrServ = str(servicos[1])
-                valorUnit = float(servicos[2])
+                valorUnit = servicos[2]
                 
                 if codServ == input_codServ:
                     self._preencherDescricaoServicos(descrServ)
@@ -1038,7 +1036,7 @@ class LoginGUI:
         """
         self.tlServicos.destroy()
     
-    def pegandoValoresTelaCadServico(self):
+    def pegarValoresTelaCadServico(self):
         """
         Obtém os valores dos campos da tela de cadastro de serviços.
 
@@ -1073,7 +1071,7 @@ class LoginGUI:
         self.inputDescServ_tlCadServ.delete(0, 'end')  # Limpar campo de descrição
         self.inputVlrUnit_tlCadServ.delete(0, 'end')  # Limpar campo de valor unitário
         
-    def _verificaSeCamposTelaServicosPreenchidos(self):
+    def _verificarSeCamposTelaServicosPreenchidos(self):
         """
         Verifica se os campos da tela de cadastro de serviços estão preenchidos.
 
@@ -1085,7 +1083,7 @@ class LoginGUI:
         Retorna:
         bool: True se todos os campos estão preenchidos, False se algum campo estiver vazio.
         """
-        codServico, descServico, vlrUnit = self.pegandoValoresTelaCadServico()
+        codServico, descServico, vlrUnit = self.pegarValoresTelaCadServico()
         
         # Retorna True se todos os campos estiverem preenchidos, caso contrário, retorna False
         return bool(codServico and descServico and vlrUnit)
@@ -1104,7 +1102,7 @@ class LoginGUI:
         """
         codServico = self.inputCodServ_tlCadServ.get()
         
-        return self.manipular_ordens.verificaSeServicoCadastrado(codServico) is not None    
+        return self.manipular_ordens.verificarSeCodigoDoServicoCadastrado(codServico) is not None    
     
     def verificarSeCodigoServicoJaExiste(self, codServico):
         if self._verificarSeCodigoServicoJaExiste():
@@ -1126,12 +1124,12 @@ class LoginGUI:
         """
         try:
             # Verifica se os campos obrigatórios estão preenchidos
-            if not self._verificaSeCamposTelaServicosPreenchidos():
+            if not self._verificarSeCamposTelaServicosPreenchidos():
                 self.mostrar_alerta("Campos Vazios", "Por favor, preencha todos os campos.")
                 self._atualizarTelaCadServ()
                 return False
             
-            codServico, descServico, vlrUnit = self.pegandoValoresTelaCadServico()
+            codServico, descServico, vlrUnit = self.pegarValoresTelaCadServico()
             codServico = codServico.strip()
             descServico = descServico.strip().upper()
             vlrUnit = vlrUnit.replace(",", ".")
@@ -1169,7 +1167,7 @@ class LoginGUI:
         self.treeview_tlServicos.delete(*self.treeview_tlServicos.get_children())
 
         # Realiza a consulta à tabela de serviços e valores
-        listandoServicos = self.manipular_ordens.consultaTabelaServicosValores()
+        listandoServicos = self.manipular_ordens.consultarCompletaTabelaServicosValores()
 
         # Itera sobre os resultados da consulta e insere na tabela
         for resultado in listandoServicos:
@@ -1202,7 +1200,7 @@ class LoginGUI:
             return
         
         # Obtém informações do item selecionado
-        serv_id, serv_codServ, serv_descServico, serv_vlrUnit = self.pegandoValoresLinhaSelecionadaDaTabelaServicos()
+        serv_id, serv_codServ, serv_descServico, serv_vlrUnit = self.pegarValoresLinhaSelecionadaDaTabelaServicos()
         
         # Confirmação de exclusão com o usuário
         if self.confirmar_exclusao(serv_descServico):
@@ -1220,7 +1218,7 @@ class LoginGUI:
         self._atualizarTelaCadServ()
 
     ###FUNÇÕES PARA MODIFICAR
-    def pegandoValoresLinhaSelecionadaDaTabelaServicos(self):
+    def pegarValoresLinhaSelecionadaDaTabelaServicos(self):
         itemSelecionado = self.treeview_tlServicos.selection()
         item = self.treeview_tlServicos.item(itemSelecionado, 'values')
         serv_id, serv_codServ, serv_descServico, serv_vlrUnit = item
@@ -1248,7 +1246,7 @@ class LoginGUI:
         """
         try:
             # Obtém os valores da linha selecionada na tabela de serviços
-            serv_id, serv_codServ, serv_descServico, serv_vlrUnit = self.pegandoValoresLinhaSelecionadaDaTabelaServicos()
+            serv_id, serv_codServ, serv_descServico, serv_vlrUnit = self.pegarValoresLinhaSelecionadaDaTabelaServicos()
             
             # Preenche o campo de código com o valor do item selecionado
             self.inputCodServ_tlCadServ.delete(0, 'end')
@@ -1292,7 +1290,7 @@ class LoginGUI:
         bool: True se as modificações forem salvas com sucesso, False em caso de erro.
         """
         try:
-            codServico, descServico, vlrUnit = self.pegandoValoresTelaCadServico()
+            codServico, descServico, vlrUnit = self.pegarValoresTelaCadServico()
             codServico = codServico.strip()
             descServico = descServico.strip().upper()
             vlrUnit = vlrUnit.replace(",", ".")           
@@ -1303,7 +1301,7 @@ class LoginGUI:
                 return False
             
             # Obter o serviço selecionado na tabela
-            serv_id, serv_codServ, serv_descServico, serv_vlrUnit = self.pegandoValoresLinhaSelecionadaDaTabelaServicos()
+            serv_id, serv_codServ, serv_descServico, serv_vlrUnit = self.pegarValoresLinhaSelecionadaDaTabelaServicos()
             
             # Modificar o serviço no banco de dados
             if self.manipular_ordens.editarServicoPeloIDServicosValoresDB(serv_id, codServico, descServico, vlrUnit):
@@ -1383,7 +1381,7 @@ class LoginGUI:
         self.gerarRelatorio(nome_arquivo)
     
     
-    ############### FUNÇÕES TELA CADASTRO DE CLIENTES ################
+    #@@@@@@@@@@@@@@@@@@@ FUNÇÕES TELA CADASTRO DE CLIENTES @@@@@@@@@@@@@@@@@@@#
     def abrirTelaCadCliente(self, event=None):
         """
         Abre a tela de cadastro de serviços.
@@ -1399,6 +1397,58 @@ class LoginGUI:
         Observação: event=None É um parâmetro que permite que você passe um objeto de evento associado à função. Ele é opcional, o que significa que você não precisa fornecê-lo quando chama a função. Se não for fornecido, o valor padrão é None.
         """
         self.criar_TelaCadClientes() 
+    
+    # MOSTRAR A TABELA NA TELA CADASTRO DE CLIENTES        
+    def mostrarTabelaClientes_TelaCadClientes(self):
+        
+        # Limpa os dados existentes na tabela
+        self.treeview_tlClientes.delete(*self.treeview_tlClientes.get_children())
+
+        # Realiza a consulta à tabela de CLIENTES
+        listandoClientes = self.manipular_ordens.consultarCompletaTabelaClientesValores()
+
+        # Itera sobre os resultados da consulta e insere na tabela
+        for resultado in listandoClientes:
+            cli_id, codCliente, nomeCliente, qtdNFisenta = resultado
+
+            # Insere uma nova linha na tabela com os valores obtidos
+            self.treeview_tlClientes.insert("", "end", values=(cli_id, codCliente, nomeCliente, qtdNFisenta))
+    
+    ### FUNÇÃO INSERIR ###
+    # pegar dados dos campos
+    def pegarValoresTelaCadClientes(self):
+        codCliente = self.inputCodCliente_tlCadCliente.get()
+        nomeCliente = self.inputNomeCliente_tlCadCliente.get()
+        notasIsentas = self.inputNotasIsentas_tlCadCliente.get()
+        return codCliente, nomeCliente, notasIsentas
+    
+    # verificar se todos os campos estão preenchidos
+    def _verificaSeCamposTelaClientesPreenchidos(self):
+        codCliente, nomeCliente, notasIsentas = self.pegarValoresTelaCadClientes()
+        return bool(codCliente and nomeCliente and notasIsentas)
+    
+    # verificar se código do input já está cadastrado na tabela
+    def _verificarSeCodigoClientteJaExiste(self):
+        codCliente = self.inputCodCliente_tlCadCliente.get()
+        return self.manipular_ordens.verificarSeCodigoDoClienteCadastrado(codCliente) is not None    
+    
+    def verificarSeCodigoServicoJaExiste(self, codCliente):
+        if self._verificarSeCodigoClientteJaExiste():
+            self.mostrar_alerta("Valor Inválido", f"Código {codCliente} já existe.")
+            self._atualizarTelaCadServ()
+            return False
+    # inserir dados no DB
+    # limpar tela
+    # atualizar a treeview
+    # abrir tela cad cliente novamente
+    
+    ### FUNÇÃO MODIFICAR ###
+    
+    ### FUNÇÃO DELETAR ###
+    
+    ### FUNÇÃO SALVAR MODIFICAÇÕES ###
+    
+    ### FUNÇÃO DE IMPRIMIR LISTA CLIENTES ###
     
             
     ############### FUNÇÕES GERAIS ###############
@@ -1485,7 +1535,6 @@ class LoginGUI:
             col_width = max(col_width, 100)
 
             self.treeview.column(col, width=col_width)  # Redimensionar a coluna
-
         
     def _verificarValor_Inteiro(self, valorInteiro):
         """
