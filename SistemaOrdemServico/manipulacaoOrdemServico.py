@@ -8,7 +8,7 @@ class ManipularOrdemServicos():
     #### FUNÇÕES TABELA CLIENTES ####    
     def consultarCompletaTabelaClientesValores(self):
         cursor = self.db_manager.get_cursor()
-        clientesCadastrados = cursor.execute('SELECT cli_id, cli_codCliente, cli_nomeCliente, cli_qtdNFisenta FROM tb_cliente;')
+        clientesCadastrados = cursor.execute('SELECT cli_id, cli_codCliente, cli_nomeCliente, cli_qtdNFisenta FROM tb_cliente')
         clientesCadastrados = cursor.fetchall()
         return clientesCadastrados   
     
@@ -20,6 +20,42 @@ class ManipularOrdemServicos():
             return resultado[0]
         else:
             return None
+        
+    def inserirClienteDB(self, codCliente, nomeCliente, NFIsenta):
+        try:
+            # Executa o comando SQL para inserir um novo serviço na tabela
+            self.db_manager.cursor.execute(
+                "INSERT INTO tb_cliente (cli_codCliente, cli_nomeCliente, cli_qtdNFisenta) VALUES (?, ?, ?)",
+                (codCliente, nomeCliente, NFIsenta)
+            )
+            # Confirma a transação no banco de dados
+            self.db_manager.connection.commit()
+            return True
+        except Exception as e:
+            # Em caso de erro, imprime a mensagem de erro e retorna False
+            print("Erro ao cadastrar cliente:", e)
+            return False
+        
+    def editarClientePeloIDClienteDB(self, cli_id, cli_codCliente, cli_nomeCliente, cli_qtdNFisenta):
+        try:
+            self.db_manager.cursor.execute(
+                "UPDATE tb_cliente SET cli_nomeCliente = ?, cli_qtdNFisenta = ? WHERE cli_id = ?",
+                (cli_nomeCliente, cli_qtdNFisenta, cli_id)
+            )
+            self.db_manager.connection.commit()
+            return True
+        except Exception as e:
+            print("Erro ao modificar cliente:", e)
+            return False
+        
+    def deletarClienteDB(self, cli_id):
+        try:
+            self.db_manager.cursor.execute("DELETE FROM tb_cliente WHERE cli_id = ?", (cli_id,))
+            self.db_manager.connection.commit()
+            return True
+        except Exception as e:
+            print("Erro no banco ao deletar cliente:", e)
+            return False
         
     #______________________________________________________#
     

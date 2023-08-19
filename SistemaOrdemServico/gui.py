@@ -479,7 +479,7 @@ class LoginGUI:
             image = img_btnModify_tlCadServ,
             borderwidth = 0,
             highlightthickness = 0,
-            command = self.ModificarItemSelecionadoDaTabela,
+            command = self.modificarItemSelecionadoDaTabServico,
             relief = "flat")
 
         btnModify_tlCadServ.place(
@@ -674,7 +674,7 @@ class LoginGUI:
             image = img_btnModify_tlCadCliente,
             borderwidth = 0,
             highlightthickness = 0,
-            #command = self.ModificarItemSelecionadoDaTabela,
+            command = self.modificarItemSelecionadoDaTabCliente,
             relief = "flat")
 
         btnModify_tlCadCliente.place(
@@ -689,7 +689,7 @@ class LoginGUI:
             image = img_btnInsert_tlCadCliente,
             borderwidth = 0,
             highlightthickness = 0,
-            #command = self.cadastrarServico_TelaCadServico,
+            command = self.cadastrarCliente_TelaCadCliente,
             relief = "flat")
 
         btnInsert_tlCadCliente.place(
@@ -704,7 +704,7 @@ class LoginGUI:
             image = self.img_btnDelete_tlCadCliente,
             borderwidth = 0,
             highlightthickness = 0,
-            #command = self.deletarServico_TelaCadServ,
+            command = self.deletarCliente_TelaCadCliente,
             relief = "flat")
 
         self.btnDelete_tlCadCliente.place(
@@ -719,7 +719,7 @@ class LoginGUI:
             image = img_btnPrint_tlCadCliente,
             borderwidth = 0,
             highlightthickness = 0,
-            #command = self.gerarRelatorioCadServ,
+            command = self.gerarRelatorioCadCliente,
             relief = "flat")
 
         btnPrint_tlCadCliente.place(
@@ -728,7 +728,7 @@ class LoginGUI:
             height = 30)
         
         #botões que serão ocultos ao chamar a função de modificação:
-        self.botoesParaOcultar_TelaCadServ = [self.btnDelete_tlCadCliente, btnInsert_tlCadCliente, btnModify_tlCadCliente, btnPrint_tlCadCliente]
+        self.botoesParaOcultar_TelaCadCliente = [self.btnDelete_tlCadCliente, btnInsert_tlCadCliente, btnModify_tlCadCliente, btnPrint_tlCadCliente]
         
         inputCodCliente_tlCadCliente_img = PhotoImage(file = f"./img/img_tlCadCliente_inputCodCliente.png")
         inputCodServ_tlCadCliente_bg = canvas.create_image(
@@ -800,42 +800,42 @@ class LoginGUI:
 
         self.treeview_tlClientes.pack(fill="both", expand=True)
 
-        self.treeview_tlClientes["columns"] = ("ID","CodCliente", "Cliente", "NF Isenta")
+        self.treeview_tlClientes["columns"] = ("ID","CodCliente", "Cliente", "NFIsenta")
                 
         self.treeview_tlClientes.column("#0", width=0, stretch=tk.NO)
         self.treeview_tlClientes.column("ID", width=30, anchor="center")
         self.treeview_tlClientes.column("CodCliente", width=70, anchor="center")
         self.treeview_tlClientes.column("Cliente", width=250, anchor="w")
-        self.treeview_tlClientes.column("NF Isenta", width=70, anchor="e")
+        self.treeview_tlClientes.column("NFIsenta", width=70, anchor="e")
 
         self.treeview_tlClientes.heading("#0", text="", anchor="w")
         self.treeview_tlClientes.heading("ID", text="ID", anchor="center")
         self.treeview_tlClientes.heading("CodCliente", text="Código Cliente", anchor="center")
         self.treeview_tlClientes.heading("Cliente", text="Razão Social", anchor="center")
-        self.treeview_tlClientes.heading("NF Isenta", text="Notas Isentas", anchor="center")
+        self.treeview_tlClientes.heading("NFIsenta", text="Notas Isentas", anchor="center")
 
         center_aligned_text(self.treeview_tlClientes)
         right_aligned_text(self.treeview_tlClientes)
 
         # Posicionar a TreeView
-        self.treeview_tlClientes.place(x=13, y=166, height=443, width=753)
+        self.treeview_tlClientes.place(x=13, y=166, height=427, width=737)
 
         # Adicionar barra de rolagem vertical
         scrollbar_y = ttk.Scrollbar(self.tlClientes, orient="vertical", command=self.treeview_tlClientes.yview)
         self.treeview_tlClientes.configure(yscrollcommand=scrollbar_y.set)
-        scrollbar_y.place(x=747, y=168, height=423)
+        scrollbar_y.place(x=750, y=165.5, height=426)
 
         # Adicionar barra de rolagem horizontal
         scrollbar_x = ttk.Scrollbar(self.tlClientes, orient="horizontal", command=self.treeview_tlClientes.xview)
         self.treeview_tlClientes.configure(xscrollcommand=scrollbar_x.set)
-        scrollbar_x.place(x=14, y=591, width=751)
+        scrollbar_x.place(x=13, y=592, width=754)
         ########## FIM TABELA CLIENTES ##########
         self.mostrarTabelaClientes_TelaCadClientes()
         self.tlClientes.resizable(False, False)
         self.tlClientes.mainloop()
         
         
-    ############## FUNÇÕES TELA LOGIN ##############
+    #@@@@@@@@@@@@@@@@ FUNÇÕES TELA LOGIN @@@@@@@@@@@@@@@@@@@#
     
     def verificar_usuario_existente(self):
         input_usuario = self.input_login_usuario.get().strip().upper()
@@ -892,7 +892,7 @@ class LoginGUI:
     def preencheCliente(self, event):
         if event.keysym == "Tab":
 
-            l_codCliente = self.manipular_ordens.buscarValoresTBCliente()
+            l_codCliente = self.manipular_ordens.consultarCompletaTabelaClientesValores()
             
             input_codCliente = int(self.input_CodCliente.get())
             
@@ -1005,7 +1005,7 @@ class LoginGUI:
         self.mostrar_alerta('Sucesso', 'Serviço inserido com sucesso!')
 
     
-    ############### FUNÇÕES TELA CADASTRO SERVIÇOS ###############
+    #@@@@@@@@@@@@@@@@@@@ FUNÇÕES TELA CADASTRO SERVIÇOS @@@@@@@@@@@@@@@@@#
     def abrirTelaCadServ(self, event=None):
         """
         Abre a tela de cadastro de serviços.
@@ -1219,8 +1219,8 @@ class LoginGUI:
 
     ###FUNÇÕES PARA MODIFICAR
     def pegarValoresLinhaSelecionadaDaTabelaServicos(self):
-        itemSelecionado = self.treeview_tlServicos.selection()
-        item = self.treeview_tlServicos.item(itemSelecionado, 'values')
+        itemSelecionadoTbServicos = self.treeview_tlServicos.selection()
+        item = self.treeview_tlServicos.item(itemSelecionadoTbServicos, 'values')
         serv_id, serv_codServ, serv_descServico, serv_vlrUnit = item
         return serv_id, serv_codServ, serv_descServico, serv_vlrUnit
     
@@ -1231,7 +1231,7 @@ class LoginGUI:
         self.inputCodServ_tlCadServ.config(bg="#bfbfbf")
     
     # FUNÇÃO BOTÃO MODIFICAR TELA CADASTRO DE SERVIÇOS
-    def ModificarItemSelecionadoDaTabela(self): 
+    def modificarItemSelecionadoDaTabServico(self): 
         """
         Habilita a edição de um item selecionado na tabela da tela de cadastro de serviços.
 
@@ -1265,7 +1265,7 @@ class LoginGUI:
             
             # Remove os botões anteriores e cria um botão "Salvar Modificações"
             self._apagarListaBotoes(self.botoesParaOcultar_TelaCadServ)
-            self._criarBotaoSalvarModificacoes(self.tlServicos, self.validarModificacoesTelaCadServ)
+            self._criarBotaoSalvarModificacoes(self.tlServicos, self.validarModificacoesTelaCadServ, 349, 115)
             
             return True
         
@@ -1315,7 +1315,7 @@ class LoginGUI:
             self.mostrar_alerta("Erro", f"Erro ao salvar: {e}")
             return False
             
-    def _criarBotaoSalvarModificacoes(self, janela, comando):
+    def _criarBotaoSalvarModificacoes(self, janela, comando, posicaoX, posicaoY):
         """
         Cria e posiciona um botão para salvar modificações na tela ativa no momento.
 
@@ -1341,7 +1341,7 @@ class LoginGUI:
 
         # Posiciona o botão na janela usando coordenadas e define as dimensões
         self.btnSalvarModificacoes.place(
-            x=239, y=115,
+            x=posicaoX, y=posicaoY,
             width=139,
             height=30
         )            
@@ -1377,25 +1377,11 @@ class LoginGUI:
         Retorna:
         None
         """
-        nome_arquivo = 'Relatório dos Serviços Cadastrados.pdf'
-        self.gerarRelatorio(nome_arquivo)
-    
+        self.manipular_relatorios.gerarRelatorioCadServ('Relatório dos Clientes Cadastrados.pdf')
     
     #@@@@@@@@@@@@@@@@@@@ FUNÇÕES TELA CADASTRO DE CLIENTES @@@@@@@@@@@@@@@@@@@#
+    
     def abrirTelaCadCliente(self, event=None):
-        """
-        Abre a tela de cadastro de serviços.
-
-        Este método é chamado para criar e exibir a tela de cadastro de serviços.
-
-        Parâmetros:
-        event (Tkinter event, opcional): Evento que disparou a abertura da tela.
-
-        Retorna:
-        Nenhum
-        
-        Observação: event=None É um parâmetro que permite que você passe um objeto de evento associado à função. Ele é opcional, o que significa que você não precisa fornecê-lo quando chama a função. Se não for fornecido, o valor padrão é None.
-        """
         self.criar_TelaCadClientes() 
     
     # MOSTRAR A TABELA NA TELA CADASTRO DE CLIENTES        
@@ -1414,58 +1400,197 @@ class LoginGUI:
             # Insere uma nova linha na tabela com os valores obtidos
             self.treeview_tlClientes.insert("", "end", values=(cli_id, codCliente, nomeCliente, qtdNFisenta))
     
+    def fechar_TelaCadCliente(self):
+        self.tlClientes.destroy()
+    
+    def _limparTelaCadCliente(self):
+        self.inputCodCliente_tlCadCliente.delete(0, 'end')  
+        self.inputNomeCliente_tlCadCliente.delete(0, 'end')
+        self.inputNotasIsentas_tlCadCliente.delete(0, 'end')
+        
+    def _atualizarTelaCadCliente(self):
+        self.resize_columns()  # Redimensiona as colunas da tabela
+        self.mostrarTabelaClientes_TelaCadClientes()  # Mostra a tabela de serviços
+        self.fechar_TelaCadCliente()  # Fecha a tela de cadastro de serviços
+        self.abrirTelaCadCliente()  # Recria a tela de cadastro de serviços 
+    
     ### FUNÇÃO INSERIR ###
     # pegar dados dos campos
     def pegarValoresTelaCadClientes(self):
         codCliente = self.inputCodCliente_tlCadCliente.get()
         nomeCliente = self.inputNomeCliente_tlCadCliente.get()
         notasIsentas = self.inputNotasIsentas_tlCadCliente.get()
+        if not notasIsentas:
+            notasIsentas = 0 
         return codCliente, nomeCliente, notasIsentas
     
     # verificar se todos os campos estão preenchidos
     def _verificaSeCamposTelaClientesPreenchidos(self):
         codCliente, nomeCliente, notasIsentas = self.pegarValoresTelaCadClientes()
-        return bool(codCliente and nomeCliente and notasIsentas)
+        return bool(codCliente and nomeCliente)
     
     # verificar se código do input já está cadastrado na tabela
     def _verificarSeCodigoClientteJaExiste(self):
         codCliente = self.inputCodCliente_tlCadCliente.get()
         return self.manipular_ordens.verificarSeCodigoDoClienteCadastrado(codCliente) is not None    
     
-    def verificarSeCodigoServicoJaExiste(self, codCliente):
+    def verificarSeCodigoClienteJaExiste(self, codCliente):
         if self._verificarSeCodigoClientteJaExiste():
             self.mostrar_alerta("Valor Inválido", f"Código {codCliente} já existe.")
-            self._atualizarTelaCadServ()
+            self._atualizarTelaCadCliente()
             return False
-    # inserir dados no DB
-    # limpar tela
-    # atualizar a treeview
-    # abrir tela cad cliente novamente
     
-    ### FUNÇÃO MODIFICAR ###
+    # FUNÇÃO BOTÃO INSERIR TELA CADASTRO DE CLIENTES
+    def cadastrarCliente_TelaCadCliente(self):
+        try:
+            # Verifica se os campos obrigatórios estão preenchidos
+            if not self._verificaSeCamposTelaClientesPreenchidos():
+                self.mostrar_alerta("Campos Vazios", "Por favor, preencha todos os campos.")
+                self._atualizarTelaCadCliente()
+                return False
+            
+            codCliente, nomeCliente, qtdNFisenta = self.pegarValoresTelaCadClientes()
+            codCliente = codCliente.strip()
+            nomeCliente = nomeCliente.strip().upper()
+            #qtdNFisenta = qtdNFisenta.replace(",", ".")
+            
+            # Verifica se o código de serviço já existe no banco de dados
+            if self._verificarSeCodigoClientteJaExiste():
+                self.mostrar_alerta("Valor Inválido", f"Código {codCliente} já existe.")
+                self._atualizarTelaCadCliente()
+                return False
+            
+            # Insere o novo serviço no banco de dados
+            if self.manipular_ordens.inserirClienteDB(codCliente, nomeCliente, qtdNFisenta):
+            # if self._inserirServicoNoBanco(codServico, descServico, vlrUnit):
+                self.mostrar_alerta("Cadastro de Serviço", f"Serviço '{nomeCliente}' cadastrado com sucesso!")
+                self._atualizarTelaCadCliente()
+                return True
+        except Exception as e:
+            self.mostrar_alerta('Erro', f'Cadastro do Cliente não realizado!\n(Erro:{e})')
+        return False
     
-    ### FUNÇÃO DELETAR ###
+    ### FUNÇÕES PARA MODIFICAR CADASTRO CLIENTE
+    def pegarValoresLinhaSelecionadaDaTabelaCliente(self):
+        itemSelecionadoTbCliente = self.treeview_tlClientes.selection()
+        item = self.treeview_tlClientes.item(itemSelecionadoTbCliente, 'values')
+        cli_id, cli_codcliente, cli_nomeCliente, cli_qtdNFisenta = item
+        return cli_id, cli_codcliente, cli_nomeCliente, cli_qtdNFisenta
     
-    ### FUNÇÃO SALVAR MODIFICAÇÕES ###
+    def _desabilitar_inputCodCliente(self):
+        # Desabilitar o campo
+        self.inputCodCliente_tlCadCliente.config(state="disabled")
+        # Alterar a cor de fundo para uma cor mais escura
+        self.inputCodCliente_tlCadCliente.config(bg="#bfbfbf")
+    
+    # FUNÇÃO BOTÃO MODIFICAR TELA CADASTRO DE CLIENTE
+    def modificarItemSelecionadoDaTabCliente(self): 
+        try:
+            # Obtém os valores da linha selecionada na tabela de serviços
+            cli_id, codcliente, nomeCliente, qtdNFisenta = self.pegarValoresLinhaSelecionadaDaTabelaCliente()
+            
+            # Preenche o campo de código com o valor do item selecionado
+            self.inputCodCliente_tlCadCliente.delete(0, 'end')
+            self.inputCodCliente_tlCadCliente.insert(0, int(codcliente)) 
+            
+            # Desabilita o campo de código
+            self._desabilitar_inputCodCliente()
+            
+            # Preenche o campo de descrição com o valor do item selecionado
+            self.inputNomeCliente_tlCadCliente.delete(0, 'end')
+            self.inputNomeCliente_tlCadCliente.insert(0, str(nomeCliente))
+            
+            # Preenche o campo de valor unitário com o valor do item selecionado
+            self.inputNotasIsentas_tlCadCliente.delete(0, 'end')
+            self.inputNotasIsentas_tlCadCliente.insert(0, float(qtdNFisenta))
+            
+            # Remove os botões anteriores e cria um botão "Salvar Modificações"
+            self._apagarListaBotoes(self.botoesParaOcultar_TelaCadCliente)
+            self._criarBotaoSalvarModificacoes(self.tlClientes, self.validarModificacoesTelaCadCliente, 320, 106)
+            
+            return True
+        
+        except Exception as e:
+            # Exibe uma mensagem de alerta e recria a tela caso ocorra um erro
+            self.mostrar_alerta('Atenção', f'Selecione uma linha da tabela abaixo:')
+            self.fechar_TelaCadCliente()
+            self.criar_TelaCadClientes() 
+            return False
+    
+    # FUNÇÃO BOTÃO SALVAR MODIFICAÇÕES    
+    def validarModificacoesTelaCadCliente(self):
+        try:
+            codCliente, nomeCliente, qtdNFisenta = self.pegarValoresTelaCadClientes()
+            codCliente = codCliente.strip()
+            nomeCliente = nomeCliente.strip().upper()
+            qtdNFisenta = qtdNFisenta.replace(",", ".")           
+            
+            # Verificar se todos os campos obrigatórios estão preenchidos
+            if not codCliente or not nomeCliente:
+                self.mostrar_alerta("Campos Vazios", "Por favor, preencha todos os campos.")
+                return False
+            
+            # Obter o serviço selecionado na tabela
+            cli_id, cli_codcliente, cli_nomeCliente, cli_qtdNFisenta = self.pegarValoresLinhaSelecionadaDaTabelaCliente()
+            
+            # Modificar o serviço no banco de dados
+            if self.manipular_ordens.editarClientePeloIDClienteDB(cli_id, codCliente, nomeCliente, qtdNFisenta):
+                # Atualizar a tela de cadastro e limpar os campos
+                self._limparTelaCadCliente()
+                self._atualizarTelaCadCliente()
+                return True
+            else:
+                return False
+        except Exception as e:
+            self.mostrar_alerta("Erro", f"Erro ao salvar modificação do Cliente {nomeCliente}:\nErro:{e}")
+            return False
+            
+    ### FUNÇÃO DELETAR CLIENTE ###    
+    def deletarCliente_TelaCadCliente(self):
+        # Obtém o item selecionado na tabela
+        selected_itemTabCliente = self.treeview_tlClientes.selection()
+        
+        # Verifica se algum item foi selecionado
+        if not selected_itemTabCliente:
+            self.mostrar_alerta("Nenhum item selecionado", "Por favor, selecione um item para deletar.")
+            self._atualizarTelaCadCliente()
+            return
+        
+        # Obtém informações do item selecionado
+        cli_id, cli_codcliente, cli_nomeCliente, cli_qtdNFisenta = self.pegarValoresLinhaSelecionadaDaTabelaCliente()
+        
+        # Confirmação de exclusão com o usuário
+        if self.confirmar_exclusao(cli_nomeCliente):
+            # Deleta o serviço do banco de dados
+            if self.manipular_ordens.deletarClienteDB(cli_id):
+                # Remove o item da tabela
+                self.treeview_tlClientes.delete(selected_itemTabCliente)
+                self.mostrar_sucesso(cli_codcliente, cli_nomeCliente)
+            else:
+                self.mostrar_erro(f"Ocorreu um erro ao tentar deletar o cliente {cli_nomeCliente}.")
+        else:
+            self.mostrar_alerta("Cancelado", "A exclusão foi cancelada pelo usuário.")
+        
+        # Atualiza a tela de cadastro de Cliente
+        self._atualizarTelaCadCliente()
+    
     
     ### FUNÇÃO DE IMPRIMIR LISTA CLIENTES ###
-    
-            
-    ############### FUNÇÕES GERAIS ###############
-    
-    def gerarRelatorio(self, nome_arquivo):
+    def gerarRelatorioCadCliente(self):
         """
-        Gera um relatório em um arquivo PDF que abre diretamente no navegador padrão.
+        Gera um relatório em PDF dos clientes cadastrados.
 
-        Essa função utiliza o nome do arquivo fornecido para gerar um relatório em PDF.
+        Esta função utiliza um nome de arquivo predefinido para gerar um relatório em PDF dos serviços cadastrados, utilizando o método 'gerarRelatorio' da classe.
 
         Parâmetros:
-        nome_arquivo (str): O nome do arquivo de saída para o relatório em PDF.
+        Nenhum
 
         Retorna:
         None
         """
-        self.manipular_relatorios.gerarRelatorioCadServ(nome_arquivo) 
+        self.manipular_relatorios.gerarRelatorioCadCliente('Relatório dos Clientes Cadastrados.pdf')
+            
+    ############### FUNÇÕES GERAIS ###############
     
     def _apagarListaBotoes(self, listaBotoesParaApagar):
         """
@@ -1591,17 +1716,17 @@ class LoginGUI:
         
         return resposta
 
-    def mostrar_sucesso(self, *variavelMSGErro):
+    def mostrar_sucesso(self, *variavelMSG):
         """
         Mostra uma mensagem de sucesso após a exclusão bem-sucedida.
 
         Parâmetros:
-        variavelMSGErro (str): A mensagem utiliza o valor da variável para mostrar o sucesso na exclusão.
+        variavelMSG (str): A mensagem utiliza o valor da(s) variável/variáveis para mostrar o sucesso na exclusão.
 
         Retorna:
         None
         """
-        self.mostrar_alerta("Sucesso", f"O serviço {variavelMSGErro} foi deletado com sucesso.")
+        self.mostrar_alerta("Sucesso", f"O item selecionado {variavelMSG} foi deletado com sucesso.")
 
     def mostrar_erro(self, mensagem):
         """
