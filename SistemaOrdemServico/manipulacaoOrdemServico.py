@@ -6,7 +6,7 @@ class ManipularOrdemServicos():
         self.db_manager = db_manager
     
     #### FUNÇÕES TABELA CLIENTES ####    
-    def consultarCompletaTabelaClientesValores(self):
+    def consultarCompletaTabelaClientes(self):
         cursor = self.db_manager.get_cursor()
         clientesCadastrados = cursor.execute('SELECT cli_id, cli_codCliente, cli_nomeCliente, cli_qtdNFisenta FROM tb_cliente')
         clientesCadastrados = cursor.fetchall()
@@ -65,8 +65,31 @@ class ManipularOrdemServicos():
         
         # Consulta SQL ordenando os dados pela coluna os_id em ordem decrescente
         cursor.execute("SELECT os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado FROM tb_ordens_servicos ORDER BY os_id DESC;")
-
+        
+    def inserirOrdemServicosDB(self, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado):
+        try:
+            # Executa o comando SQL para inserir um novo serviço na tabela
+            self.db_manager.cursor.execute("INSERT INTO tb_ordens_servicos (os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado) VALUES (?, ?, ?, ?, ?, ?, ?, ? ,?, ?)", (os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado))
+       
+            self.db_manager.connection.commit()
+            return True
+        except Exception as e:
+            # Em caso de erro, imprime a mensagem de erro e retorna False
+            print("Erro ao inserir ordem de serviços:", e)
+            return False  
+        
+    def consultarOrdensServicoNAOFaturadas(self):
+        cursor = self.db_manager.get_cursor()
+        
+        cursor.execute("SELECT * FROM tb_ordens_servicos WHERE os_faturado = 'NÃO' ORDER BY os_cliente, os_codServico;")
+        
+        ordensNAOfaturadas = cursor.fetchall()
+        print(ordensNAOfaturadas)
+        
+        return ordensNAOfaturadas
+        
     #______________________________________________________#
+    
     #### FUNÇÕES TABELA SERVIÇOS ####
     def consultarCompletaTabelaServicosValores(self):
         cursor = self.db_manager.get_cursor()
@@ -97,7 +120,7 @@ class ManipularOrdemServicos():
         except Exception as e:
             # Em caso de erro, imprime a mensagem de erro e retorna False
             print("Erro ao inserir serviço:", e)
-            return False        
+            return False
 
     def deletarServicoDB(self, serv_id):
         try:

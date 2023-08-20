@@ -5,6 +5,7 @@ from tkcalendar import DateEntry
 from user import UserManager
 from manipulacaoOrdemServico import ManipularOrdemServicos
 from relatoriosPDF import ManipularCriacaodeRelatorios
+from window_financeiro import ManipularWindowFinanceiro
 
 
 
@@ -14,6 +15,7 @@ class LoginGUI:
         self.user_manager = UserManager(db_manager)
         self.manipular_ordens = ManipularOrdemServicos(db_manager)
         self.manipular_relatorios = ManipularCriacaodeRelatorios(db_manager)
+        self.manipular_telaFinanceiro = ManipularWindowFinanceiro(db_manager)
 
         self.tela_login = Tk()
         self.tela_login.title('Sistema Ordens de Serviços')
@@ -287,9 +289,9 @@ class LoginGUI:
             width = 522.0,
             height = 95)
 
-        ########### CRIANDO BOTÕES TELA PRINCIPAL ###########
+        # CRIANDO BOTÕES TELA PRINCIPAL #
         
-        #### BOTÃO MODIFICAR ####
+        #### BOTÃO MODIFICAR ORDEM DE SERVIÇO ####
         img_tlPrincipal_btnModificar = PhotoImage(file="./img/img_tlPrincipal_btnModify.png")
         btnModifyOS_tlPrincipal = Button(
             image = img_tlPrincipal_btnModificar,
@@ -303,7 +305,7 @@ class LoginGUI:
             width = 103,
             height = 40)
 
-        #### BOTÃO DELETAR ####
+        #### BOTÃO DELETAR ORDEM DE SERVIÇO ####
         img_tlPrincipal_btnDelete = PhotoImage(file="./img/img_tlPrincipal_btnDelete.png")
         btnDeleteOS_tlPrincipal = Button(
             image = img_tlPrincipal_btnDelete,
@@ -317,7 +319,7 @@ class LoginGUI:
             width = 103,
             height = 40)
 
-        #### BOTÃO INSERT ####
+        #### BOTÃO INSERT ORDEM DE SERVIÇO####
         img_tlPrincipal_btnInsert = PhotoImage(file="./img/img_tlPrincipal_btnInsert.png")
         btnInsertOS_tlPrincipal = Button(
             image = img_tlPrincipal_btnInsert,
@@ -331,7 +333,7 @@ class LoginGUI:
             width = 81,
             height = 97)
 
-        #### BOTÃO CADASTRAR CLIENTE ####
+        #### BOTÃO CADASTRAR CLIENTE ORDEM DE SERVIÇO ####
         img_tlPrincipal_btnCadCliente = PhotoImage(file="./img/img_tlPrincipal_btnCadCliente.png")
         btnCadCliente_tlPrincipal = Button(
             image = img_tlPrincipal_btnCadCliente,
@@ -345,7 +347,7 @@ class LoginGUI:
             width = 138,
             height = 60)
 
-        #### BOTÃO CADASTRAR SERVIÇO ####
+        #### BOTÃO CADASTRAR SERVIÇO ORDEM DE SERVIÇO####
         img_tlPrincipal_btnCadServico = PhotoImage(file="./img/img_tlPrincipal_btnCadServico.png")
         btnCadServ_tlPrincipal = Button(
             image = img_tlPrincipal_btnCadServico,
@@ -358,14 +360,15 @@ class LoginGUI:
             x = 809, y = 145,
             width = 138,
             height = 60)
-
+        
+            
         #### BOTÃO FINANCEIRO ####
         img_tlPrincipal_btnFinanceiro = PhotoImage(file="./img/img_tlPrincipal_btnFinanceiro.png")
         btnFinanceiro_tlPrincipal = Button(
             image = img_tlPrincipal_btnFinanceiro,
             borderwidth = 0,
             highlightthickness = 0,
-            #command ='',
+            command = self.gerarRelatorioOrdensNAOfaturadas,
             relief = "flat")
 
         btnFinanceiro_tlPrincipal.place(
@@ -444,6 +447,11 @@ class LoginGUI:
         self.telaPrincipal.resizable(False, False)
         self.telaPrincipal.mainloop()
     
+    
+    def abrir_janela_financeiro(self):
+        self.manipular_telaFinanceiro.criarTelaFinanceiro()
+
+            
     ############# CRIANDO TELA CADASTRO DE SERVIÇOS #############
     def criar_TelaCadServ(self):
         
@@ -856,32 +864,21 @@ class LoginGUI:
             return self.username  # Retorna o nome do usuário logado
  
     
-    ############## FUNÇÕES TELA PRINCIPAL ORDEM DE SERVIÇOS ##############
+    #@@@@@@@@@@@@@@@@ FUNÇÕES TELA PRINCIPAL ORDEM DE SERVIÇOS @@@@@@@@@@@@@@@@@#
+    
     def pegandoValoresTelaPrincipalOS(self):
-        dtServico = self.input_DataOS.get()
-        codCliente = int(self.input_CodCliente.get().strip())
-        cliente = self.input_Cliente.get().strip().upper()
-        codServico = int(self.input_CodServ.get().strip())
-        descrServico = self.input_DescricaoServ.get().strip().upper()
-        descComplementar = self.input_DescrCompl.get('1.0', 'end-1c')  # Usar '1.0' e 'end-1c' para er todo o conteúdo
-        quantidade = int(self.input_Quantidade.get())
-        vlrUnit = self.input_VlrUnitario.get()
-        total = float(self.input_VlrTotal.get())
-        faturado = self.input_Faturado.get()
+        os_dtServico = self.input_DataOS.get()
+        os_codCliente = int(self.input_CodCliente.get().strip())
+        os_cliente = self.input_Cliente.get().strip().upper()
+        os_codServico = int(self.input_CodServ.get().strip())
+        os_descrServico = self.input_DescricaoServ.get().strip().upper()
+        os_quantidade = int(self.input_Quantidade.get())
+        os_vlrUnit = self.input_VlrUnitario.get()
+        os_total = float(self.input_VlrTotal.get())
+        os_faturado = self.input_Faturado.get()
+        os_descComplementar = self.input_DescrCompl.get('1.0', 'end-1c')
 
-        os_values = {
-            'dtServico': dtServico,
-            'codCliente': codCliente,
-            'cliente': cliente,
-            'codServico': codServico,
-            'descServico': descrServico,
-            'descComplementar': descComplementar,
-            'quantidade': quantidade,
-            'vlrUnit': vlrUnit,
-            'total': total,
-            'os_faturado': faturado
-        }
-        return os_values
+        return os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_faturado, os_descComplementar
 
     def _preencherFaturado(self, faturado):
         self.input_Faturado.configure(state="normal")
@@ -892,15 +889,15 @@ class LoginGUI:
     def preencheCliente(self, event):
         if event.keysym == "Tab":
 
-            l_codCliente = self.manipular_ordens.consultarCompletaTabelaClientesValores()
+            list_tv_cliente = self.manipular_ordens.consultarCompletaTabelaClientes()
             
             input_codCliente = int(self.input_CodCliente.get())
             
-            for index, cliente in enumerate(l_codCliente):
-                
-                codCliente = int(cliente[0])
-                nomeCliente = str(cliente[1])
-                
+            for index, cliente in enumerate(list_tv_cliente ):
+                print(f'index e cliente{index}, {cliente}')
+                codCliente = int(cliente[1])
+                nomeCliente = str(cliente[2])
+                print(f' código e nome{codCliente}, {nomeCliente}')
                 if codCliente == input_codCliente:
                     self.input_Cliente.configure(state="normal")
                     self.input_Cliente.delete(0, END)
@@ -931,9 +928,9 @@ class LoginGUI:
             
             for index, servicos in enumerate(l_codServDescrServVlrUnit):
                 
-                codServ = int(servicos[0])
-                descrServ = str(servicos[1])
-                valorUnit = servicos[2]
+                codServ = int(servicos[1])
+                descrServ = str(servicos[2])
+                valorUnit = servicos[3]
                 
                 if codServ == input_codServ:
                     self._preencherDescricaoServicos(descrServ)
@@ -957,29 +954,11 @@ class LoginGUI:
             self.input_VlrTotal.configure(state="readonly")
             
 
-    def inserir_OrdemServico(self):
-        dictInputValoresTelaPrincipal = self.pegandoValoresTelaPrincipalOS()
-
-        dtServico = dictInputValoresTelaPrincipal['dtServico']
-        codCliente = dictInputValoresTelaPrincipal['codCliente']
-        cliente = dictInputValoresTelaPrincipal['cliente']
-        codServico = dictInputValoresTelaPrincipal['codServico']
-        descServico = dictInputValoresTelaPrincipal['descServico']
-        qtd = dictInputValoresTelaPrincipal['quantidade']
-        vlrUnit = dictInputValoresTelaPrincipal['vlrUnit']
-        total = dictInputValoresTelaPrincipal['total']
-        descrComplementar = dictInputValoresTelaPrincipal['descComplementar']
-        faturado = dictInputValoresTelaPrincipal['os_faturado']
-
-        cursor = self.db_manager.get_cursor()
-
-        cursor.execute("INSERT INTO tb_ordens_servicos (os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado) VALUES (?, ?, ?, ?, ?, ?, ?, ? ,?, ?)", (dtServico, codCliente, cliente, codServico, descServico, qtd, vlrUnit, total, descrComplementar, faturado))
-       
-        # Confirmar a transação
-        self.db_manager.connection.commit()
-        self.resize_columns()
-    
+    def cadastrarOrdemServicos(self):
+        os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_faturado, os_descComplementar = self.pegandoValoresTelaPrincipalOS()
         
+        self.manipular_ordens.inserirOrdemServicosDB(os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado)
+       
     def mostrarOrdensServico_TelaPrincipal(self):
         cursor = self.db_manager.get_cursor()
 
@@ -997,12 +976,13 @@ class LoginGUI:
             self.treeview.insert("", "0", values=(os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado))
 
         # Redimensionar as colunas para ajustar o conteúdo
-        self.resize_columns()
+        #self.resize_columns()
 
     def atualizar_VizualizacaoTelaPrincipal(self):
-        self.inserir_OrdemServico()
+        self.cadastrarOrdemServicos()
         self.mostrarOrdensServico_TelaPrincipal()
         self.mostrar_alerta('Sucesso', 'Serviço inserido com sucesso!')
+        self.resize_columns()
 
     
     #@@@@@@@@@@@@@@@@@@@ FUNÇÕES TELA CADASTRO SERVIÇOS @@@@@@@@@@@@@@@@@#
@@ -1391,7 +1371,7 @@ class LoginGUI:
         self.treeview_tlClientes.delete(*self.treeview_tlClientes.get_children())
 
         # Realiza a consulta à tabela de CLIENTES
-        listandoClientes = self.manipular_ordens.consultarCompletaTabelaClientesValores()
+        listandoClientes = self.manipular_ordens.consultarCompletaTabelaClientes()
 
         # Itera sobre os resultados da consulta e insere na tabela
         for resultado in listandoClientes:
@@ -1589,6 +1569,10 @@ class LoginGUI:
         None
         """
         self.manipular_relatorios.gerarRelatorioCadCliente('Relatório dos Clientes Cadastrados.pdf')
+        
+    ############### FINANCEIRO ###################
+    def gerarRelatorioOrdensNAOfaturadas(self):
+        self.manipular_relatorios.gerarRelatorioOdensServicoNAOfaturadas('Relatório Ordens há faturar.pdf')
             
     ############### FUNÇÕES GERAIS ###############
     

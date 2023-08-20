@@ -104,3 +104,51 @@ class ManipularCriacaodeRelatorios():
         
         # Abrir o PDF no navegador padrão
         webbrowser.open(output_file, new=2)
+        
+    def gerarRelatorioOdensServicoNAOfaturadas(self, output_file):
+        
+        # Conectar ao banco de dados
+        cursor = self.db_manager.get_cursor()
+
+        # Obter os dados da tabela
+        cursor.execute("SELECT os_cliente, os_codServico, os_descServico, SUM(os_qtd) as total_quantidade, SUM(os_vlrUnit) as total_valor_unitario, SUM(os_total) as total_valor_total FROM tb_ordens_servicos WHERE os_faturado = 'NÃO' GROUP BY os_cliente, os_codServico, os_descServico ORDER BY os_cliente, os_codServico")
+        
+        data = cursor.fetchall()
+
+        # Configurações de estilo
+        styles = getSampleStyleSheet()
+        title_style = styles['Heading1']
+        footer_style = styles['Normal']
+
+        # Criar um documento PDF
+        doc = SimpleDocTemplate(output_file, pagesize=pagesizes.A4,
+                                topMargin=1.5*units.cm, bottomMargin=1.5*units.cm)
+        elements = []
+
+        # Título do PDF centralizado
+        title = Paragraph("Relatório Ordens a Faturar", title_style)
+        title.alignment = TA_CENTER
+        elements.append(title)        
+        elements.append(Spacer(1, 20))  # Espaço entre o título e a tabela
+
+        # Criar a tabela com os dados do banco de dados
+        table_data = [['ID', 'Data', 'CódCliente', 'Cliente', 'Cód_Serv', 'Descrição Serviço', 'Qtd', 'Valor Unitários', 'Valor Total', 'Descrição Complementar', 'Sit_Faturamento']]
+        table_data.extend(data)
+
+        table = Table(table_data)
+        table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                                   # ... (estilos da tabela)
+                                   ('GRID', (0, 0), (-1, -1), 1, colors.black)]))
+        elements.append(table)
+        
+        elements.append(Spacer(1, 20))  # Espaço entre a tabela e o rodapé
+
+        # Espaçamento para o rodapé
+        footer_text = "Gerado em: {}".format(datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
+        footer = Paragraph(footer_text, footer_style)
+        elements.append(footer)
+
+        doc.build(elements)
+        
+        # Abrir o PDF no navegador padrão
+        webbrowser.open(output_file, new=2)
