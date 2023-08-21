@@ -41,6 +41,7 @@ def processar_xml():
 
 window = Tk()
 
+window.title('')
 window.geometry("496x315")
 window.configure(bg = "#ffffff")
 canvas = Canvas(
