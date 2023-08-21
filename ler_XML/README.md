@@ -16,9 +16,9 @@
   Após feito e testado o programa gerei o arquivo de distribuição para poder criar o executável e poder instalar em qualquer computador, o mesmo está disponível neste diretório:
   <strong>
 
-  [Link para baixar o executável.](https://github.com/CatiusciScheffer/Python/tree/main/ler_XML/output)
+  [Link para baixar o executável.](https://github.com/CatiusciScheffer/Python/tree/main/ler_XML/arquivo_Executavel)
   
   </strong>
 
-  Basta baixar a pasta main e todos os arquivos dela e executar o arquivo main.exe.
+  Basta baixar a pasta LeitorXML e todos os arquivos dela e executar o arquivo LeitorXML.exe.
 </div>
