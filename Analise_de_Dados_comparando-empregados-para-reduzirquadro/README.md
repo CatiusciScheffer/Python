@@ -4,9 +4,7 @@
 
  Então analisei essas informações obtendo os número para a descisão ser justa.
 
-Para visualizar todas as análises:
-
-###[Clique aqui para ver todas as análises.](https://github.com/CatiusciScheffer/Python/blob/main/comparando-empregados-para-reduzirquadro/dadosAusenciasEmpregados.ipynb)
+Para visualizar todas as análises: [Clique aqui!](https://github.com/CatiusciScheffer/Python/blob/main/Analise_de_Dados_comparando-empregados-para-reduzirquadro/dadosAusenciasEmpregados.ipynb)
 
 <hr>
 
