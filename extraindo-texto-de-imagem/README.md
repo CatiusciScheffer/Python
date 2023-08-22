@@ -10,6 +10,6 @@ Me atende a já me ajudou uitas vezes, faço print da minha tela mesmo do docume
 
 Tentei fazer bem simples e intuitivo pois não serei eu apenas a usar, então clicamos no primeiro botão para selecionar o arquivo de imagem e após selecionar o arquivo basta clicar no botão de download e escolher onde salvar o arquivo de texto com nome desejado.
 
-Para utilizar basta fazer o download de todos os arquivos contidos na pasta Executavel_ConvertIMGtoTXT neste link abaixo e após download, executar o arquivo chamado 'conversorIMGtoTXT.exe'.
+Para utilizar basta fazer o download da pasta Executavel_ConvertIMGtoTXT neste link abaixo e após download, executar o arquivo chamado 'conversorIMGtoTXT.exe'.
 
-  [Clique aqui para download do Conversor.](https://github.com/CatiusciScheffer/Python/tree/main/extraindo-texto-de-imagem/Executavel_ConvertIMGtoTXT)
+  [Clique em download!](https://github.com/CatiusciScheffer/Python/blob/main/extraindo-texto-de-imagem/Executavel_ConvertIMGtoTXT/conversorIMGtoTXT.rar)

@@ -13,12 +13,12 @@
 
   O uso é bem simples, basta o usuário selecionar a pasta onde tenha um arquivo ou vários arquivos xml, seleciona a pasta onde gerar o arquivo excel com as informações extraídas dos xml e clica em executar para começar o processo. No status irá aparecer o caminho onde foi salvo o excel gerado ou se der erro tambem irá aparecer neste local.
 
-  Após feito e testado o programa gerei o arquivo de distribuição para poder criar o executável e poder instalar em qualquer computador, o mesmo está disponível neste diretório:
+  Após feito e testado o programa gerei o arquivo de distribuição para poder criar o executável e poder instalar em qualquer computador, o mesmo está disponível para download no link abaixo:
   <strong>
 
-  [Link para baixar o executável.](https://github.com/CatiusciScheffer/Python/tree/main/ler_XML/arquivo_Executavel)
+  [Link para baixar o executável.](https://github.com/CatiusciScheffer/Python/blob/main/ler_XML/arquivo_Executavel/LeitorXML.rar)
   
   </strong>
 
-  Basta baixar a pasta LeitorXML e todos os arquivos dela e executar o arquivo LeitorXML.exe.
+  Basta baixar a pasta LeitorXML e executar o arquivo LeitorXML.exe.
 </div>
