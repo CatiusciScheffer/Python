@@ -6,6 +6,9 @@ from user import UserManager
 from manipulacaoOrdemServico import ManipularOrdemServicos
 from relatoriosPDF import ManipularCriacaodeRelatorios
 from window_financeiro import ManipularWindowFinanceiro
+import pyautogui
+import time
+import traceback
 
 
 
@@ -74,7 +77,7 @@ class LoginGUI:
             image = imgBtnEntrar,
             borderwidth = 0,
             highlightthickness = 0,
-            command = self.fechar_tl_login,
+            command = self.fechar_TelaLogin,
             relief = "flat")
 
         BtnEntrar.place(
@@ -83,17 +86,17 @@ class LoginGUI:
             height = 32)
         
         #Faz entrar sem clique no botão enter, apenas clicando
-        BtnEntrar.bind("<Return>", self.fechar_tl_login)
+        BtnEntrar.bind("<Return>", self.fechar_TelaLogin)
 
         self.tela_login.resizable(False, False)
         self.tela_login.mainloop()
         
-    def fechar_tl_login(self, event=None):
+    def fechar_TelaLogin(self, event=None):
         self.verificar_usuario_existente()
-        self.abrir_tl_principal()
         #self.tela_login.destroy()
+        self.criar_TelaPrincipal()
     
-    def abrir_tl_principal(self):
+    def criar_TelaPrincipal(self):
         
         self.telaPrincipal = Tk()        
         self.telaPrincipal.title(f"Cadasto de Serviços")
@@ -297,7 +300,7 @@ class LoginGUI:
             image = img_tlPrincipal_btnModificar,
             borderwidth = 0,
             highlightthickness = 0,
-            #command = btn_clicked,
+            command = self.modificarItemSelecionadoDaTabOrdemServico,
             relief = "flat")
 
         btnModifyOS_tlPrincipal.place(
@@ -311,7 +314,7 @@ class LoginGUI:
             image = img_tlPrincipal_btnDelete,
             borderwidth = 0,
             highlightthickness = 0,
-            #command = btn_clicked,
+            command = self.deletarOrdemServico_TelaPrincipal,
             relief = "flat")
 
         btnDeleteOS_tlPrincipal.place(
@@ -325,7 +328,7 @@ class LoginGUI:
             image = img_tlPrincipal_btnInsert,
             borderwidth = 0,
             highlightthickness = 0,
-            command = self.atualizar_VizualizacaoTelaPrincipal,
+            command = self.cadastrarOrdemServicos,
             relief = "flat")
 
         btnInsertOS_tlPrincipal.place(
@@ -376,6 +379,9 @@ class LoginGUI:
             width = 138,
             height = 60)
         
+        # botões que serão ocultos ao chamar a função de modificação:
+        self.botoesParaOcultar_TelaPrincipal = [btnFinanceiro_tlPrincipal, btnCadServ_tlPrincipal, btnCadCliente_tlPrincipal, btnInsertOS_tlPrincipal, btnDeleteOS_tlPrincipal, btnModifyOS_tlPrincipal]
+        
         ############# CRIANDO TREEVIEW ORDEM DE SERVIÇOS #############
               
         # Função para centralizar o texto nas células da TreeView
@@ -387,61 +393,61 @@ class LoginGUI:
             tree.tag_configure('right', anchor='e')
             
         # Criar a TreeView
-        self.treeview = ttk.Treeview(self.telaPrincipal)
+        self.treeviewTelaPrincipal = ttk.Treeview(self.telaPrincipal)
 
-        self.treeview.pack(fill="both", expand=True)
+        self.treeviewTelaPrincipal.pack(fill="both", expand=True)
 
         # Configurar as colunas com largura e alinhamento
-        self.treeview["columns"] = ("ID","Data", "CodCliente", "Cliente", "CodServ", "DescrServico", "QTD", "ValorUnit", "ValorTotal", "DescComplementar", "Faturado")
+        self.treeviewTelaPrincipal["columns"] = ("ID","Data", "CodCliente", "Cliente", "CodServ", "DescrServico", "QTD", "ValorUnit", "ValorTotal", "DescComplementar", "Faturado")
         
-        self.treeview.column("#0", width=0, stretch=tk.NO)  # Coluna de ícones (não visível)
-        self.treeview.column("ID", width=50, anchor="center")
-        self.treeview.column("Data", width=70, anchor="center")
-        self.treeview.column("CodCliente", width=70, anchor="center")
-        self.treeview.column("Cliente", width=200, anchor="w")
-        self.treeview.column("CodServ", width=70, anchor="center")
-        self.treeview.column("DescrServico", width=146, anchor="w")
-        self.treeview.column("QTD", width=38, anchor="e")
-        self.treeview.column("ValorUnit", width=65, anchor="e")
-        self.treeview.column("ValorTotal", width=65, anchor="e")
-        self.treeview.column("DescComplementar", width=200, anchor="w")
-        self.treeview.column("Faturado", width=70, anchor="center")
-        #self.treeview.column("Resp", width=100, anchor="center")
+        self.treeviewTelaPrincipal.column("#0", width=0, stretch=tk.NO)  # Coluna de ícones (não visível)
+        self.treeviewTelaPrincipal.column("ID", width=50, anchor="center")
+        self.treeviewTelaPrincipal.column("Data", width=70, anchor="center")
+        self.treeviewTelaPrincipal.column("CodCliente", width=70, anchor="center")
+        self.treeviewTelaPrincipal.column("Cliente", width=200, anchor="w")
+        self.treeviewTelaPrincipal.column("CodServ", width=70, anchor="center")
+        self.treeviewTelaPrincipal.column("DescrServico", width=146, anchor="w")
+        self.treeviewTelaPrincipal.column("QTD", width=38, anchor="e")
+        self.treeviewTelaPrincipal.column("ValorUnit", width=65, anchor="e")
+        self.treeviewTelaPrincipal.column("ValorTotal", width=65, anchor="e")
+        self.treeviewTelaPrincipal.column("DescComplementar", width=200, anchor="w")
+        self.treeviewTelaPrincipal.column("Faturado", width=70, anchor="center")
+        #self.treeviewTelaPrincipal.column("Resp", width=100, anchor="center")
 
         # Definir as colunas que serão exibidas
-        self.treeview.heading("#0", text="", anchor="w")  # Coluna de ícones (não visível)
-        self.treeview.heading("ID", text="ID", anchor="center")
-        self.treeview.heading("Data", text="Data", anchor="center")
-        self.treeview.heading("CodCliente", text="Cód.Cliente", anchor="center")
-        self.treeview.heading("Cliente", text="Cliente", anchor="center")
-        self.treeview.heading("CodServ", text="Cód.Serv.", anchor="center")
-        self.treeview.heading("DescrServico", text="Descrição Serviço", anchor="center")
-        self.treeview.heading("QTD", text="QTD", anchor="center")
-        self.treeview.heading("ValorUnit", text="Valor Unit.", anchor="center")
-        self.treeview.heading("ValorTotal", text="Valor Total", anchor="center")
-        self.treeview.heading("DescComplementar", text="Descrição Complementar", anchor="center")
-        self.treeview.heading("Faturado", text="Faturado", anchor="center")
-        #self.treeview.heading("Resp", text="Responsável", anchor="center")
+        self.treeviewTelaPrincipal.heading("#0", text="", anchor="w")  # Coluna de ícones (não visível)
+        self.treeviewTelaPrincipal.heading("ID", text="ID", anchor="center")
+        self.treeviewTelaPrincipal.heading("Data", text="Data", anchor="center")
+        self.treeviewTelaPrincipal.heading("CodCliente", text="Cód.Cliente", anchor="center")
+        self.treeviewTelaPrincipal.heading("Cliente", text="Cliente", anchor="center")
+        self.treeviewTelaPrincipal.heading("CodServ", text="Cód.Serv.", anchor="center")
+        self.treeviewTelaPrincipal.heading("DescrServico", text="Descrição Serviço", anchor="center")
+        self.treeviewTelaPrincipal.heading("QTD", text="QTD", anchor="center")
+        self.treeviewTelaPrincipal.heading("ValorUnit", text="Valor Unit.", anchor="center")
+        self.treeviewTelaPrincipal.heading("ValorTotal", text="Valor Total", anchor="center")
+        self.treeviewTelaPrincipal.heading("DescComplementar", text="Descrição Complementar", anchor="center")
+        self.treeviewTelaPrincipal.heading("Faturado", text="Faturado", anchor="center")
+        #self.treeviewTelaPrincipal.heading("Resp", text="Responsável", anchor="center")
 
         # Aplicar formatação de alinhamento
-        center_aligned_text(self.treeview)
-        right_aligned_text(self.treeview)
+        center_aligned_text(self.treeviewTelaPrincipal)
+        right_aligned_text(self.treeviewTelaPrincipal)
 
         # Posicionar a TreeView na janela principal usando o place()
-        self.treeview.place(x=13, y=322, height=369, width=957)
+        self.treeviewTelaPrincipal.place(x=13, y=322, height=369, width=957)
 
         # Adicionar barra de rolagem vertical
-        scrollbar_y = ttk.Scrollbar(self.telaPrincipal, orient="vertical", command=self.treeview.yview)
-        self.treeview.configure(yscrollcommand=scrollbar_y.set)
+        scrollbar_y = ttk.Scrollbar(self.telaPrincipal, orient="vertical", command=self.treeviewTelaPrincipal.yview)
+        self.treeviewTelaPrincipal.configure(yscrollcommand=scrollbar_y.set)
         scrollbar_y.place(x=969, y=323, height=367)
 
         # Adicionar barra de rolagem horizontal
-        scrollbar_x = ttk.Scrollbar(self.telaPrincipal, orient="horizontal", command=self.treeview.xview)
-        self.treeview.configure(xscrollcommand=scrollbar_x.set)
+        scrollbar_x = ttk.Scrollbar(self.telaPrincipal, orient="horizontal", command=self.treeviewTelaPrincipal.xview)
+        self.treeviewTelaPrincipal.configure(xscrollcommand=scrollbar_x.set)
         scrollbar_x.place(x=14, y=690, width=973)
         
         self.mostrarOrdensServico_TelaPrincipal()
-        self.resize_columns()    
+        #self.resize_columns()    
             
         # Iniciar o loop principal do Tkinter
         self.telaPrincipal.resizable(False, False)
@@ -852,14 +858,14 @@ class LoginGUI:
 
         if self.user_manager.checkUsernameAndPasswordRegistered(input_usuario, input_senha):
             self.tela_login.destroy()
-            #self.abrir_tl_principal()
+            #self.criar_TelaPrincipal()
             self.username = input_usuario
             return self.username  # Retorna o nome do usuário logado
         else:
             self.user_manager.registerNewUser(input_usuario, input_senha)
             self.mostrar_alerta("Cadastro de Usuário", f" ☻ Usuário(a) {input_usuario} cadastrado com sucesso!")
             self.tela_login.destroy()
-            #self.abrir_tl_principal()
+            #self.criar_TelaPrincipal()
             self.username = input_usuario
             return self.username  # Retorna o nome do usuário logado
  
@@ -878,8 +884,116 @@ class LoginGUI:
         os_faturado = self.input_Faturado.get()
         os_descComplementar = self.input_DescrCompl.get('1.0', 'end-1c')
 
-        return os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_faturado, os_descComplementar
+        return os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado
 
+    def pegarValoresLinhaSelecionadaDaTabelaOrdemServico(self):
+        itemSelecionadoTbOrdemServicos = self.treeviewTelaPrincipal.selection()
+        
+        item = self.treeviewTelaPrincipal.item(itemSelecionadoTbOrdemServicos, 'values')
+        
+        os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado = item
+        
+        return os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado
+    
+    def _verificarSeCamposTelaOrdemServicosPreenchidos(self):
+        
+        os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_faturado, os_descComplementar = self.pegandoValoresTelaPrincipalOS()
+        
+        # Retorna True se todos os campos estiverem preenchidos, caso contrário, retorna False
+        return bool(os_dtServico and os_codCliente and os_cliente and os_codServico and os_descrServico and os_quantidade and os_vlrUnit and os_total and os_faturado and os_descComplementar)
+    
+    def _limparTelaPrincipal(self):
+        self.input_CodCliente.delete(0,'end')
+        self.input_Cliente.delete(0, 'end')
+        self.input_CodServ.delete(0, 'end')
+        self.input_DescricaoServ.delete(0,'end')
+        self.input_Quantidade.delete(0, 'end')
+        self.input_VlrUnitario.delete(0, 'end')
+        self.input_VlrTotal.delete(0, 'end')
+        self.input_Faturado.delete(0, 'end')
+    
+    # FUNÇÃO BOTÃO MODIFICAR TELA PRINCIPAL
+    def modificarItemSelecionadoDaTabOrdemServico(self): 
+        try:
+            # Obtém os valores da linha selecionada na tabela de serviços
+            os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado = self.pegarValoresLinhaSelecionadaDaTabelaOrdemServico()
+            
+            print(f'id{type(os_id)}\n, data{type(os_dtServico)}\n, codCliente{type(os_codCliente)}\n, cliente{type(os_cliente)}\n, codServ{type(os_codServico)}\n, descServ{type(os_descrServico)}\n, qtd{type(os_quantidade)}\n, unit{type(os_vlrUnit)}\n, total{type(os_total)}\n, faturado{type(os_faturado)}\n, descricao{type(os_descComplementar)}\n')
+            
+            # Preenche os campos com os valor do item selecionado na lista
+            self.input_DataOS.delete(0, 'end')
+            self.input_DataOS.insert(0, os_dtServico)
+            
+            self.input_CodCliente.delete(0, 'end')  
+            self.input_CodCliente.insert(0, os_codCliente)
+            
+            self.input_CodServ.delete(0, 'end')
+            self.input_CodServ.insert(0, os_codServico)
+            
+            self.input_Quantidade.delete(0, 'end')
+            self.input_Quantidade.insert(0, os_quantidade)
+            
+            self.input_VlrUnitario.delete(0, 'end')
+            self.input_VlrUnitario.insert(0, os_vlrUnit)
+                        
+            self.input_DescrCompl.delete('1.0', 'end-1c')
+            self.input_DescrCompl.insert('1.0', os_descComplementar)
+            
+            self.input_Faturado.delete(0, 'end')
+            self.input_Faturado.insert(0, os_faturado)
+            
+            #Remove os botões anteriores e cria um botão "Salvar Modificações"
+            self._apagarListaBotoes(self.botoesParaOcultar_TelaPrincipal)
+            self._criarBotaoSalvarModificacoes(self.telaPrincipal, self.validarModificacoesTelaPrincipal, 712, 188)
+            
+            return True
+        
+        except Exception as e:
+            # Obter a traceback do erro
+            traceback_str = traceback.format_exc()
+
+            # Exibir a mensagem de erro e a traceback
+            self.mostrar_alerta('Erro', f'O seguinte erro ocorreu:\n{e}\n\nTraceback:\n{traceback_str}')
+            return False
+        
+    # FUNÇÃO BOTÃO SALVAR MODIFICAÇÕES TELA PRINCIPAL   
+    def validarModificacoesTelaPrincipal(self):
+        try:
+            dtServico, codCliente, cliente, codServico, descrServico, quantidade, vlrUnit, total, descComplementar, faturado = self.pegandoValoresTelaPrincipalOS()
+            
+            dtServico = dtServico
+            codCliente = codCliente
+            cliente = cliente.strip().upper()
+            codServico = codServico
+            descrServico = descrServico.strip().upper()
+            quantidade = quantidade
+            vlrUnit = vlrUnit
+            vlrUnit = vlrUnit.replace(",", ".")           
+            total = total
+            faturado = faturado.strip().upper()
+            descComplementar = descComplementar.strip().upper()
+            
+            if not self._verificarSeCamposTelaOrdemServicosPreenchidos:
+                self.mostrar_alerta("Campos Vazios", "Por favor, preencha todos os campos.")
+                return False
+            
+            # Obter o serviço selecionado na tabela
+            os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado = self.pegarValoresLinhaSelecionadaDaTabelaOrdemServico()
+            
+            # Modificar o serviço no banco de dados
+            if self.manipular_ordens.editarOrdemServicoPeloIDOrdensServicosDB(os_id, dtServico, codCliente, cliente, codServico, descrServico, quantidade, vlrUnit, total, descComplementar, faturado):
+                # Atualizar a tela de cadastro e limpar os campos
+                self._limparTelaPrincipal()
+                self._atualizarTelaPrincipal()
+                return True
+            else:
+                return False
+        except Exception as e:
+            traceback_str = traceback.format_exc()
+            #Exibir a mensagem de erro e a traceback
+            self.mostrar_alerta('Erro', f'Erro ao salvar alteração na Ordem de Serviços:\n{e}\n\nTraceback:\n{traceback_str}')
+            return False
+            
     def _preencherFaturado(self, faturado):
         self.input_Faturado.configure(state="normal")
         self.input_Faturado.delete(0, END)
@@ -918,7 +1032,6 @@ class LoginGUI:
         self.input_VlrUnitario.delete(0, END)
         self.input_VlrUnitario.insert(0, valor_unitario)  
         
-                    
     def preencheDescrServicoEvalorUnitario(self, event):
         if event.keysym == "Tab":
 
@@ -947,18 +1060,26 @@ class LoginGUI:
             vlrUnitario = float(self.input_VlrUnitario.get())
             
             calcularVlrTotal = quantidade * vlrUnitario
+            vlrTotalArredondado = round(calcularVlrTotal, 2)
             
             self.input_VlrTotal.configure(state="normal")
             self.input_VlrTotal.delete(0, END)
-            self.input_VlrTotal.insert(0, calcularVlrTotal)
+            self.input_VlrTotal.insert(0, vlrTotalArredondado)
             self.input_VlrTotal.configure(state="readonly")
             
 
     def cadastrarOrdemServicos(self):
-        os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_faturado, os_descComplementar = self.pegandoValoresTelaPrincipalOS()
+        os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado = self.pegandoValoresTelaPrincipalOS()
         
         self.manipular_ordens.inserirOrdemServicosDB(os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado)
-       
+
+        self.mostrar_alerta('Sucesso', 'Serviço inserido com sucesso!')
+        
+        self._atualizarTelaPrincipal()
+        
+    def fechar_TelaPrincipal(self):
+        self.telaPrincipal.destroy()
+    
     def mostrarOrdensServico_TelaPrincipal(self):
         cursor = self.db_manager.get_cursor()
 
@@ -968,23 +1089,62 @@ class LoginGUI:
         resultados = cursor.fetchall()
 
         # Limpar a Treeview antes de adicionar os novos registros
-        self.treeview.delete(*self.treeview.get_children())
+        self.treeviewTelaPrincipal.delete(*self.treeviewTelaPrincipal.get_children())
 
         # Iterar sobre os resultados e adicioná-los à Treeview no início (índice "0")
         for resultado in resultados:
-            os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado = resultado
-            self.treeview.insert("", "0", values=(os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado))
+            os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado, = resultado
+            self.treeviewTelaPrincipal.insert("", "0", values=(os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado))
 
         # Redimensionar as colunas para ajustar o conteúdo
         #self.resize_columns()
 
-    def atualizar_VizualizacaoTelaPrincipal(self):
-        self.cadastrarOrdemServicos()
-        self.mostrarOrdensServico_TelaPrincipal()
-        self.mostrar_alerta('Sucesso', 'Serviço inserido com sucesso!')
-        self.resize_columns()
+    #FUNÇÃO BOTÃO DELETAR NA TELA PRINCIPAL ORDEM DE SERVIÇOS
+    def deletarOrdemServico_TelaPrincipal(self):
+        """
+        Deleta uma ordem de serviço da tabela na principal.
 
+        Este método permite a exclusão de uma ordem de serviço selecionado da tabela de ordem de serviço.
+        Ele confirma a exclusão com o usuário, realiza a exclusão no banco de dados e atualiza a tabela.
+
+        Parâmetros:
+        Nenhum
+
+        Retorna:
+        Nenhum
+        """
+        # Obtém o item selecionado na tabela
+        selected_item = self.treeviewTelaPrincipal.selection()
+        
+        # Verifica se algum item foi selecionado
+        if not selected_item:
+            self.mostrar_alerta("Nenhum item selecionado", "Por favor, selecione um item para deletar.")
+            self._atualizarTelaPrincipal()
+            return
+        
+        # Obtém informações do item selecionado
+        os_id,os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_faturado, os_descComplementar = self.pegarValoresLinhaSelecionadaDaTabelaOrdemServico()
+        
+        # Confirmação de exclusão com o usuário
+        if self.confirmar_exclusao(os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total):
+            # Deleta o serviço do banco de dados
+            if self.manipular_ordens.deletarOrdemServicoDB(os_id):
+                # Remove o item da tabela
+                self.treeviewTelaPrincipal.delete(selected_item)
+                self.mostrar_sucesso(f'Exclusão bem sucedida do seguinte item, Cliente: {os_cliente}, Serviço: {os_descrServico}, Valor Total: {os_total}')
+            else:
+                self.mostrar_erro("Ocorreu um erro ao tentar deletar Ordem de Serviços.")
+        else:
+            self.mostrar_alerta("Cancelado", "A exclusão foi cancelada pelo usuário.")
+        
+        # Atualiza a tela de cadastro de serviços
+        self._atualizarTelaPrincipal()
     
+    
+    def _atualizarTelaPrincipal(self):
+        self.fechar_TelaPrincipal()
+        self.criar_TelaPrincipal()
+            
     #@@@@@@@@@@@@@@@@@@@ FUNÇÕES TELA CADASTRO SERVIÇOS @@@@@@@@@@@@@@@@@#
     def abrirTelaCadServ(self, event=None):
         """
@@ -1251,7 +1411,7 @@ class LoginGUI:
         
         except Exception as e:
             # Exibe uma mensagem de alerta e recria a tela caso ocorra um erro
-            self.mostrar_alerta('Atenção', f'Selecione uma linha da tabela abaixo:')
+            self.mostrar_alerta('Atenção', f'Selecione uma linha da tabela abaixo:\n{e}')
             self.fechar_TelaCadServ()
             self.criar_TelaCadServ() 
             return False
@@ -1294,37 +1454,6 @@ class LoginGUI:
         except Exception as e:
             self.mostrar_alerta("Erro", f"Erro ao salvar: {e}")
             return False
-            
-    def _criarBotaoSalvarModificacoes(self, janela, comando, posicaoX, posicaoY):
-        """
-        Cria e posiciona um botão para salvar modificações na tela ativa no momento.
-
-        Parâmetros:
-        janela (Tk): A janela da interface gráfica onde o botão será colocado.
-        comando (function): A função que será executada quando o botão for clicado.
-
-        Retorna:
-        None
-        """
-        # Carrega a imagem do botão "Salvar Modificações" a partir de um arquivo
-        self.img_btnSalvarModificacoes = PhotoImage(file="./img/img_btnSalvarModificacoes.png")
-
-        # Cria um botão usando a imagem carregada e configura seus atributos
-        self.btnSalvarModificacoes = Button(
-            janela,
-            image=self.img_btnSalvarModificacoes,
-            borderwidth=0,
-            highlightthickness=0,
-            command=comando,
-            relief="flat"
-        )
-
-        # Posiciona o botão na janela usando coordenadas e define as dimensões
-        self.btnSalvarModificacoes.place(
-            x=posicaoX, y=posicaoY,
-            width=139,
-            height=30
-        )            
     
     def _atualizarTelaCadServ(self):
         """
@@ -1339,7 +1468,7 @@ class LoginGUI:
         Retorna:
         None
         """
-        self.resize_columns()  # Redimensiona as colunas da tabela
+        #self.resize_columns()  # Redimensiona as colunas da tabela
         self.mostrarTabelaServicos_TelaCadServ()  # Mostra a tabela de serviços
         self.fechar_TelaCadServ()  # Fecha a tela de cadastro de serviços
         self.criar_TelaCadServ()  # Recria a tela de cadastro de serviços 
@@ -1389,7 +1518,7 @@ class LoginGUI:
         self.inputNotasIsentas_tlCadCliente.delete(0, 'end')
         
     def _atualizarTelaCadCliente(self):
-        self.resize_columns()  # Redimensiona as colunas da tabela
+        #self.resize_columns()  # Redimensiona as colunas da tabela
         self.mostrarTabelaClientes_TelaCadClientes()  # Mostra a tabela de serviços
         self.fechar_TelaCadCliente()  # Fecha a tela de cadastro de serviços
         self.abrirTelaCadCliente()  # Recria a tela de cadastro de serviços 
@@ -1522,7 +1651,7 @@ class LoginGUI:
             else:
                 return False
         except Exception as e:
-            self.mostrar_alerta("Erro", f"Erro ao salvar modificação do Cliente {nomeCliente}:\nErro:{e}")
+            self.mostrar_alerta("Erro", f"Erro ao salvar modificação do Cliente!\nErro:{e}")
             return False
             
     ### FUNÇÃO DELETAR CLIENTE ###    
@@ -1620,30 +1749,30 @@ class LoginGUI:
         """
         self.tela_login.mainloop()
         
-    def resize_columns(self):
-        """
-        Redimensiona dinamicamente as colunas de um widget Treeview para acomodar o conteúdo.
+    # def resize_columns(self):
+    #     """
+    #     Redimensiona dinamicamente as colunas de um widget Treeview para acomodar o conteúdo.
 
-        Para cada coluna do widget Treeview, esta função redefine o texto do cabeçalho para centralizar
-        corretamente e calcula a largura ideal da coluna com base no maior comprimento do conteúdo da coluna.
-        Uma largura mínima também é definida para garantir que a coluna seja sempre visível.
+    #     Para cada coluna do widget Treeview, esta função redefine o texto do cabeçalho para centralizar
+    #     corretamente e calcula a largura ideal da coluna com base no maior comprimento do conteúdo da coluna.
+    #     Uma largura mínima também é definida para garantir que a coluna seja sempre visível.
 
-        Parâmetros:
-        Nenhum
+    #     Parâmetros:
+    #     Nenhum
 
-        Retorna:
-        None
-        """
-        for col in self.treeview["columns"]:
-            self.treeview.heading(col, text=col, anchor="center")  # Redefinir o texto do cabeçalho para alinhar corretamente
+    #     Retorna:
+    #     None
+    #     """
+    #     for col in self.treeview["columns"]:
+    #         self.treeview.heading(col, text=col, anchor="center")  # Redefinir o texto do cabeçalho para alinhar corretamente
 
-            # Calcular a largura ideal da coluna com base no maior comprimento do conteúdo da coluna
-            col_width = max(len(self.treeview.set(row, col)) for row in self.treeview.get_children()) * 10
+    #         # Calcular a largura ideal da coluna com base no maior comprimento do conteúdo da coluna
+    #         col_width = max(len(self.treeview.set(row, col)) for row in self.treeview.get_children()) * 10
             
-            # Definir uma largura mínima para a coluna
-            col_width = max(col_width, 100)
+    #         # Definir uma largura mínima para a coluna
+    #         col_width = max(col_width, 100)
 
-            self.treeview.column(col, width=col_width)  # Redimensionar a coluna
+    #         self.treeview.column(col, width=col_width)  # Redimensionar a coluna
         
     def _verificarValor_Inteiro(self, valorInteiro):
         """
@@ -1685,7 +1814,7 @@ class LoginGUI:
         # Aceitar apenas texto (não vazio)
         return len(valor.strip()) > 0
         
-    def confirmar_exclusao(self, variavelMSGErro):
+    def confirmar_exclusao(self, *variavelMSGErro):
         """
         Exibe uma caixa de diálogo de confirmação para verificar se o usuário deseja excluir.
 
@@ -1710,7 +1839,7 @@ class LoginGUI:
         Retorna:
         None
         """
-        self.mostrar_alerta("Sucesso", f"O item selecionado {variavelMSG} foi deletado com sucesso.")
+        self.mostrar_alerta("Sucesso", f"{variavelMSG}")
 
     def mostrar_erro(self, mensagem):
         """
@@ -1724,8 +1853,37 @@ class LoginGUI:
         """
         self.mostrar_alerta("Erro", mensagem)
 
-     
-        
+    def _criarBotaoSalvarModificacoes(self, janela, comando, posicaoX, posicaoY):
+        """
+        Cria e posiciona um botão para salvar modificações na tela ativa no momento.
+
+        Parâmetros:
+        janela (Tk): A janela da interface gráfica onde o botão será colocado.
+        comando (function): A função que será executada quando o botão for clicado.
+
+        Retorna:
+        None
+        """
+        # Carrega a imagem do botão "Salvar Modificações" a partir de um arquivo
+        self.img_btnSalvarModificacoes = PhotoImage(file="./img/img_btnSalvarModificacoes.png")
+
+        # Cria um botão usando a imagem carregada e configura seus atributos
+        self.btnSalvarModificacoes = Button(
+            janela,
+            image=self.img_btnSalvarModificacoes,
+            borderwidth=0,
+            highlightthickness=0,
+            command=comando,
+            relief="flat"
+        )
+
+        # Posiciona o botão na janela usando coordenadas e define as dimensões
+        self.btnSalvarModificacoes.place(
+            x=posicaoX, y=posicaoY,
+            width=139,
+            height=30
+        )             
+    
         
         
         

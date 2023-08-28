@@ -76,7 +76,16 @@ class ManipularOrdemServicos():
         except Exception as e:
             # Em caso de erro, imprime a mensagem de erro e retorna False
             print("Erro ao inserir ordem de serviços:", e)
-            return False  
+            return False 
+        
+    def deletarOrdemServicoDB(self, os_id):
+        try:
+            self.db_manager.cursor.execute("DELETE FROM tb_ordens_servicos WHERE os_id = ?", (os_id,))
+            self.db_manager.connection.commit()
+            return True
+        except Exception as e:
+            print("Erro no banco ao deletar Ordem de Serviço:", e)
+            return False
         
     def consultarOrdensServicoNAOFaturadas(self):
         cursor = self.db_manager.get_cursor()
@@ -87,6 +96,18 @@ class ManipularOrdemServicos():
         print(ordensNAOfaturadas)
         
         return ordensNAOfaturadas
+    
+    def editarOrdemServicoPeloIDOrdensServicosDB(self, os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado):
+        try:
+            self.db_manager.cursor.execute(
+                "UPDATE tb_ordens_servicos SET os_dtServico = ?, os_codCliente = ?, os_cliente = ?, os_codServico = ?, os_descServico = ?, os_qtd = ?, os_vlrUnit = ?, os_total = ?, os_descrComplementar = ?, os_faturado = ? WHERE os_id = ?",
+                (os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado, os_id)
+            )
+            self.db_manager.connection.commit()
+            return True
+        except Exception as e:
+            print("Erro ao modificar Ordem de Serviço_DB:", e)
+            return False
         
     #______________________________________________________#
     
