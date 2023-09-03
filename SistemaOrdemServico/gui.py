@@ -882,7 +882,7 @@ class LoginGUI:
         os_vlrUnit = self.input_VlrUnitario.get()
         os_total = float(self.input_VlrTotal.get())
         os_faturado = self.input_Faturado.get()
-        os_descComplementar = self.input_DescrCompl.get('1.0', 'end-1c')
+        os_descComplementar = self.input_DescrCompl.get('1.0', 'end-1c').upper()
 
         return os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado
 
@@ -1003,15 +1003,14 @@ class LoginGUI:
     def preencheCliente(self, event):
         if event.keysym == "Tab":
 
-            list_tv_cliente = self.manipular_ordens.consultarCompletaTabelaClientes()
+            list_tb_cliente = self.manipular_ordens.consultarCompletaTabelaClientes()
             
             input_codCliente = int(self.input_CodCliente.get())
             
-            for index, cliente in enumerate(list_tv_cliente ):
-                print(f'index e cliente{index}, {cliente}')
+            for index, cliente in enumerate(list_tb_cliente ):
                 codCliente = int(cliente[1])
                 nomeCliente = str(cliente[2])
-                print(f' código e nome{codCliente}, {nomeCliente}')
+                
                 if codCliente == input_codCliente:
                     self.input_Cliente.configure(state="normal")
                     self.input_Cliente.delete(0, END)
@@ -1019,9 +1018,9 @@ class LoginGUI:
                     self.input_Cliente.configure(state="readonly")
                     self._preencherFaturado('NÃO')
                     break
-                else:
-                    pass
-    
+            else:
+                self.mostrar_alerta('Aviso', f'Cliente não cadastrado!')
+       
     def _preencherDescricaoServicos(self, descricao):
         self.input_DescricaoServ.configure(state="normal")
         self.input_DescricaoServ.delete(0, END)
@@ -1049,8 +1048,8 @@ class LoginGUI:
                     self._preencherDescricaoServicos(descrServ)
                     self._preencherValorUnitario(valorUnit)
                     break
-                else:
-                    pass
+            else:
+                self.mostrar_alerta('Aviso', f'Serviço não cadastrado!')
                 
     def preencherValorTotal(self, event):
         
@@ -1071,11 +1070,14 @@ class LoginGUI:
     def cadastrarOrdemServicos(self):
         os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado = self.pegandoValoresTelaPrincipalOS()
         
-        self.manipular_ordens.inserirOrdemServicosDB(os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado)
+        if self._verificarSeCamposTelaOrdemServicosPreenchidos():
+            self.manipular_ordens.inserirOrdemServicosDB(os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado)
 
-        self.mostrar_alerta('Sucesso', 'Serviço inserido com sucesso!')
-        
-        self._atualizarTelaPrincipal()
+            self.mostrar_alerta('Sucesso', 'Serviço inserido com sucesso!')
+            
+            self._atualizarTelaPrincipal()
+        else:
+            self.mostrar_alerta('Erro de Preenchimento', 'Preencha todos os campos!')
         
     def fechar_TelaPrincipal(self):
         self.telaPrincipal.destroy()
