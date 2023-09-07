@@ -5,7 +5,6 @@ from tkcalendar import DateEntry
 from user import UserManager
 from manipulacaoOrdemServico import ManipularOrdemServicos
 from relatoriosPDF import ManipularCriacaodeRelatorios
-from window_financeiro import ManipularWindowFinanceiro
 import pyautogui
 import time
 import traceback
@@ -18,7 +17,6 @@ class LoginGUI:
         self.user_manager = UserManager(db_manager)
         self.manipular_ordens = ManipularOrdemServicos(db_manager)
         self.manipular_relatorios = ManipularCriacaodeRelatorios(db_manager)
-        self.manipular_telaFinanceiro = ManipularWindowFinanceiro(db_manager)
 
         self.tela_login = Tk()
         self.tela_login.title('Sistema Ordens de Serviços')
@@ -65,7 +63,7 @@ class LoginGUI:
             bd = 0,
             bg = "#d9d9d9",
             highlightthickness = 0,
-            show="☺")
+            show="*")
 
         self.input_login_senha.place(
             x = 414.0, y = 210,
@@ -123,9 +121,6 @@ class LoginGUI:
         input_DataOS_bg = canvas.create_image(
             120.0, 84.0,
             image = input_DataOS_img)
-        
-        # self.input_DataOS = tk.Label(telaPrincipal, text=f"{datetime.now()}")
-        # self.input_DataOS.pack()
         
         self.input_DataOS = DateEntry(
             bd=0,
@@ -279,7 +274,7 @@ class LoginGUI:
         
         input_DescrCompl_img = PhotoImage(file="./img/img_tlPrincipal_textDescricaoServ.png")
         input_DescrServ_bg = canvas.create_image(
-            291.0, 244.5,
+            327.5, 244.5,
             image = input_DescrCompl_img)
 
         self.input_DescrCompl = tk.Text(
@@ -288,9 +283,9 @@ class LoginGUI:
             highlightthickness = 0)
 
         self.input_DescrCompl.place(
-            x = 30.0, y = 196,
-            width = 522.0,
-            height = 95)
+            x = 30.0, y = 195,
+            width = 595.0,
+            height = 97)
 
         # CRIANDO BOTÕES TELA PRINCIPAL #
         
@@ -304,9 +299,9 @@ class LoginGUI:
             relief = "flat")
 
         btnModifyOS_tlPrincipal.place(
-            x = 656, y = 253,
-            width = 103,
-            height = 40)
+            x = 782, y = 186,
+            width = 173,
+            height = 30)
 
         #### BOTÃO DELETAR ORDEM DE SERVIÇO ####
         img_tlPrincipal_btnDelete = PhotoImage(file="./img/img_tlPrincipal_btnDelete.png")
@@ -318,9 +313,9 @@ class LoginGUI:
             relief = "flat")
 
         btnDeleteOS_tlPrincipal.place(
-            x = 656, y = 196,
-            width = 103,
-            height = 40)
+            x = 782, y = 225,
+            width = 173,
+            height = 30)
 
         #### BOTÃO INSERT ORDEM DE SERVIÇO####
         img_tlPrincipal_btnInsert = PhotoImage(file="./img/img_tlPrincipal_btnInsert.png")
@@ -332,9 +327,9 @@ class LoginGUI:
             relief = "flat")
 
         btnInsertOS_tlPrincipal.place(
-            x = 566, y = 196,
-            width = 81,
-            height = 97)
+            x = 654, y = 187,
+            width = 105,
+            height = 50)
 
         #### BOTÃO CADASTRAR CLIENTE ORDEM DE SERVIÇO ####
         img_tlPrincipal_btnCadCliente = PhotoImage(file="./img/img_tlPrincipal_btnCadCliente.png")
@@ -346,9 +341,9 @@ class LoginGUI:
             relief = "flat")
 
         btnCadCliente_tlPrincipal.place(
-            x = 809, y = 71,
-            width = 138,
-            height = 60)
+            x = 782, y = 71,
+            width = 173,
+            height = 30)
 
         #### BOTÃO CADASTRAR SERVIÇO ORDEM DE SERVIÇO####
         img_tlPrincipal_btnCadServico = PhotoImage(file="./img/img_tlPrincipal_btnCadServico.png")
@@ -360,9 +355,9 @@ class LoginGUI:
             relief = "flat")
 
         btnCadServ_tlPrincipal.place(
-            x = 809, y = 145,
-            width = 138,
-            height = 60)
+            x = 782, y = 109,
+            width = 173,
+            height = 30)
         
             
         #### BOTÃO FINANCEIRO ####
@@ -375,12 +370,40 @@ class LoginGUI:
             relief = "flat")
 
         btnFinanceiro_tlPrincipal.place(
-            x = 809, y = 220,
-            width = 138,
-            height = 60)
+            x = 782, y = 148,
+            width = 173,
+            height = 30)
+        
+        #### BOTÃO FECHAMENTO ####
+        img_tlPrincipal_btnFechamento = PhotoImage(file="./img/img_tlPrincipal_btnFechamento.png")
+        btnFechamento_tlPrincipal = Button(
+            image = img_tlPrincipal_btnFechamento,
+            borderwidth = 0,
+            highlightthickness = 0,
+            #command = self.gerarRelatorioOrdensNAOfaturadas,
+            relief = "flat")
+
+        btnFechamento_tlPrincipal.place(
+            x = 654, y = 244,
+            width = 105,
+            height = 50)
+        
+        #### BOTÃO IMPRIMIR ####
+        img_tlPrincipal_btnImprimir = PhotoImage(file="./img/img_tlPrincipal_btnImprimir.png")
+        btnImprimir_tlPrincipal = Button(
+            image = img_tlPrincipal_btnImprimir,
+            borderwidth = 0,
+            highlightthickness = 0,
+            #command = self.gerarRelatorioOrdensNAOfaturadas,
+            relief = "flat")
+
+        btnImprimir_tlPrincipal.place(
+            x = 782, y = 263,
+            width = 173,
+            height = 30)
         
         # botões que serão ocultos ao chamar a função de modificação:
-        self.botoesParaOcultar_TelaPrincipal = [btnFinanceiro_tlPrincipal, btnCadServ_tlPrincipal, btnCadCliente_tlPrincipal, btnInsertOS_tlPrincipal, btnDeleteOS_tlPrincipal, btnModifyOS_tlPrincipal]
+        self.botoesParaOcultar_TelaPrincipal = [btnFinanceiro_tlPrincipal, btnCadServ_tlPrincipal, btnCadCliente_tlPrincipal, btnInsertOS_tlPrincipal, btnDeleteOS_tlPrincipal, btnModifyOS_tlPrincipal, btnFechamento_tlPrincipal]
         
         ############# CRIANDO TREEVIEW ORDEM DE SERVIÇOS #############
               
@@ -918,7 +941,7 @@ class LoginGUI:
             # Obtém os valores da linha selecionada na tabela de serviços
             os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado = self.pegarValoresLinhaSelecionadaDaTabelaOrdemServico()
             
-            print(f'id{type(os_id)}\n, data{type(os_dtServico)}\n, codCliente{type(os_codCliente)}\n, cliente{type(os_cliente)}\n, codServ{type(os_codServico)}\n, descServ{type(os_descrServico)}\n, qtd{type(os_quantidade)}\n, unit{type(os_vlrUnit)}\n, total{type(os_total)}\n, faturado{type(os_faturado)}\n, descricao{type(os_descComplementar)}\n')
+            print(f'id{type(os_id)}/n, data{type(os_dtServico)}/n, codCliente{type(os_codCliente)}/n, cliente{type(os_cliente)}/n, codServ{type(os_codServico)}/n, descServ{type(os_descrServico)}/n, qtd{type(os_quantidade)}/n, unit{type(os_vlrUnit)}/n, total{type(os_total)}/n, faturado{type(os_faturado)}/n, descricao{type(os_descComplementar)}/n')
             
             # Preenche os campos com os valor do item selecionado na lista
             self.input_DataOS.delete(0, 'end')
@@ -944,8 +967,7 @@ class LoginGUI:
             
             #Remove os botões anteriores e cria um botão "Salvar Modificações"
             self._apagarListaBotoes(self.botoesParaOcultar_TelaPrincipal)
-            self._criarBotaoSalvarModificacoes(self.telaPrincipal, self.validarModificacoesTelaPrincipal, 712, 188)
-            
+            self._criarBotaoSalvarModificacoes(self.telaPrincipal, self.validarModificacoesTelaPrincipal, 654, 187, 105, 50, "./img/img_tlPrincipal_btnSalvarModificacao.png")
             return True
         
         except Exception as e:
@@ -953,7 +975,7 @@ class LoginGUI:
             traceback_str = traceback.format_exc()
 
             # Exibir a mensagem de erro e a traceback
-            self.mostrar_alerta('Erro', f'O seguinte erro ocorreu:\n{e}\n\nTraceback:\n{traceback_str}')
+            self.mostrar_alerta('Erro', f'O seguinte erro ocorreu:/n{e}/n/nTraceback:/n{traceback_str}')
             return False
         
     # FUNÇÃO BOTÃO SALVAR MODIFICAÇÕES TELA PRINCIPAL   
@@ -991,7 +1013,7 @@ class LoginGUI:
         except Exception as e:
             traceback_str = traceback.format_exc()
             #Exibir a mensagem de erro e a traceback
-            self.mostrar_alerta('Erro', f'Erro ao salvar alteração na Ordem de Serviços:\n{e}\n\nTraceback:\n{traceback_str}')
+            self.mostrar_alerta('Erro', f'Erro ao salvar alteração na Ordem de Serviços:/n{e}/n/nTraceback:/n{traceback_str}')
             return False
             
     def _preencherFaturado(self, faturado):
@@ -1407,13 +1429,13 @@ class LoginGUI:
             
             # Remove os botões anteriores e cria um botão "Salvar Modificações"
             self._apagarListaBotoes(self.botoesParaOcultar_TelaCadServ)
-            self._criarBotaoSalvarModificacoes(self.tlServicos, self.validarModificacoesTelaCadServ, 349, 115)
+            self._criarBotaoSalvarModificacoes(self.tlServicos, self.validarModificacoesTelaCadServ, 349, 115, 139, 30, "./img/img_btnSalvarModificacoes.png")
             
             return True
         
         except Exception as e:
             # Exibe uma mensagem de alerta e recria a tela caso ocorra um erro
-            self.mostrar_alerta('Atenção', f'Selecione uma linha da tabela abaixo:\n{e}')
+            self.mostrar_alerta('Atenção', f'Selecione uma linha da tabela abaixo:/n{e}')
             self.fechar_TelaCadServ()
             self.criar_TelaCadServ() 
             return False
@@ -1578,7 +1600,7 @@ class LoginGUI:
                 self._atualizarTelaCadCliente()
                 return True
         except Exception as e:
-            self.mostrar_alerta('Erro', f'Cadastro do Cliente não realizado!\n(Erro:{e})')
+            self.mostrar_alerta('Erro', f'Cadastro do Cliente não realizado!/n(Erro:{e})')
         return False
     
     ### FUNÇÕES PARA MODIFICAR CADASTRO CLIENTE
@@ -1617,7 +1639,7 @@ class LoginGUI:
             
             # Remove os botões anteriores e cria um botão "Salvar Modificações"
             self._apagarListaBotoes(self.botoesParaOcultar_TelaCadCliente)
-            self._criarBotaoSalvarModificacoes(self.tlClientes, self.validarModificacoesTelaCadCliente, 320, 106)
+            self._criarBotaoSalvarModificacoes(self.tlClientes, self.validarModificacoesTelaCadCliente, 320, 106, 139, 30,"./img/img_btnSalvarModificacoes.png")
             
             return True
         
@@ -1653,7 +1675,7 @@ class LoginGUI:
             else:
                 return False
         except Exception as e:
-            self.mostrar_alerta("Erro", f"Erro ao salvar modificação do Cliente!\nErro:{e}")
+            self.mostrar_alerta("Erro", f"Erro ao salvar modificação do Cliente!/nErro:{e}")
             return False
             
     ### FUNÇÃO DELETAR CLIENTE ###    
@@ -1855,7 +1877,7 @@ class LoginGUI:
         """
         self.mostrar_alerta("Erro", mensagem)
 
-    def _criarBotaoSalvarModificacoes(self, janela, comando, posicaoX, posicaoY):
+    def _criarBotaoSalvarModificacoes(self, janela, comando, posicaoX, posicaoY, width, height,file_img):
         """
         Cria e posiciona um botão para salvar modificações na tela ativa no momento.
 
@@ -1867,7 +1889,7 @@ class LoginGUI:
         None
         """
         # Carrega a imagem do botão "Salvar Modificações" a partir de um arquivo
-        self.img_btnSalvarModificacoes = PhotoImage(file="./img/img_btnSalvarModificacoes.png")
+        self.img_btnSalvarModificacoes = PhotoImage(file= file_img)
 
         # Cria um botão usando a imagem carregada e configura seus atributos
         self.btnSalvarModificacoes = Button(
@@ -1882,8 +1904,8 @@ class LoginGUI:
         # Posiciona o botão na janela usando coordenadas e define as dimensões
         self.btnSalvarModificacoes.place(
             x=posicaoX, y=posicaoY,
-            width=139,
-            height=30
+            width=width,
+            height=height
         )             
     
         
