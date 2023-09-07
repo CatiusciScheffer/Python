@@ -6,6 +6,6 @@
 --DELETE FROM tb_cliente;
 
 -- Deletar a tabela usuarios;
---DROP TABLE tb_servicos_vlr;
+DROP TABLE tb_ordens_servicos;
 
 

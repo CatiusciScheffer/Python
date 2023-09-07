@@ -1,18 +1,16 @@
 import tkinter as tk
 from tkinter import Tk, Button, Entry, PhotoImage, Canvas, ttk, messagebox, END, Toplevel
-from tkinter.filedialog import askopenfilename
 from tkcalendar import DateEntry
 from user import UserManager
 from manipulacaoOrdemServico import ManipularOrdemServicos
 from relatoriosPDF import ManipularCriacaodeRelatorios
-import pyautogui
-import time
 import traceback
 
 
 
 class LoginGUI:
     def __init__(self, db_manager):
+        self.usuarioLogado = None
         self.db_manager = db_manager
         self.user_manager = UserManager(db_manager)
         self.manipular_ordens = ManipularOrdemServicos(db_manager)
@@ -228,13 +226,13 @@ class LoginGUI:
 
         self.input_VlrUnitario = Entry(
             bd = 0,
-            bg = "#8a8a8a",
+            bg = "#d9d9d9",
             highlightthickness = 0)
 
         self.input_VlrUnitario.place(
-            x = 304.0, y = 142,
-            width = 89.0,
-            height = 24)
+            x = 304.0, y = 144,
+            width = 90.0,
+            height = 22)
         
         # Associa a função atualizarValore aos eventos <FocusOut> e <Tab> do campo input_VlrTotal
         self.input_VlrUnitario.bind("<FocusOut>", self.preencherValorTotal)
@@ -380,7 +378,7 @@ class LoginGUI:
             image = img_tlPrincipal_btnFechamento,
             borderwidth = 0,
             highlightthickness = 0,
-            #command = self.gerarRelatorioOrdensNAOfaturadas,
+            command = self.fazerFechamentoFaturamento,
             relief = "flat")
 
         btnFechamento_tlPrincipal.place(
@@ -421,7 +419,7 @@ class LoginGUI:
         self.treeviewTelaPrincipal.pack(fill="both", expand=True)
 
         # Configurar as colunas com largura e alinhamento
-        self.treeviewTelaPrincipal["columns"] = ("ID","Data", "CodCliente", "Cliente", "CodServ", "DescrServico", "QTD", "ValorUnit", "ValorTotal", "DescComplementar", "Faturado")
+        self.treeviewTelaPrincipal["columns"] = ("ID","Data", "CodCliente", "Cliente", "CodServ", "DescrServico", "QTD", "ValorUnit", "ValorTotal", "DescComplementar", "Faturado", "Dt.Faturamento", "Responsavel")
         
         self.treeviewTelaPrincipal.column("#0", width=0, stretch=tk.NO)  # Coluna de ícones (não visível)
         self.treeviewTelaPrincipal.column("ID", width=50, anchor="center")
@@ -435,7 +433,8 @@ class LoginGUI:
         self.treeviewTelaPrincipal.column("ValorTotal", width=65, anchor="e")
         self.treeviewTelaPrincipal.column("DescComplementar", width=200, anchor="w")
         self.treeviewTelaPrincipal.column("Faturado", width=70, anchor="center")
-        #self.treeviewTelaPrincipal.column("Resp", width=100, anchor="center")
+        self.treeviewTelaPrincipal.column("Dt.Faturamento", width=70, anchor="center")
+        self.treeviewTelaPrincipal.column("Responsavel", width=100, anchor="center")
 
         # Definir as colunas que serão exibidas
         self.treeviewTelaPrincipal.heading("#0", text="", anchor="w")  # Coluna de ícones (não visível)
@@ -450,7 +449,8 @@ class LoginGUI:
         self.treeviewTelaPrincipal.heading("ValorTotal", text="Valor Total", anchor="center")
         self.treeviewTelaPrincipal.heading("DescComplementar", text="Descrição Complementar", anchor="center")
         self.treeviewTelaPrincipal.heading("Faturado", text="Faturado", anchor="center")
-        #self.treeviewTelaPrincipal.heading("Resp", text="Responsável", anchor="center")
+        self.treeviewTelaPrincipal.heading("Dt.Faturamento", text="Dt.Faturamento", anchor="center")
+        self.treeviewTelaPrincipal.heading("Responsavel", text="Responsável", anchor="center")
 
         # Aplicar formatação de alinhamento
         center_aligned_text(self.treeviewTelaPrincipal)
@@ -882,17 +882,16 @@ class LoginGUI:
         if self.user_manager.checkUsernameAndPasswordRegistered(input_usuario, input_senha):
             self.tela_login.destroy()
             #self.criar_TelaPrincipal()
-            self.username = input_usuario
-            return self.username  # Retorna o nome do usuário logado
+            self.usuarioLogado = input_usuario
+            return self.usuarioLogado  # Retorna o nome do usuário logado
         else:
             self.user_manager.registerNewUser(input_usuario, input_senha)
             self.mostrar_alerta("Cadastro de Usuário", f" ☻ Usuário(a) {input_usuario} cadastrado com sucesso!")
             self.tela_login.destroy()
             #self.criar_TelaPrincipal()
-            self.username = input_usuario
-            return self.username  # Retorna o nome do usuário logado
+            self.usuarioLogado = input_usuario
+            return self.usuarioLogado # Retorna o nome do usuário logado
  
-    
     #@@@@@@@@@@@@@@@@ FUNÇÕES TELA PRINCIPAL ORDEM DE SERVIÇOS @@@@@@@@@@@@@@@@@#
     
     def pegandoValoresTelaPrincipalOS(self):
@@ -1092,8 +1091,11 @@ class LoginGUI:
     def cadastrarOrdemServicos(self):
         os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado = self.pegandoValoresTelaPrincipalOS()
         
+        nomeUsuario = self.usuarioLogado
+        print(nomeUsuario)
+        
         if self._verificarSeCamposTelaOrdemServicosPreenchidos():
-            self.manipular_ordens.inserirOrdemServicosDB(os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado)
+            self.manipular_ordens.inserirOrdemServicosDB(os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado, nomeUsuario)
 
             self.mostrar_alerta('Sucesso', 'Serviço inserido com sucesso!')
             
@@ -1117,8 +1119,9 @@ class LoginGUI:
 
         # Iterar sobre os resultados e adicioná-los à Treeview no início (índice "0")
         for resultado in resultados:
-            os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado, = resultado
-            self.treeviewTelaPrincipal.insert("", "0", values=(os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado))
+            os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado, os_dtFaturamento, os_usuario = resultado
+            
+            self.treeviewTelaPrincipal.insert("", "0", values=(os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado, os_dtFaturamento, os_usuario))
 
         # Redimensionar as colunas para ajustar o conteúdo
         #self.resize_columns()
@@ -1150,7 +1153,7 @@ class LoginGUI:
         os_id,os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_faturado, os_descComplementar = self.pegarValoresLinhaSelecionadaDaTabelaOrdemServico()
         
         # Confirmação de exclusão com o usuário
-        if self.confirmar_exclusao(os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total):
+        if self.confirmar_solicitacao(os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total):
             # Deleta o serviço do banco de dados
             if self.manipular_ordens.deletarOrdemServicoDB(os_id):
                 # Remove o item da tabela
@@ -1163,6 +1166,13 @@ class LoginGUI:
         
         # Atualiza a tela de cadastro de serviços
         self._atualizarTelaPrincipal()
+    
+    
+    def fazerFechamentoFaturamento(self):
+        self.manipular_ordens.modificarsituacaoFaturamentoParaSIM()
+        self.confirmar_solicitacao("Confirmar Fechamento", 'Tem certeza que deseja FATURAR todas as ordens em aberta?')
+        self._atualizarTelaPrincipal()
+        
     
     
     def _atualizarTelaPrincipal(self):
@@ -1367,7 +1377,7 @@ class LoginGUI:
         serv_id, serv_codServ, serv_descServico, serv_vlrUnit = self.pegarValoresLinhaSelecionadaDaTabelaServicos()
         
         # Confirmação de exclusão com o usuário
-        if self.confirmar_exclusao(serv_descServico):
+        if self.confirmar_solicitacao(f"Confirmar Exclusão", 'Tem certeza que deseja excluir o serviço:', {serv_codServ, serv_descServico}):
             # Deleta o serviço do banco de dados
             if self.manipular_ordens.deletarServicoDB(serv_id):
                 # Remove o item da tabela
@@ -1587,16 +1597,16 @@ class LoginGUI:
             nomeCliente = nomeCliente.strip().upper()
             #qtdNFisenta = qtdNFisenta.replace(",", ".")
             
-            # Verifica se o código de serviço já existe no banco de dados
+            # Verifica se o código de cliente já existe no banco de dados
             if self._verificarSeCodigoClientteJaExiste():
                 self.mostrar_alerta("Valor Inválido", f"Código {codCliente} já existe.")
                 self._atualizarTelaCadCliente()
                 return False
             
-            # Insere o novo serviço no banco de dados
+            # Insere o novo cliente no banco de dados
             if self.manipular_ordens.inserirClienteDB(codCliente, nomeCliente, qtdNFisenta):
             # if self._inserirServicoNoBanco(codServico, descServico, vlrUnit):
-                self.mostrar_alerta("Cadastro de Serviço", f"Serviço '{nomeCliente}' cadastrado com sucesso!")
+                self.mostrar_alerta("Cadastro de Cliente", f"O cliente '{codCliente, nomeCliente}' foi cadastrado com sucesso!")
                 self._atualizarTelaCadCliente()
                 return True
         except Exception as e:
@@ -1693,12 +1703,12 @@ class LoginGUI:
         cli_id, cli_codcliente, cli_nomeCliente, cli_qtdNFisenta = self.pegarValoresLinhaSelecionadaDaTabelaCliente()
         
         # Confirmação de exclusão com o usuário
-        if self.confirmar_exclusao(cli_nomeCliente):
+        if self.confirmar_solicitacao("Confirmar Exclusão", 'Tem certeza que deseja excluir o cliente: ', {cli_codcliente, cli_nomeCliente}):           
             # Deleta o serviço do banco de dados
             if self.manipular_ordens.deletarClienteDB(cli_id):
                 # Remove o item da tabela
                 self.treeview_tlClientes.delete(selected_itemTabCliente)
-                self.mostrar_sucesso(cli_codcliente, cli_nomeCliente)
+                self.mostrar_sucesso('Exclusão bem sucedida do cliente: ',{cli_codcliente, cli_nomeCliente})
             else:
                 self.mostrar_erro(f"Ocorreu um erro ao tentar deletar o cliente {cli_nomeCliente}.")
         else:
@@ -1838,7 +1848,7 @@ class LoginGUI:
         # Aceitar apenas texto (não vazio)
         return len(valor.strip()) > 0
         
-    def confirmar_exclusao(self, *variavelMSGErro):
+    def confirmar_solicitacao(self, tituloMSG, textoMSG,*variavelMSGErro):
         """
         Exibe uma caixa de diálogo de confirmação para verificar se o usuário deseja excluir.
 
@@ -1849,7 +1859,7 @@ class LoginGUI:
         bool: True se o usuário confirmar a exclusão, False caso contrário.
         """
         
-        resposta = messagebox.askyesno("Confirmar exclusão", f"Tem certeza que deseja excluir '{variavelMSGErro}'?")
+        resposta = messagebox.askyesno(f"{tituloMSG}", f"{textoMSG} {variavelMSGErro}")
         
         return resposta
 
@@ -1908,6 +1918,7 @@ class LoginGUI:
             height=height
         )             
     
+        
         
         
         

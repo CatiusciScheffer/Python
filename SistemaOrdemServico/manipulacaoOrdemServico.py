@@ -1,5 +1,6 @@
 #import sqlite3
 from database import DatabaseManager
+from datetime import datetime
 
 class ManipularOrdemServicos():
     def __init__(self, db_manager):
@@ -66,10 +67,10 @@ class ManipularOrdemServicos():
         # Consulta SQL ordenando os dados pela coluna os_id em ordem decrescente
         cursor.execute("SELECT os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado FROM tb_ordens_servicos ORDER BY os_id DESC;")
         
-    def inserirOrdemServicosDB(self, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado):
+    def inserirOrdemServicosDB(self, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado, os_usuario):
         try:
             # Executa o comando SQL para inserir um novo serviço na tabela
-            self.db_manager.cursor.execute("INSERT INTO tb_ordens_servicos (os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado) VALUES (?, ?, ?, ?, ?, ?, ?, ? ,?, ?)", (os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado))
+            self.db_manager.cursor.execute("INSERT INTO tb_ordens_servicos (os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado, os_usuario) VALUES (?, ?, ?, ?, ?, ?, ?, ? ,?, ?, ?)", (os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado, os_usuario))
        
             self.db_manager.connection.commit()
             return True
@@ -109,6 +110,28 @@ class ManipularOrdemServicos():
             print("Erro ao modificar Ordem de Serviço_DB:", e)
             return False
         
+    def modificarsituacaoFaturamentoParaSIM(self):
+        try:
+            
+            # Comando SQL para atualizar os registros
+            update_sql = """
+            UPDATE tb_ordens_servicos
+            SET os_faturado = 'SIM',
+                os_dtFaturamento = ?
+            WHERE os_faturado = 'NÃO';
+            """
+            # Obtenha a data atual no formato "YYYY-MM-DD HH:MM:SS"
+            data_atual = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+            # Execute o comando SQL
+            self.db_manager.cursor.execute(update_sql, (data_atual,))
+            self.db_manager.connection.commit()
+            return True
+        
+        except Exception as e:
+            print("Erro ao Fechar faturamento:", e)
+            return False
+    
+    
     #______________________________________________________#
     
     #### FUNÇÕES TABELA SERVIÇOS ####
