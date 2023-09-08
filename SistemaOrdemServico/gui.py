@@ -7,7 +7,6 @@ from relatoriosPDF import ManipularCriacaodeRelatorios
 import traceback
 
 
-
 class LoginGUI:
     def __init__(self, db_manager):
         self.usuarioLogado = None
@@ -285,7 +284,7 @@ class LoginGUI:
             width = 595.0,
             height = 97)
         # Insira o valor preenchido no campo de texto
-        descricaoComplementarPadrao = "Não esqueça de detalhar aqui o serviço"
+        descricaoComplementarPadrao = "Aqui para detalhar o serviço..."
         self.input_DescrCompl.insert("1.0", descricaoComplementarPadrao)
         
 
@@ -479,50 +478,37 @@ class LoginGUI:
         # --------------- ORDENAR A TREEVIEW (CLIQUE CABEÇALHO) ----------------#   
         # Chamando a função para ordenar pelo clique nos cabeçalhos
         self.treeviewTelaPrincipal.heading("ID", text="ID", anchor="center")
-        self.treeviewTelaPrincipal.heading("ID", command=lambda: self.ordenarPeloCabecalhoTreview(0))
+        self.treeviewTelaPrincipal.heading("ID", command=lambda: self.ordenarPeloCabecalhoTreview(self.treeviewTelaPrincipal, 0))
         
         self.treeviewTelaPrincipal.heading("Data", text="Data", anchor="center")
-        self.treeviewTelaPrincipal.heading("Data", command=lambda: self.ordenarPeloCabecalhoTreview(1))
+        self.treeviewTelaPrincipal.heading("Data", command=lambda: self.ordenarPeloCabecalhoTreview(self.treeviewTelaPrincipal, 1))
         
         self.treeviewTelaPrincipal.heading("CodCliente", text="CodCliente", anchor="center")
-        self.treeviewTelaPrincipal.heading("CodCliente", command=lambda: self.ordenarPeloCabecalhoTreview(2))
+        self.treeviewTelaPrincipal.heading("CodCliente", command=lambda: self.ordenarPeloCabecalhoTreview(self.treeviewTelaPrincipal, 2))
         
         self.treeviewTelaPrincipal.heading("Cliente", text="Cliente", anchor="center")
-        self.treeviewTelaPrincipal.heading("Cliente", command=lambda: self.ordenarPeloCabecalhoTreview(3))
+        self.treeviewTelaPrincipal.heading("Cliente", command=lambda: self.ordenarPeloCabecalhoTreview(self.treeviewTelaPrincipal, 3))
         
         self.treeviewTelaPrincipal.heading("CodServ", text="CodServ", anchor="center")
-        self.treeviewTelaPrincipal.heading("CodServ", command=lambda: self.ordenarPeloCabecalhoTreview(4))
+        self.treeviewTelaPrincipal.heading("CodServ", command=lambda: self.ordenarPeloCabecalhoTreview(self.treeviewTelaPrincipal, 4))
         
         self.treeviewTelaPrincipal.heading("DescrServico", text="DescrServico", anchor="center")
-        self.treeviewTelaPrincipal.heading("DescrServico", command=lambda: self.ordenarPeloCabecalhoTreview(5))
+        self.treeviewTelaPrincipal.heading("DescrServico", command=lambda: self.ordenarPeloCabecalhoTreview(self.treeviewTelaPrincipal, 5))
         
         self.treeviewTelaPrincipal.heading("Faturado", text="Faturado", anchor="center")
-        self.treeviewTelaPrincipal.heading("Faturado", command=lambda: self.ordenarPeloCabecalhoTreview(10))
+        self.treeviewTelaPrincipal.heading("Faturado", command=lambda: self.ordenarPeloCabecalhoTreview(self.treeviewTelaPrincipal, 10))
         
         self.treeviewTelaPrincipal.heading("Dt.Faturamento", text="Dt.Faturamento", anchor="center")
-        self.treeviewTelaPrincipal.heading("Dt.Faturamento", command=lambda: self.ordenarPeloCabecalhoTreview(11))
+        self.treeviewTelaPrincipal.heading("Dt.Faturamento", command=lambda: self.ordenarPeloCabecalhoTreview(self.treeviewTelaPrincipal, 11))
         
         self.treeviewTelaPrincipal.heading("Responsavel", text="Responsavel", anchor="center")
-        self.treeviewTelaPrincipal.heading("Responsavel", command=lambda: self.ordenarPeloCabecalhoTreview(12))       
+        self.treeviewTelaPrincipal.heading("Responsavel", command=lambda: self.ordenarPeloCabecalhoTreview(self.treeviewTelaPrincipal, 12))       
         # --------------- ************************************* ----------------#
             
         # Iniciar o loop principal do Tkinter
         self.telaPrincipal.resizable(False, False)
         self.telaPrincipal.mainloop()
-    
-    
-    ############# FUNÇÕES TREEVIEW ##################
-    
-    def ordenarPeloCabecalhoTreview(self, coluna):
-        data = self.treeviewTelaPrincipal.get_children()
-        data = sorted(data, key=lambda item: self.treeviewTelaPrincipal.item(item, "values")[coluna])
-        for i, item in enumerate(data):
-            self.treeviewTelaPrincipal.move(item, "", i)
-
-
-
-
-    
+      
     ############# CRIANDO TELA CADASTRO DE SERVIÇOS #############
     def criar_TelaCadServ(self):
         
@@ -545,7 +531,6 @@ class LoginGUI:
         background = canvas.create_image(
             417.5, 288.5,
             image=background_img_tlCadServ)
-
         
         verificaInteger = self.tlServicos.register(self._verificarValor_Inteiro)
         verificaFloat = self.tlServicos.register(self._verificarValor_Float)
@@ -610,7 +595,8 @@ class LoginGUI:
             x = 696, y = 115,
             width = 115,
             height = 30)
-        #botões que serão ocultos ao chamar a função de modificação:
+        
+        #@@@@ botões que serão ocultos ao chamar a função de modificação @@@@#
         self.botoesParaOcultar_TelaCadServ = [self.btnDelete_tlCadServ, btnInsert_tlCadServ, btnModify_tlCadServ, btnPrint_tlCadServ]
         
         inputCodServ_tlCadServ_img = PhotoImage(file = f"./img/img_tlCadServ_inputCodServ.png")
@@ -654,7 +640,6 @@ class LoginGUI:
             763.5, 85.0,
             image = inputVlrUnit_tlCadServ_img)
         
-        
         self.inputVlrUnit_tlCadServ = tk.Entry(
             self.tlServicos,
             bd=0,
@@ -663,8 +648,6 @@ class LoginGUI:
             validate="key",
             validatecommand=(verificaFloat, "%P")
         )
-
-        self.inputVlrUnit_tlCadServ.pack()
             
         self.inputVlrUnit_tlCadServ.place(
             x = 719.0, y = 70,
@@ -715,6 +698,22 @@ class LoginGUI:
         ########## FIM TABELA SERVICOS ##########
         
         self.mostrarTabelaServicos_TelaCadServ()
+        
+        #----------------------- ORDENANDO POR CLIQUE NO CABEÇALHO TB SERVIÇOS-----------------------#
+        self.treeview_tlServicos .heading("ID", text="ID", anchor="center")
+        self.treeview_tlServicos .heading("ID", command=lambda: self.ordenarPeloCabecalhoTreview(self.treeview_tlServicos , 0))
+        
+        self.treeview_tlServicos .heading("CodServ", text="CodServ", anchor="center")
+        self.treeview_tlServicos .heading("CodServ", command=lambda: self.ordenarPeloCabecalhoTreview(self.treeview_tlServicos , 1))
+        
+        self.treeview_tlServicos .heading("DescrServico", text="DescrServico", anchor="center")
+        self.treeview_tlServicos .heading("DescrServico", command=lambda: self.ordenarPeloCabecalhoTreview(self.treeview_tlServicos , 2))
+        
+        self.treeview_tlServicos .heading("ValorUnit", text="ValorUnit", anchor="center")
+        self.treeview_tlServicos .heading("ValorUnit", command=lambda: self.ordenarPeloCabecalhoTreview(self.treeview_tlServicos , 3))
+        #----------------------- *********************************************-----------------------#
+        
+        
         self.tlServicos.resizable(False, False)
         self.tlServicos.mainloop()
     
@@ -908,65 +907,161 @@ class LoginGUI:
         scrollbar_x = ttk.Scrollbar(self.tlClientes, orient="horizontal", command=self.treeview_tlClientes.xview)
         self.treeview_tlClientes.configure(xscrollcommand=scrollbar_x.set)
         scrollbar_x.place(x=13, y=592, width=754)
-        ########## FIM TABELA CLIENTES ##########
+        
         self.mostrarTabelaClientes_TelaCadClientes()
+        
+        #----------------------- ORDENANDO POR CLIQUE NO CABEÇALHO TB CLIENTES-----------------------#
+        self.treeview_tlClientes.heading("ID", text="ID", anchor="center")
+        self.treeview_tlClientes.heading("ID", command=lambda: self.ordenarPeloCabecalhoTreview(self.treeview_tlClientes, 0))
+        
+        self.treeview_tlClientes.heading("CodCliente", text="CodCliente", anchor="center")
+        self.treeview_tlClientes.heading("CodCliente", command=lambda: self.ordenarPeloCabecalhoTreview(self.treeview_tlClientes, 1))
+        
+        self.treeview_tlClientes.heading("Cliente", text="Cliente", anchor="center")
+        self.treeview_tlClientes.heading("Cliente", command=lambda: self.ordenarPeloCabecalhoTreview(self.treeview_tlClientes, 2))
+        
+        self.treeview_tlClientes.heading("NFIsenta", text="NFIsenta", anchor="center")
+        self.treeview_tlClientes.heading("NFIsenta", command=lambda: self.ordenarPeloCabecalhoTreview(self.treeview_tlClientes, 3))
+        #----------------------- *********************************************-----------------------#
+        
         self.tlClientes.resizable(False, False)
         self.tlClientes.mainloop()
+        ########## FIM TABELA CLIENTES ##########
         
         
     #@@@@@@@@@@@@@@@@ FUNÇÕES TELA LOGIN @@@@@@@@@@@@@@@@@@@#
     
     def verificar_usuario_existente(self):
+        """
+        Verifica se o usuário e senha fornecidos existem no sistema e realiza o login, ou cria um novo usuário se não existir.
+
+        Returns:
+            str: O nome do usuário logado após a autenticação.
+
+        Note:
+            Este método verifica se o usuário e senha fornecidos existem no sistema.
+            Se existirem, realiza o login e retorna o nome do usuário logado.
+            Se não existirem, cria um novo usuário, realiza o login e retorna o nome do usuário logado.
+        """
+        # Obtém o nome de usuário e senha dos campos de entrada
         input_usuario = self.input_login_usuario.get().strip().upper()
         input_senha = self.input_login_senha.get().strip().upper()
-        print(f'usuario{input_usuario}, senha{input_senha}')
 
+        # Verifica se o usuário e senha existem no sistema
         if self.user_manager.checkUsernameAndPasswordRegistered(input_usuario, input_senha):
             self.tela_login.destroy()
-            #self.criar_TelaPrincipal()
             self.usuarioLogado = input_usuario
             return self.usuarioLogado  # Retorna o nome do usuário logado
         else:
+            # Se o usuário não existir, registra um novo usuário
             self.user_manager.registerNewUser(input_usuario, input_senha)
             self.mostrar_alerta("Cadastro de Usuário", f" ☻ Usuário(a) {input_usuario} cadastrado com sucesso!")
             self.tela_login.destroy()
-            #self.criar_TelaPrincipal()
             self.usuarioLogado = input_usuario
-            return self.usuarioLogado # Retorna o nome do usuário logado
+            return self.usuarioLogado  # Retorna o nome do usuário logado
  
     #@@@@@@@@@@@@@@@@ FUNÇÕES TELA PRINCIPAL ORDEM DE SERVIÇOS @@@@@@@@@@@@@@@@@#
     
     def pegandoValoresTelaPrincipalOS(self):
-        os_dtServico = self.input_DataOS.get()
-        os_codCliente = int(self.input_CodCliente.get().strip())
-        os_cliente = self.input_Cliente.get().strip().upper()
-        os_codServico = int(self.input_CodServ.get().strip())
-        os_descrServico = self.input_DescricaoServ.get().strip().upper()
-        os_quantidade = int(self.input_Quantidade.get())
-        os_vlrUnit = self.input_VlrUnitario.get()
-        os_total = float(self.input_VlrTotal.get())
-        os_descComplementar = self.input_DescrCompl.get('1.0', 'end-1c').upper()
-        os_faturado = self.input_Faturado.get()
+        """
+        Obtém os valores inseridos na tela principal de Ordens de Serviço.
+
+        Returns:
+            tuple: Uma tupla contendo os valores inseridos na tela, incluindo:
+                - os_dtServico (str): Data do serviço.
+                - os_codCliente (int): Código do cliente.
+                - os_cliente (str): Nome do cliente.
+                - os_codServico (int): Código do serviço.
+                - os_descrServico (str): Descrição do serviço.
+                - os_quantidade (int): Quantidade do serviço.
+                - os_vlrUnit (str): Valor unitário do serviço.
+                - os_total (float): Valor total do serviço.
+                - os_descComplementar (str): Descrição complementar do serviço.
+                - os_faturado (str): Indicação se o serviço está faturado ("SIM" ou "NÃO").
+
+        Note:
+            Os valores são obtidos a partir dos campos preenchidos na tela principal de Ordens de Serviço.
+
+        Example:
+            Os valores podem ser obtidos da seguinte forma:
+            os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_faturado, os_descComplementar = pegandoValoresTelaPrincipalOS()
+        """
+        os_dtServico = self.input_DataOS.get()  # Obtém a data do serviço
+        os_codCliente = int(self.input_CodCliente.get().strip())  # Obtém o código do cliente
+        os_cliente = self.input_Cliente.get().strip().upper()  # Obtém o nome do cliente
+        os_codServico = int(self.input_CodServ.get().strip())  # Obtém o código do serviço
+        os_descrServico = self.input_DescricaoServ.get().strip().upper()  # Obtém a descrição do serviço
+        os_quantidade = int(self.input_Quantidade.get())  # Obtém a quantidade do serviço
+        os_vlrUnit = self.input_VlrUnitario.get()  # Obtém o valor unitário do serviço
+        os_total = float(self.input_VlrTotal.get())  # Obtém o valor total do serviço
+        os_descComplementar = self.input_DescrCompl.get('1.0', 'end-1c').upper()  # Obtém a descrição complementar do serviço
+        os_faturado = self.input_Faturado.get()  # Obtém a indicação de faturamento do serviço
 
         return os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_faturado, os_descComplementar
 
     def pegarValoresLinhaSelecionadaDaTabelaOrdemServico(self):
+        """
+        Obtém os valores da linha selecionada na tabela de Ordens de Serviço da tela principal.
+
+        Returns:
+            tuple: Uma tupla contendo os valores da linha selecionada, incluindo:
+                - os_id (int): ID da Ordem de Serviço.
+                - os_dtServico (str): Data do serviço.
+                - os_codCliente (int): Código do cliente.
+                - os_cliente (str): Nome do cliente.
+                - os_codServico (int): Código do serviço.
+                - os_descrServico (str): Descrição do serviço.
+                - os_quantidade (float): Quantidade do serviço.
+                - os_vlrUnit (float): Valor unitário do serviço.
+                - os_total (float): Valor total do serviço.
+                - os_descComplementar (str): Descrição complementar do serviço.
+                - os_faturado (str): Indicação se o serviço está faturado ("SIM" ou "NÃO").
+                - os_dtFaturamento (str): Data de faturamento.
+                - os_usuario (str): Nome do usuário responsável.
+
+        Note:
+            Os valores são obtidos da linha selecionada na tabela de Ordens de Serviço.
+        """
         itemSelecionadoTbOrdemServicos = self.treeviewTelaPrincipal.selection()
-        
         item = self.treeviewTelaPrincipal.item(itemSelecionadoTbOrdemServicos, 'values')
-        
         os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado, os_dtFaturamento, os_usuario = item
-        
         return os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado, os_dtFaturamento, os_usuario
     
     def _verificarSeCamposTelaOrdemServicosPreenchidos(self):
+        """
+        Função responsável por verificar se todos os campos na tela de cadastro de Ordens de Serviço estão preenchidos.
+
+        Returns:
+            bool: True se todos os campos estiverem preenchidos, False caso contrário.
+        """
+        # Obtém os valores dos campos da tela
+        os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado = self.pegandoValoresTelaPrincipalOS()
         
-        os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado  = self.pegandoValoresTelaPrincipalOS()
-        
-        # Retorna True se todos os campos estiverem preenchidos, caso contrário, retorna False
-        return bool(os_dtServico and os_codCliente and os_cliente and os_codServico and os_descrServico and os_quantidade and os_vlrUnit and os_total and os_faturado and os_descComplementar)
+        # Lista de verificações de campos individuais
+        campos_preenchidos = [
+            bool(os_dtServico),
+            bool(os_codCliente),
+            bool(os_cliente),
+            bool(os_codServico),
+            bool(os_descrServico),
+            bool(os_quantidade),
+            bool(os_vlrUnit),
+            bool(os_total),
+            bool(os_faturado),
+            bool(os_descComplementar)
+        ]
+
+        # Verifica se todos os campos estão preenchidos
+        return all(campos_preenchidos)
     
     def _limparTelaPrincipal(self):
+        """
+        Função responsável por limpar os campos de entrada e seleção da tela principal de cadastro de Ordens de Serviço.
+
+        Returns:
+            None
+        """
+        # Limpa os campos de entrada
         self.input_CodCliente.delete(0,'end')
         self.input_Cliente.delete(0, 'end')
         self.input_CodServ.delete(0, 'end')
@@ -975,18 +1070,26 @@ class LoginGUI:
         self.input_VlrUnitario.delete(0, 'end')
         self.input_VlrTotal.delete(0, 'end')
         self.input_Faturado.delete(0, 'end')
-        
+ 
     # FUNÇÃO BOTÃO MODIFICAR TELA PRINCIPAL
     def modificarItemSelecionadoDaTabOrdemServico(self): 
+        """
+        Função responsável por preencher os campos de edição com os valores da Ordem de Serviço selecionada na tabela
+        e criar um botão "Salvar Modificações" para permitir a edição dos dados da Ordem de Serviço.
+
+        Returns:
+            bool: True se os campos foram preenchidos com sucesso, False caso contrário.
+        """
         try:
-            # Obtém os valores da linha selecionada na tabela de serviços
+            # Passo 1: Obtém os valores da linha selecionada na tabela de Ordem de Serviço
             os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado, os_dtFaturamento, os_usuario = self.pegarValoresLinhaSelecionadaDaTabelaOrdemServico()
             
+            # Passo 2: Verificar se a Ordem de Serviço já foi faturada, se sim, impedir a modificação
             if os_faturado == 'SIM':
                 self.mostrar_alerta("Atenção", "Este serviço já foi faturado, NÃO é possível modificar")
-                return
+                return False
             
-            # Preenche os campos com os valor do item selecionado na lista
+            # Passo 3: Preenche os campos de edição com os valores do item selecionado na lista
             self.input_DataOS.delete(0, 'end')
             self.input_DataOS.insert(0, os_dtServico)
             
@@ -1002,69 +1105,110 @@ class LoginGUI:
             self.input_VlrUnitario.delete(0, 'end')
             self.input_VlrUnitario.insert(0, os_vlrUnit)
             
-            self.input_VlrUnitario.delete(0, 'end')
-            self.input_VlrUnitario.insert(0, os_vlrUnit)
-                        
             self.input_VlrTotal.delete(0, 'end')
             self.input_VlrTotal.insert(0, os_total)
             
-            #Remove os botões anteriores e cria um botão "Salvar Modificações"
+            # Passo 4: Remove os botões anteriores e cria um botão "Salvar Modificações"
             self._apagarListaBotoes(self.botoesParaOcultar_TelaPrincipal)
             self._criarBotaoSalvarModificacoes(self.telaPrincipal, self.validarModificacoesTelaPrincipal, 654, 187, 105, 50, "./img/img_tlPrincipal_btnSalvarModificacao.png")
+            
+            # Passo 5: Retorna True para indicar que os campos foram preenchidos com sucesso
             return True
-        
+            
         except Exception as e:
-            # Obter a traceback do erro
+            # Passo 6: Obter a traceback do erro
             traceback_str = traceback.format_exc()
 
-            # Exibir a mensagem de erro e a traceback
-            self.mostrar_alerta('Erro', f'O seguinte erro ocorreu:/n{e}/n/nTraceback:/n{traceback_str}')
+            # Passo 7: Exibir a mensagem de erro e a traceback em caso de falha
+            self.mostrar_alerta('Erro', f'O seguinte erro ocorreu:\n{e}\n\nTraceback:\n{traceback_str}')
             return False
         
     # FUNÇÃO BOTÃO SALVAR MODIFICAÇÕES TELA PRINCIPAL   
     def validarModificacoesTelaPrincipal(self):
+        """
+        Função responsável por validar e salvar as modificações feitas em uma Ordem de Serviço na tela principal.
+
+        Returns:
+            bool: True se as modificações foram salvas com sucesso, False caso contrário.
+        """
         try:
+            # Passo 1: Obter os valores da tela principal
             dtServico, codCliente, cliente, codServico, descrServico, quantidade, vlrUnit, total, descComplementar, faturado = self.pegandoValoresTelaPrincipalOS()
             
+            # Passo 2: Formatar o valor unitário substituindo "," por "."
             vlrUnit = vlrUnit.replace(",", ".")           
-                        
+            
+            # Passo 3: Verificar se todos os campos obrigatórios estão preenchidos
             if not self._verificarSeCamposTelaOrdemServicosPreenchidos:
                 self.mostrar_alerta("Campos Vazios", "Por favor, preencha todos os campos.")
                 return False
             
-            # Obter o serviço selecionado na tabela
+            # Passo 4: Obter a Ordem de Serviço selecionada na tabela
             os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado, os_dtFaturamento, os_usuario = self.pegarValoresLinhaSelecionadaDaTabelaOrdemServico()
             
-            # Modificar o serviço no banco de dados
-            self.manipular_ordens.editarOrdemServicoPeloIDOrdensServicosDB(os_id, dtServico, codCliente, cliente, codServico, descrServico, quantidade, vlrUnit, total, faturado, descComplementar)
-            # Atualizar a tela de cadastro e limpar os campos
+            # Passo 5: Modificar a Ordem de Serviço no banco de dados
+            self.manipular_ordens.editarOrdemServicoPeloIDOrdensServicosDB(
+                os_id, dtServico, codCliente, cliente, codServico, descrServico, quantidade, vlrUnit, total, faturado, descComplementar)
+            
+            # Passo 6: Atualizar a tela de cadastro e limpar os campos
             self._limparTelaPrincipal()
             self._atualizarTelaPrincipal()
-                
+            
+            # Passo 7: Retornar True para indicar que as modificações foram salvas com sucesso
+            return True
         except Exception as e:
             traceback_str = traceback.format_exc()
-            #Exibir a mensagem de erro e a traceback
-            self.mostrar_alerta('Erro', f'Erro ao salvar alteração na Ordem de Serviços:/n{e}/n/nTraceback:/n{traceback_str}')
+            # Passo 8: Exibir a mensagem de erro e a traceback em caso de falha
+            self.mostrar_alerta('Erro', f'Erro ao salvar alteração na Ordem de Serviços:\n{e}\n\nTraceback:\n{traceback_str}')
             return False
             
     def _preencherFaturado(self, faturado):
+        """
+        Função interna responsável por preencher o campo de faturado com um valor especificado.
+
+        Args:
+            faturado (str): O valor de faturado a ser preenchido no campo.
+
+        Returns:
+            None
+        """
+        # Torna o campo de faturado editável
         self.input_Faturado.configure(state="normal")
+        
+        # Limpa o campo de faturado
         self.input_Faturado.delete(0, END)
+        
+        # Insere o valor de faturado especificado no campo de faturado
         self.input_Faturado.insert(0, faturado)
-        self.input_Faturado.configure(state="readonly")        
+        
+        # Torna o campo de faturado somente leitura novamente
+        self.input_Faturado.configure(state="readonly")      
     
     def preencheCliente(self, event):
-        if event.keysym == "Tab":
+        """
+        Função responsável por preencher o campo de cliente com o nome do cliente correspondente ao código inserido.
 
+        Args:
+            event (Event): O evento que acionou a função, geralmente associado à tecla "Tab".
+
+        Returns:
+            None
+        """
+        # Passo 1: Verifica se o evento foi acionado pela tecla "Tab".
+        if event.keysym == "Tab":
+            # Passo 2: Consulta a tabela de clientes para obter a lista de códigos de cliente e nomes de cliente.
             list_tb_cliente = self.manipular_ordens.consultarCompletaTabelaClientes()
             
+            # Passo 3: Obtém o código de cliente inserido pelo usuário.
             input_codCliente = int(self.input_CodCliente.get())
             
-            for index, cliente in enumerate(list_tb_cliente ):
+            # Passo 4: Itera sobre a lista de clientes para encontrar o cliente com o código correspondente.
+            for index, cliente in enumerate(list_tb_cliente):
                 codCliente = int(cliente[1])
                 nomeCliente = str(cliente[2])
                 
                 if codCliente == input_codCliente:
+                    # Passo 5: Se encontrar o cliente, preenche o campo de cliente com o nome correspondente.
                     self.input_Cliente.configure(state="normal")
                     self.input_Cliente.delete(0, END)
                     self.input_Cliente.insert(0, nomeCliente)
@@ -1072,94 +1216,221 @@ class LoginGUI:
                     self._preencherFaturado('NÃO')
                     break
             else:
+                # Passo 6: Se o código de cliente não existir na lista, exibe um alerta informando que o cliente não está cadastrado.
                 self.mostrar_alerta('Aviso', f'Cliente não cadastrado!')
        
     def _preencherDescricaoServicos(self, descricao):
+        """
+        Função interna responsável por preencher o campo de descrição de serviços com uma descrição especificada.
+
+        Args:
+            descricao (str): A descrição do serviço a ser preenchida no campo.
+
+        Returns:
+            None
+        """
+        # Torna o campo de descrição de serviços editável
         self.input_DescricaoServ.configure(state="normal")
+        
+        # Limpa o campo de descrição de serviços
         self.input_DescricaoServ.delete(0, END)
+        
+        # Insere a descrição especificada no campo de descrição de serviços
         self.input_DescricaoServ.insert(0, descricao)
+        
+        # Torna o campo de descrição de serviços somente leitura novamente
         self.input_DescricaoServ.configure(state="readonly")
     
     def _preencherValorUnitario(self, valor_unitario):
+        """
+        Função interna responsável por preencher o campo de valor unitário com um valor especificado.
+
+        Args:
+            valor_unitario (float): O valor unitário a ser preenchido no campo.
+
+        Returns:
+            None
+        """
+        # Limpa o campo de valor unitário
         self.input_VlrUnitario.delete(0, END)
-        self.input_VlrUnitario.insert(0, valor_unitario)  
+        
+        # Insere o valor unitário especificado no campo
+        self.input_VlrUnitario.insert(0, valor_unitario) 
         
     def preencheDescrServicoEvalorUnitario(self, event):
-        if event.keysym == "Tab":
+        """
+        Função responsável por preencher a descrição do serviço e o valor unitário com base no código do serviço.
 
+        Esta função é acionada quando a tecla "Tab" é pressionada em um campo específico (evento "Tab").
+        Ela realiza as seguintes etapas:
+        1. Verifica se o evento foi acionado pela tecla "Tab".
+        2. Consulta a tabela de serviços e valores para obter a lista de códigos de serviço, descrições e valores unitários.
+        3. Obtém o código de serviço inserido pelo usuário.
+        4. Itera sobre a lista de serviços para encontrar o serviço com o código correspondente.
+        5. Se encontrar o serviço, preenche a descrição do serviço e o valor unitário nos campos apropriados.
+        6. Se o código de serviço não existir na lista, exibe um alerta informando que o serviço não está cadastrado.
+
+        Args:
+            event (Event): O evento que acionou a função, geralmente associado à tecla "Tab".
+
+        Returns:
+            None
+        """
+        # Passo 1: Verifica se o evento foi acionado pela tecla "Tab".
+        if event.keysym == "Tab":
+            # Passo 2: Consulta a tabela de serviços e valores para obter a lista de códigos de serviço, descrições e valores unitários.
             l_codServDescrServVlrUnit = self.manipular_ordens.consultarCompletaTabelaServicosValores()
             
+            # Passo 3: Obtém o código de serviço inserido pelo usuário.
             input_codServ = int(self.input_CodServ.get())
             
+            # Passo 4: Itera sobre a lista de serviços para encontrar o serviço com o código correspondente.
             for index, servicos in enumerate(l_codServDescrServVlrUnit):
-                
                 codServ = int(servicos[1])
                 descrServ = str(servicos[2])
                 valorUnit = servicos[3]
                 
                 if codServ == input_codServ:
+                    # Passo 5: Se encontrar o serviço, preenche a descrição do serviço e o valor unitário nos campos apropriados.
                     self._preencherDescricaoServicos(descrServ)
                     self._preencherValorUnitario(valorUnit)
                     break
             else:
+                # Passo 6: Se o código de serviço não existir na lista, exibe um alerta informando que o serviço não está cadastrado.
                 self.mostrar_alerta('Aviso', f'Serviço não cadastrado!')
-                
+
     def preencherValorTotal(self, event):
-        
+        """
+        Função responsável por calcular e preencher o valor total com base na quantidade e no valor unitário.
+
+        Esta função é acionada quando a tecla "Tab" é pressionada em um campo específico (evento "Tab").
+        Ela realiza as seguintes etapas:
+        1. Verifica se o evento foi acionado pela tecla "Tab".
+        2. Obtém a quantidade e o valor unitário dos campos correspondentes.
+        3. Calcula o valor total multiplicando a quantidade pelo valor unitário.
+        4. Arredonda o valor total para duas casas decimais.
+        5. Atualiza o campo de valor total com o valor calculado e o torna somente leitura.
+
+        Args:
+            event (Event): O evento que acionou a função, geralmente associado à tecla "Tab".
+
+        Returns:
+            None
+        """
+        # Passo 1: Verifica se o evento foi acionado pela tecla "Tab".
         if event.keysym == "Tab":
-            
+            # Passo 2: Obtém a quantidade e o valor unitário dos campos correspondentes.
             quantidade = int(self.input_Quantidade.get())
             vlrUnitario = float(self.input_VlrUnitario.get())
             
+            # Passo 3: Calcula o valor total multiplicando a quantidade pelo valor unitário.
             calcularVlrTotal = quantidade * vlrUnitario
             vlrTotalArredondado = round(calcularVlrTotal, 2)
             
+            # Passo 4: Atualiza o campo de valor total com o valor calculado e o torna somente leitura.
             self.input_VlrTotal.configure(state="normal")
             self.input_VlrTotal.delete(0, END)
             self.input_VlrTotal.insert(0, vlrTotalArredondado)
             self.input_VlrTotal.configure(state="readonly")
             
-
     def cadastrarOrdemServicos(self):
+        """
+        Função responsável por cadastrar uma ordem de serviço na tela principal do aplicativo.
+
+        Esta função realiza as seguintes etapas:
+        1. Obtém os valores dos campos da tela de ordem de serviço usando a função interna `pegandoValoresTelaPrincipalOS`.
+        2. Obtém o nome de usuário logado.
+        3. Verifica se todos os campos obrigatórios estão preenchidos chamando a função interna `_verificarSeCamposTelaOrdemServicosPreenchidos`.
+        4. Insere a ordem de serviço no banco de dados chamando a função `inserirOrdemServicosDB` do objeto `self.manipular_ordens`.
+        5. Exibe um alerta de sucesso se o cadastro for bem-sucedido.
+        6. Atualiza a tela principal chamando a função interna `_atualizarTelaPrincipal`.
+
+        Returns:
+            None
+        """
         try:
+            # Passo 1: Obtém os valores dos campos da tela de ordem de serviço usando a função interna `pegandoValoresTelaPrincipalOS`.
             os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado  = self.pegandoValoresTelaPrincipalOS()
             
+            # Obtém o nome de usuário logado.
             nomeUsuario = self.usuarioLogado 
             
+            # Passo 3: Verifica se todos os campos obrigatórios estão preenchidos chamando a função interna `_verificarSeCamposTelaOrdemServicosPreenchidos`.
             if self._verificarSeCamposTelaOrdemServicosPreenchidos():
+                # Passo 4: Insere a ordem de serviço no banco de dados chamando a função `inserirOrdemServicosDB` do objeto `self.manipular_ordens`.
                 self.manipular_ordens.inserirOrdemServicosDB(os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_faturado, os_descComplementar, nomeUsuario)
 
+                # Passo 5: Exibe um alerta de sucesso se o cadastro for bem-sucedido.
                 self.mostrar_alerta('Sucesso', 'Serviço inserido com sucesso!')
                 
+                # Passo 6: Atualiza a tela principal chamando a função interna `_atualizarTelaPrincipal`.
                 self._atualizarTelaPrincipal()
                 
         except Exception as e:
-            self.mostrar_alerta('Erro de Preenchimento', f'Preencha todos os campos!{e}')
-        
+            self.mostrar_alerta('Erro de Preenchimento', f'Preencha todos os campos! {e}')
+  
     def fechar_TelaPrincipal(self):
+        """
+        Função responsável por fechar a tela principal do aplicativo.
+
+        Esta função realiza as seguintes etapas:
+        1. Destroi a janela da tela principal, encerrando a aplicação.
+
+        Returns:
+            None
+        """
+        # Passo 1: Destroi a janela da tela principal, encerrando a aplicação.
         self.telaPrincipal.destroy()
     
     def mostrarOrdensServico_TelaPrincipal(self):
+        """
+        Função responsável por exibir as ordens de serviço na Treeview da tela principal.
+
+        Esta função realiza as seguintes etapas:
+        1. Obtém um cursor para interagir com o banco de dados.
+        2. Executa uma consulta SQL para selecionar todas as ordens de serviço ordenadas pelo ID em ordem crescente.
+        3. Recupera os resultados da consulta.
+        4. Limpa a Treeview para remover todos os registros existentes.
+        5. Itera sobre os resultados da consulta e adiciona cada ordem de serviço à Treeview.
+        6. Redimensiona as colunas da Treeview para ajustar o conteúdo exibido.
+
+        Returns:
+            None
+        """
+        # Passo 1: Obtém um cursor para interagir com o banco de dados.
         cursor = self.db_manager.get_cursor()
 
-        # Adicione a cláusula ORDER BY para ordenar os registros pelo ID em ordem decrescente
+        # Passo 2: Executa uma consulta SQL para selecionar todas as ordens de serviço ordenadas pelo ID em ordem crescente.
         cursor.execute("SELECT * FROM tb_ordens_servicos ORDER BY os_id ASC")
 
+        # Passo 3: Recupera os resultados da consulta.
         resultados = cursor.fetchall()
 
-        # Limpar a Treeview antes de adicionar os novos registros
+        # Passo 4: Limpa a Treeview para remover todos os registros existentes.
         self.treeviewTelaPrincipal.delete(*self.treeviewTelaPrincipal.get_children())
 
-        # Iterar sobre os resultados e adicioná-los à Treeview no início (índice "0")
+        # Passo 5: Itera sobre os resultados da consulta e adiciona cada ordem de serviço à Treeview.
         for resultado in resultados:
             os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado, os_dtFaturamento, os_usuario = resultado
             
             self.treeviewTelaPrincipal.insert("", "0", values=(os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado, os_dtFaturamento, os_usuario))
         
-        # Redimensionar as colunas para ajustar o conteúdo
+        # Passo 6: Redimensiona as colunas da Treeview para ajustar o conteúdo exibido.
         self.ajustarLarguraColunaTreeview(self.treeviewTelaPrincipal)
+
         
     def gerarRelatorioOrdensGeral(self):
+        """
+        Função responsável por gerar um relatório geral de todas as ordens de serviço.
+
+        Esta função realiza as seguintes etapas:
+        1. Chama a função `gerarRelatorioOdensServicoTodas` do objeto `self.manipular_relatorios`.
+        2. Especifica o nome do arquivo de saída como 'Relatorio geral de retrabalho.pdf'.
+
+        Returns:
+            None
+        """
+        # Passo 1: Chama a função `gerarRelatorioOdensServicoTodas` do objeto `self.manipular_relatorios`.
         self.manipular_relatorios.gerarRelatorioOdensServicoTodas('Relatorio geral de retrabalho.pdf')
 
     #FUNÇÃO BOTÃO DELETAR NA TELA PRINCIPAL ORDEM DE SERVIÇOS
@@ -1209,9 +1480,22 @@ class LoginGUI:
         self._atualizarTelaPrincipal()
     
     def _atualizarTelaPrincipal(self):
+        """
+        Função interna responsável por atualizar a tela principal do aplicativo.
+
+        Esta função realiza as seguintes etapas:
+        1. Fecha a tela principal atual chamando a função interna `fechar_TelaPrincipal`.
+        2. Cria uma nova tela principal chamando a função interna `criar_TelaPrincipal`.
+
+        Returns:
+            None
+        """
+        # Passo 1: Fecha a tela principal atual chamando a função interna `fechar_TelaPrincipal`.
         self.fechar_TelaPrincipal()
+        
+        # Passo 2: Cria uma nova tela principal chamando a função interna `criar_TelaPrincipal`.
         self.criar_TelaPrincipal()
-            
+
     #@@@@@@@@@@@@@@@@@@@ FUNÇÕES TELA CADASTRO SERVIÇOS @@@@@@@@@@@@@@@@@#
     def abrirTelaCadServ(self, event=None):
         """
@@ -1312,10 +1596,26 @@ class LoginGUI:
         return self.manipular_ordens.verificarSeCodigoDoServicoCadastrado(codServico) is not None    
     
     def verificarSeCodigoServicoJaExiste(self, codServico):
+        """
+        Função responsável por verificar se um código de serviço já existe na tela de cadastro de serviços.
+
+        Esta função realiza as seguintes etapas:
+        1. Chama a função interna `_verificarSeCodigoServicoJaExiste` para realizar a verificação.
+        2. Se o código de serviço já existir, exibe um alerta, atualiza a tela de cadastro de serviços e retorna False.
+
+        Args:
+            codServico (str): O código de serviço a ser verificado.
+
+        Returns:
+            bool: True se o código de serviço não existir, False caso contrário.
+        """
+        # Passo 1: Chama a função interna `_verificarSeCodigoServicoJaExiste` para realizar a verificação.
         if self._verificarSeCodigoServicoJaExiste():
+            # Passo 2: Se o código de serviço já existir, exibe um alerta, atualiza a tela de cadastro de serviços e retorna False.
             self.mostrar_alerta("Valor Inválido", f"Código {codServico} já existe.")
             self._atualizarTelaCadServ()
             return False
+        
     # FUNÇÃO BOTÃO INSERIR TELA CADASTRO DE SERVIÇOS    
     def cadastrarServico_TelaCadServico(self):
         """
@@ -1386,55 +1686,92 @@ class LoginGUI:
     #FUNÇÃO BOTÃO DELETAR NA TELA CADATRO DE SERVIÇOS
     def deletarServico_TelaCadServ(self):
         """
-        Deleta um serviço da tabela na tela de cadastro de serviços.
+        Função responsável por deletar um serviço da tela de cadastro de serviços.
 
-        Este método permite a exclusão de um serviço selecionado da tabela na tela de cadastro de serviços.
-        Ele confirma a exclusão com o usuário, realiza a exclusão no banco de dados e atualiza a tabela.
+        Esta função realiza as seguintes etapas:
+        1. Obtém o item selecionado na tabela de serviços.
+        2. Verifica se algum item foi selecionado; caso contrário, exibe um alerta.
+        3. Obtém informações do item selecionado (ID, código de serviço, descrição do serviço e valor unitário).
+        4. Solicita confirmação ao usuário para a exclusão do serviço.
+        5. Se confirmado, deleta o serviço do banco de dados.
+        6. Se a exclusão no banco de dados for bem-sucedida, remove o item da tabela.
+        7. Exibe uma mensagem de sucesso.
+        8. Se ocorrer um erro na exclusão, exibe uma mensagem de erro.
+        9. Se o usuário cancelar a exclusão, exibe uma mensagem de alerta.
+        10. Atualiza a tela de cadastro de serviços.
 
-        Parâmetros:
-        Nenhum
-
-        Retorna:
-        Nenhum
+        Returns:
+            None
         """
-        # Obtém o item selecionado na tabela
+        # Passo 1: Obtém o item selecionado na tabela de serviços.
         selected_item = self.treeview_tlServicos.selection()
         
-        # Verifica se algum item foi selecionado
+        # Passo 2: Verifica se algum item foi selecionado; caso contrário, exibe um alerta.
         if not selected_item:
             self.mostrar_alerta("Nenhum item selecionado", "Por favor, selecione um item para deletar.")
             self._atualizarTelaCadServ()
             return
         
-        # Obtém informações do item selecionado
+        # Passo 3: Obtém informações do item selecionado (ID, código de serviço, descrição do serviço e valor unitário).
         serv_id, serv_codServ, serv_descServico, serv_vlrUnit = self.pegarValoresLinhaSelecionadaDaTabelaServicos()
         
-        # Confirmação de exclusão com o usuário
+        # Passo 4: Solicita confirmação ao usuário para a exclusão do serviço.
         if self.confirmar_solicitacao(f"Confirmar Exclusão", 'Tem certeza que deseja excluir o serviço:', {serv_codServ, serv_descServico}):
-            # Deleta o serviço do banco de dados
+            # Passo 5: Deleta o serviço do banco de dados.
             if self.manipular_ordens.deletarServicoDB(serv_id):
-                # Remove o item da tabela
+                # Passo 6: Se a exclusão no banco de dados for bem-sucedida, remove o item da tabela.
                 self.treeview_tlServicos.delete(selected_item)
+                # Passo 7: Exibe uma mensagem de sucesso.
                 self.mostrar_sucesso(serv_codServ, serv_descServico, serv_vlrUnit)
             else:
+                # Passo 8: Se ocorrer um erro na exclusão, exibe uma mensagem de erro.
                 self.mostrar_erro("Ocorreu um erro ao tentar deletar o serviço.")
         else:
+            # Passo 9: Se o usuário cancelar a exclusão, exibe uma mensagem de alerta.
             self.mostrar_alerta("Cancelado", "A exclusão foi cancelada pelo usuário.")
         
-        # Atualiza a tela de cadastro de serviços
+        # Passo 10: Atualiza a tela de cadastro de serviços.
         self._atualizarTelaCadServ()
 
     ###FUNÇÕES PARA MODIFICAR
     def pegarValoresLinhaSelecionadaDaTabelaServicos(self):
+        """
+        Função responsável por obter os valores da linha selecionada na tabela de serviços na tela de cadastro de serviços.
+
+        Esta função realiza as seguintes etapas:
+        1. Obtém o item (valores da linha) da tabela de serviços selecionado.
+        2. Extrai os valores do item, que representam as informações do serviço (ID, código de serviço, descrição do serviço e valor unitário).
+        3. Retorna os valores obtidos em uma tupla.
+
+        Returns:
+            Tuple[int, str, str, float]: Uma tupla contendo os valores da linha selecionada na seguinte ordem:
+            (ID do serviço, código de serviço, descrição do serviço, valor unitário).
+        """
+        # Passo 1: Obtém o item (valores da linha) da tabela de serviços selecionado.
         itemSelecionadoTbServicos = self.treeview_tlServicos.selection()
         item = self.treeview_tlServicos.item(itemSelecionadoTbServicos, 'values')
+        
+        # Passo 2: Extrai os valores do item, que representam as informações do serviço.
         serv_id, serv_codServ, serv_descServico, serv_vlrUnit = item
-        return serv_id, serv_codServ, serv_descServico, serv_vlrUnit
+        
+        # Passo 3: Retorna os valores obtidos em uma tupla.
+        return serv_id, serv_codServ, serv_descServico, float(serv_vlrUnit)
     
     def _desabilitar_inputCodServ(self):
-        # Desabilitar o campo
+        """
+        Função interna responsável por desabilitar o campo de código de serviço na tela de cadastro de serviços.
+
+        Esta função realiza as seguintes etapas:
+        1. Desabilita o campo de código de serviço.
+        2. Altera a cor de fundo do campo para uma cor mais escura.
+
+        Returns:
+            None
+        """
+        # Passo 1: Desabilita o campo de código de serviço.
         self.inputCodServ_tlCadServ.config(state="disabled")
-        # Alterar a cor de fundo para uma cor mais escura
+        
+        # Passo 2: Altera a cor de fundo do campo para uma cor mais escura.
         self.inputCodServ_tlCadServ.config(bg="#bfbfbf")
     
     # FUNÇÃO BOTÃO MODIFICAR TELA CADASTRO DE SERVIÇOS
@@ -1486,39 +1823,44 @@ class LoginGUI:
     # FUNÇÃO BOTÃO SALVAR MODIFICAÇÕES    
     def validarModificacoesTelaCadServ(self):
         """
-        Salva as modificações feitas na tela de cadastro de serviços.
+        Função responsável por validar e salvar as modificações na tela de cadastro de serviços.
 
-        Esta função captura os valores dos campos de entrada na tela de cadastro de serviços, valida se os campos obrigatórios estão preenchidos, modifica o serviço no banco de dados, atualiza a tela de cadastro e limpa os campos.
+        Esta função realiza as seguintes etapas:
+        1. Obtém os valores dos campos da tela de cadastro de serviços (código de serviço, descrição do serviço e valor unitário).
+        2. Realiza validações para verificar se todos os campos obrigatórios estão preenchidos.
+        3. Obtém os valores do serviço selecionado na tabela.
+        4. Modifica o serviço no banco de dados com os novos valores.
+        5. Se a modificação for bem-sucedida, limpa os campos e atualiza a tela de cadastro de serviços.
+        6. Retorna True se a modificação for bem-sucedida, False caso contrário.
 
-        Parâmetros:
-        Nenhum
-
-        Retorna:
-        bool: True se as modificações forem salvas com sucesso, False em caso de erro.
+        Returns:
+            bool: True se a modificação for bem-sucedida, False caso contrário.
         """
         try:
+            # Passo 1: Obtém os valores dos campos da tela de cadastro de serviços.
             codServico, descServico, vlrUnit = self.pegarValoresTelaCadServico()
             codServico = codServico.strip()
             descServico = descServico.strip().upper()
             vlrUnit = vlrUnit.replace(",", ".")           
             
-            # Verificar se todos os campos obrigatórios estão preenchidos
+            # Passo 2: Realiza validações para verificar se todos os campos obrigatórios estão preenchidos.
             if not codServico or not descServico or not vlrUnit:
                 self.mostrar_alerta("Campos Vazios", "Por favor, preencha todos os campos.")
                 return False
             
-            # Obter o serviço selecionado na tabela
+            # Passo 3: Obtém os valores do serviço selecionado na tabela.
             serv_id, serv_codServ, serv_descServico, serv_vlrUnit = self.pegarValoresLinhaSelecionadaDaTabelaServicos()
             
-            # Modificar o serviço no banco de dados
+            # Passo 4: Modifica o serviço no banco de dados com os novos valores.
             if self.manipular_ordens.editarServicoPeloIDServicosValoresDB(serv_id, codServico, descServico, vlrUnit):
-                # Atualizar a tela de cadastro e limpar os campos
+                # Passo 5: Se a modificação for bem-sucedida, limpa os campos e atualiza a tela de cadastro de serviços.
                 self._limparTelaCadServ()
                 self._atualizarTelaCadServ()
                 return True
             else:
                 return False
         except Exception as e:
+            # Passo 6: Em caso de erro, exibe uma mensagem de alerta e retorna False.
             self.mostrar_alerta("Erro", f"Erro ao salvar: {e}")
             return False
     
@@ -1558,199 +1900,435 @@ class LoginGUI:
     #@@@@@@@@@@@@@@@@@@@ FUNÇÕES TELA CADASTRO DE CLIENTES @@@@@@@@@@@@@@@@@@@#
     
     def abrirTelaCadCliente(self, event=None):
-        self.criar_TelaCadClientes() 
-    
+        """
+        Função responsável por abrir a tela de cadastro de clientes.
+
+        Esta função realiza o seguinte passo:
+        1. Chama a função interna `criar_TelaCadClientes` para criar a tela de cadastro de clientes.
+
+        Args:
+            event (Tkinter Event, optional): Um evento (geralmente associado a um botão) que aciona a abertura da tela. O padrão é None.
+
+        Returns:
+            None
+        """
+        # Passo 1: Chama a função interna `criar_TelaCadClientes` para criar a tela de cadastro de clientes.
+        self.criar_TelaCadClientes()
+
     # MOSTRAR A TABELA NA TELA CADASTRO DE CLIENTES        
     def mostrarTabelaClientes_TelaCadClientes(self):
-        
-        # Limpa os dados existentes na tabela
+        """
+        Função responsável por atualizar e mostrar a tabela(treeview) de clientes na tela de cadastro de clientes.
+
+        Esta função realiza as seguintes etapas:
+        1. Limpa os dados existentes na tabela de clientes.
+        2. Realiza uma consulta à tabela de CLIENTES para obter os registros.
+        3. Itera sobre os resultados da consulta e insere cada registro na tabela de clientes.
+
+        Returns:
+            None
+        """
+        # Passo 1: Limpa os dados existentes na tabela de clientes.
         self.treeview_tlClientes.delete(*self.treeview_tlClientes.get_children())
 
-        # Realiza a consulta à tabela de CLIENTES
+        # Passo 2: Realiza a consulta à tabela de CLIENTES para obter os registros.
         listandoClientes = self.manipular_ordens.consultarCompletaTabelaClientes()
 
-        # Itera sobre os resultados da consulta e insere na tabela
+        # Passo 3: Itera sobre os resultados da consulta e insere cada registro na tabela de clientes.
         for resultado in listandoClientes:
             cli_id, codCliente, nomeCliente, qtdNFisenta = resultado
 
-            # Insere uma nova linha na tabela com os valores obtidos
+            # Insere uma nova linha na tabela com os valores obtidos.
             self.treeview_tlClientes.insert("", "end", values=(cli_id, codCliente, nomeCliente, qtdNFisenta))
-    
+
     def fechar_TelaCadCliente(self):
+        """
+        Função responsável por fechar a janela da tela de cadastro de clientes.
+
+        Esta função realiza o seguinte passo:
+        1. Destroi a janela da tela de cadastro de clientes.
+
+        Returns:
+            None
+        """
+        # Passo 1: Destroi a janela da tela de cadastro de clientes.
         self.tlClientes.destroy()
     
     def _limparTelaCadCliente(self):
+        """
+        Função interna responsável por limpar os campos da tela de cadastro de clientes.
+
+        Esta função realiza as seguintes etapas:
+        1. Remove o conteúdo do campo "Código de Cliente".
+        2. Remove o conteúdo do campo "Nome do Cliente".
+        3. Remove o conteúdo do campo "Quantidade de Notas Fiscais Isentas".
+
+        Returns:
+            None
+        """
+        # Passo 1: Remove o conteúdo do campo "Código de Cliente".
         self.inputCodCliente_tlCadCliente.delete(0, 'end')  
+        
+        # Passo 2: Remove o conteúdo do campo "Nome do Cliente".
         self.inputNomeCliente_tlCadCliente.delete(0, 'end')
+        
+        # Passo 3: Remove o conteúdo do campo "Quantidade de Notas Fiscais Isentas".
         self.inputNotasIsentas_tlCadCliente.delete(0, 'end')
         
     def _atualizarTelaCadCliente(self):
-        self.ajustarLarguraColunaTreeview(self.treeview_tlClientes)  # Redimensiona as colunas da tabela
-        self.mostrarTabelaClientes_TelaCadClientes()  # Mostra a tabela de serviços
-        self.fechar_TelaCadCliente()  # Fecha a tela de cadastro de serviços
-        self.abrirTelaCadCliente()  # Recria a tela de cadastro de serviços 
-    
-    ### FUNÇÃO INSERIR ###
-    # pegar dados dos campos
+        """
+        Função interna responsável por atualizar a tela de cadastro de clientes.
+
+        Esta função realiza as seguintes etapas:
+        1. Redimensiona as colunas da tabela de clientes na tela.
+        2. Mostra a tabela de clientes na tela de cadastro de clientes.
+        3. Fecha a tela de cadastro de clientes.
+        4. Recria a tela de cadastro de clientes.
+
+        Returns:
+            None
+        """
+        # Passo 1: Redimensiona as colunas da tabela de clientes na tela.
+        self.ajustarLarguraColunaTreeview(self.treeview_tlClientes)
+        
+        # Passo 2: Mostra a tabela de clientes na tela de cadastro de clientes.
+        self.mostrarTabelaClientes_TelaCadClientes()
+        
+        # Passo 3: Fecha a tela de cadastro de clientes.
+        self.fechar_TelaCadCliente()
+        
+        # Passo 4: Recria a tela de cadastro de clientes.
+        self.abrirTelaCadCliente()
+
     def pegarValoresTelaCadClientes(self):
+        """
+        Função responsável por obter os valores dos campos na tela de cadastro de clientes.
+
+        Esta função realiza as seguintes etapas:
+        1. Obtém o valor do campo "Código de Cliente".
+        2. Obtém o valor do campo "Nome do Cliente".
+        3. Obtém o valor do campo "Quantidade de Notas Fiscais Isentas".
+        4. Se o campo "Quantidade de Notas Fiscais Isentas" estiver vazio, define o valor como 0.
+        5. Retorna os valores obtidos em uma tupla (código de cliente, nome do cliente, quantidade de notas fiscais isentas).
+
+        Returns:
+            Tuple[str, str, float]: Uma tupla contendo os valores dos campos na tela de cadastro de clientes na seguinte ordem:
+            (código de cliente, nome do cliente, quantidade de notas fiscais isentas).
+        """
+        # Passo 1: Obtém o valor do campo "Código de Cliente".
         codCliente = self.inputCodCliente_tlCadCliente.get()
+        
+        # Passo 2: Obtém o valor do campo "Nome do Cliente".
         nomeCliente = self.inputNomeCliente_tlCadCliente.get()
+        
+        # Passo 3: Obtém o valor do campo "Quantidade de Notas Fiscais Isentas".
         notasIsentas = self.inputNotasIsentas_tlCadCliente.get()
+        
+        # Passo 4: Se o campo "Quantidade de Notas Fiscais Isentas" estiver vazio, define o valor como 0.
         if not notasIsentas:
-            notasIsentas = 0 
-        return codCliente, nomeCliente, notasIsentas
+            notasIsentas = 0
+        
+        # Passo 5: Retorna os valores obtidos em uma tupla (código de cliente, nome do cliente, quantidade de notas fiscais isentas).
+        return codCliente, nomeCliente, float(notasIsentas)
     
-    # verificar se todos os campos estão preenchidos
     def _verificaSeCamposTelaClientesPreenchidos(self):
+        """
+        Função interna responsável por verificar se os campos obrigatórios na tela de cadastro de clientes estão preenchidos.
+
+        Esta função realiza as seguintes etapas:
+        1. Obtém os valores dos campos da tela de cadastro de clientes (código de cliente, nome do cliente e quantidade de notas fiscais isentas).
+        2. Retorna True se os campos obrigatórios (código e nome do cliente) estão preenchidos, caso contrário retorna False.
+
+        Returns:
+            bool: True se os campos obrigatórios estão preenchidos, False caso contrário.
+        """
+        # Passo 1: Obtém os valores dos campos da tela de cadastro de clientes.
         codCliente, nomeCliente, notasIsentas = self.pegarValoresTelaCadClientes()
+        
+        # Passo 2: Retorna True se os campos obrigatórios (código e nome do cliente) estão preenchidos, caso contrário retorna False.
         return bool(codCliente and nomeCliente)
     
-    # verificar se código do input já está cadastrado na tabela
     def _verificarSeCodigoClientteJaExiste(self):
+        """
+        Função interna responsável por verificar se um código de cliente já existe no banco de dados.
+
+        Esta função realiza as seguintes etapas:
+        1. Obtém o código de cliente da entrada de texto na tela de cadastro de clientes.
+        2. Chama a função `verificarSeCodigoDoClienteCadastrado` do objeto `manipular_ordens` para verificar se o código existe.
+        3. Retorna True se o código já existe no banco de dados, False caso contrário.
+
+        Returns:
+            bool: True se o código de cliente já existe, False caso contrário.
+        """
+        # Passo 1: Obtém o código de cliente da entrada de texto na tela de cadastro de clientes.
         codCliente = self.inputCodCliente_tlCadCliente.get()
-        return self.manipular_ordens.verificarSeCodigoDoClienteCadastrado(codCliente) is not None    
-    
+        
+        # Passo 2: Chama a função `verificarSeCodigoDoClienteCadastrado` do objeto `manipular_ordens` para verificar se o código existe.
+        return self.manipular_ordens.verificarSeCodigoDoClienteCadastrado(codCliente) is not None
+  
     def verificarSeCodigoClienteJaExiste(self, codCliente):
+        """
+        Função responsável por verificar se um código de cliente já existe no banco de dados.
+
+        Esta função realiza as seguintes etapas:
+        1. Chama a função interna `_verificarSeCodigoClientteJaExiste` para verificar se o código já existe.
+        2. Se o código já existe, exibe um alerta indicando que o valor é inválido.
+        3. Atualiza a tela de cadastro de clientes.
+        4. Retorna False se o código já existe, True caso contrário.
+
+        Args:
+            codCliente (str): O código do cliente a ser verificado.
+
+        Returns:
+            bool: False se o código já existe, True caso contrário.
+        """
+        # Passo 1: Chama a função interna `_verificarSeCodigoClientteJaExiste` para verificar se o código já existe.
         if self._verificarSeCodigoClientteJaExiste():
+            # Passo 2: Se o código já existe, exibe um alerta indicando que o valor é inválido.
             self.mostrar_alerta("Valor Inválido", f"Código {codCliente} já existe.")
+            # Passo 3: Atualiza a tela de cadastro de clientes.
             self._atualizarTelaCadCliente()
+            # Passo 4: Retorna False para indicar que o código já existe.
             return False
-    
+        # Se o código não existe, retorna True.
+        return True
+
     # FUNÇÃO BOTÃO INSERIR TELA CADASTRO DE CLIENTES
     def cadastrarCliente_TelaCadCliente(self):
+        """
+        Função responsável por cadastrar um novo cliente na tela de cadastro de clientes.
+
+        Esta função realiza as seguintes etapas:
+        1. Verifica se os campos obrigatórios (código, nome do cliente e quantidade de notas fiscais isentas) estão preenchidos.
+        2. Remove espaços em branco extras do código do cliente e converte o nome do cliente para letras maiúsculas.
+        3. Verifica se o código de cliente já existe no banco de dados.
+        4. Insere o novo cliente no banco de dados se o código for único.
+        5. Exibe uma mensagem de sucesso se o cadastro for bem-sucedido.
+        6. Retorna True se o cadastro for bem-sucedido, False caso contrário.
+
+        Returns:
+            bool: True se o cadastro for bem-sucedido, False caso contrário.
+        """
         try:
-            # Verifica se os campos obrigatórios estão preenchidos
+            # Passo 1: Verifica se os campos obrigatórios estão preenchidos.
             if not self._verificaSeCamposTelaClientesPreenchidos():
                 self.mostrar_alerta("Campos Vazios", "Por favor, preencha todos os campos.")
                 self._atualizarTelaCadCliente()
                 return False
             
+            # Passo 2: Remove espaços em branco extras do código do cliente e converte o nome do cliente para letras maiúsculas.
             codCliente, nomeCliente, qtdNFisenta = self.pegarValoresTelaCadClientes()
             codCliente = codCliente.strip()
             nomeCliente = nomeCliente.strip().upper()
-            #qtdNFisenta = qtdNFisenta.replace(",", ".")
             
-            # Verifica se o código de cliente já existe no banco de dados
+            # Passo 3: Verifica se o código de cliente já existe no banco de dados.
             if self._verificarSeCodigoClientteJaExiste():
                 self.mostrar_alerta("Valor Inválido", f"Código {codCliente} já existe.")
                 self._atualizarTelaCadCliente()
                 return False
             
-            # Insere o novo cliente no banco de dados
+            # Passo 4: Insere o novo cliente no banco de dados se o código for único.
             if self.manipular_ordens.inserirClienteDB(codCliente, nomeCliente, qtdNFisenta):
-            # if self._inserirServicoNoBanco(codServico, descServico, vlrUnit):
+                # Passo 5: Exibe uma mensagem de sucesso se o cadastro for bem-sucedido.
                 self.mostrar_alerta("Cadastro de Cliente", f"O cliente '{codCliente, nomeCliente}' foi cadastrado com sucesso!")
                 self._atualizarTelaCadCliente()
                 return True
         except Exception as e:
-            self.mostrar_alerta('Erro', f'Cadastro do Cliente não realizado!/n(Erro:{e})')
+            # Passo 6: Exibe uma mensagem de erro se ocorrer uma exceção.
+            self.mostrar_alerta('Erro', f'Cadastro do Cliente não realizado!\n(Erro:{e})')
         return False
     
     ### FUNÇÕES PARA MODIFICAR CADASTRO CLIENTE
     def pegarValoresLinhaSelecionadaDaTabelaCliente(self):
+        """
+        Função responsável por obter os valores da linha selecionada na treeview da tabela de clientes.
+
+        Esta função realiza as seguintes etapas:
+        1. Obtém o item (valores) da linha selecionada na tabela de clientes.
+        2. Extrai os valores individuais (ID, código do cliente, nome do cliente e quantidade de notas fiscais isentas).
+        3. Retorna os valores obtidos.
+
+        Returns:
+            Tuple[int, str, str, str]: Uma tupla contendo os valores da linha selecionada na seguinte ordem:
+            (ID do cliente, código do cliente, nome do cliente, quantidade de notas fiscais isentas).
+        """
+        # Passo 1: Obtém o item (valores) da linha selecionada na tabela de clientes.
         itemSelecionadoTbCliente = self.treeview_tlClientes.selection()
         item = self.treeview_tlClientes.item(itemSelecionadoTbCliente, 'values')
+
+        # Passo 2: Extrai os valores individuais (ID, código do cliente, nome do cliente e quantidade de notas fiscais isentas).
         cli_id, cli_codcliente, cli_nomeCliente, cli_qtdNFisenta = item
+
+        # Passo 3: Retorna os valores obtidos em uma tupla.
         return cli_id, cli_codcliente, cli_nomeCliente, cli_qtdNFisenta
-    
+
     def _desabilitar_inputCodCliente(self):
-        # Desabilitar o campo
+        """
+        Função responsável por desabilitar o campo de código do cliente na tela de cadastro de clientes.
+
+        Esta função realiza as seguintes etapas:
+        1. Desabilita o campo para impedir que o usuário faça edições.
+        2. Altera a cor de fundo do campo para uma cor mais escura para indicar que está desabilitado.
+
+        Returns:
+            None
+        """
+        # Passo 1: Desabilita o campo para impedir que o usuário faça edições.
         self.inputCodCliente_tlCadCliente.config(state="disabled")
-        # Alterar a cor de fundo para uma cor mais escura
+
+        # Passo 2: Altera a cor de fundo do campo para uma cor mais escura para indicar que está desabilitado.
         self.inputCodCliente_tlCadCliente.config(bg="#bfbfbf")
     
     # FUNÇÃO BOTÃO MODIFICAR TELA CADASTRO DE CLIENTE
-    def modificarItemSelecionadoDaTabCliente(self): 
+    def modificarItemSelecionadoDaTabCliente(self):
+        """
+        Função responsável por preencher os campos de edição na tela de cadastro de clientes com os valores do item selecionado na tabela de clientes.
+
+        Esta função realiza as seguintes etapas:
+        1. Obtém os valores da linha selecionada na tabela de clientes (ID, código do cliente, nome do cliente e quantidade de notas fiscais isentas).
+        2. Preenche o campo de código com o valor do item selecionado.
+        3. Desabilita o campo de código para evitar modificações.
+        4. Preenche o campo de nome do cliente com o valor do item selecionado.
+        5. Preenche o campo de quantidade de notas fiscais isentas com o valor do item selecionado.
+        6. Remove os botões anteriores e cria um botão "Salvar Modificações" na tela.
+        7. Retorna True se a operação for bem-sucedida, False caso contrário.
+
+        Returns:
+            bool: True se a operação for bem-sucedida, False caso contrário.
+        """
         try:
-            # Obtém os valores da linha selecionada na tabela de serviços
+            # Passo 1: Obtém os valores da linha selecionada na tabela de clientes.
             cli_id, codcliente, nomeCliente, qtdNFisenta = self.pegarValoresLinhaSelecionadaDaTabelaCliente()
             
-            # Preenche o campo de código com o valor do item selecionado
+            # Passo 2: Preenche o campo de código com o valor do item selecionado.
             self.inputCodCliente_tlCadCliente.delete(0, 'end')
-            self.inputCodCliente_tlCadCliente.insert(0, int(codcliente)) 
+            self.inputCodCliente_tlCadCliente.insert(0, int(codcliente))
             
-            # Desabilita o campo de código
+            # Passo 3: Desabilita o campo de código para evitar modificações.
             self._desabilitar_inputCodCliente()
             
-            # Preenche o campo de descrição com o valor do item selecionado
+            # Passo 4: Preenche o campo de nome do cliente com o valor do item selecionado.
             self.inputNomeCliente_tlCadCliente.delete(0, 'end')
             self.inputNomeCliente_tlCadCliente.insert(0, str(nomeCliente))
             
-            # Preenche o campo de valor unitário com o valor do item selecionado
+            # Passo 5: Preenche o campo de quantidade de notas fiscais isentas com o valor do item selecionado.
             self.inputNotasIsentas_tlCadCliente.delete(0, 'end')
             self.inputNotasIsentas_tlCadCliente.insert(0, float(qtdNFisenta))
             
-            # Remove os botões anteriores e cria um botão "Salvar Modificações"
+            # Passo 6: Remove os botões anteriores e cria um botão "Salvar Modificações" na tela.
             self._apagarListaBotoes(self.botoesParaOcultar_TelaCadCliente)
-            self._criarBotaoSalvarModificacoes(self.tlClientes, self.validarModificacoesTelaCadCliente, 320, 106, 139, 30,"./img/img_btnSalvarModificacoes.png")
+            self._criarBotaoSalvarModificacoes(self.tlClientes, self.validarModificacoesTelaCadCliente, 320, 106, 139, 30, "./img/img_btnSalvarModificacoes.png")
             
+            # Passo 7: Retorna True para indicar que a operação foi bem-sucedida.
             return True
         
         except Exception as e:
-            # Exibe uma mensagem de alerta e recria a tela caso ocorra um erro
+            # Exibe uma mensagem de alerta, recria a tela e retorna False em caso de erro.
             self.mostrar_alerta('Atenção', f'Selecione uma linha da tabela abaixo:')
             self.fechar_TelaCadCliente()
-            self.criar_TelaCadClientes() 
+            self.criar_TelaCadClientes()
             return False
     
     # FUNÇÃO BOTÃO SALVAR MODIFICAÇÕES    
     def validarModificacoesTelaCadCliente(self):
+        """
+        Função responsável por validar e salvar as modificações feitas na tela de cadastro de clientes.
+
+        Esta função realiza as seguintes etapas:
+        1. Obtém os valores da tela de cadastro de clientes (código do cliente, nome do cliente e quantidade de notas fiscais isentas).
+        2. Remove espaços em branco extras do código do cliente e converte o nome do cliente para letras maiúsculas.
+        3. Substitui vírgulas por pontos na quantidade de notas fiscais isentas.
+        4. Verifica se os campos obrigatórios (código e nome do cliente) estão preenchidos.
+        5. Obtém os valores da linha selecionada da tabela de clientes (ID, código do cliente, nome do cliente e quantidade de notas fiscais isentas).
+        6. Tenta editar o cliente no banco de dados com os novos valores.
+        7. Se a edição for bem-sucedida, limpa a tela de cadastro de clientes e a atualiza.
+        8. Se ocorrer um erro durante a edição, retorna False e exibe uma mensagem de erro.
+
+        Returns:
+            bool: True se a edição for bem-sucedida, False caso contrário.
+        """
         try:
+            # Passo 1: Obtém os valores da tela de cadastro de clientes.
             codCliente, nomeCliente, qtdNFisenta = self.pegarValoresTelaCadClientes()
+
+            # Passo 2: Remove espaços em branco extras do código do cliente e converte o nome do cliente para letras maiúsculas.
             codCliente = codCliente.strip()
             nomeCliente = nomeCliente.strip().upper()
-            qtdNFisenta = qtdNFisenta.replace(",", ".")           
-            
-            # Verificar se todos os campos obrigatórios estão preenchidos
+
+            # Passo 3: Substitui vírgulas por pontos na quantidade de notas fiscais isentas.
+            qtdNFisenta = qtdNFisenta.replace(",", ".")
+
+            # Passo 4: Verifica se os campos obrigatórios (código e nome do cliente) estão preenchidos.
             if not codCliente or not nomeCliente:
                 self.mostrar_alerta("Campos Vazios", "Por favor, preencha todos os campos.")
                 return False
-            
-            # Obter o serviço selecionado na tabela
+
+            # Passo 5: Obtém os valores da linha selecionada da tabela de clientes (ID, código do cliente, nome do cliente e quantidade de notas fiscais isentas).
             cli_id, cli_codcliente, cli_nomeCliente, cli_qtdNFisenta = self.pegarValoresLinhaSelecionadaDaTabelaCliente()
-            
-            # Modificar o serviço no banco de dados
+
+            # Passo 6: Tenta editar o cliente no banco de dados com os novos valores.
             if self.manipular_ordens.editarClientePeloIDClienteDB(cli_id, codCliente, nomeCliente, qtdNFisenta):
-                # Atualizar a tela de cadastro e limpar os campos
+                # Passo 7: Se a edição for bem-sucedida, limpa a tela de cadastro de clientes e a atualiza.
                 self._limparTelaCadCliente()
                 self._atualizarTelaCadCliente()
                 return True
             else:
+                # Passo 8: Se ocorrer um erro durante a edição, retorna False e exibe uma mensagem de erro.
                 return False
         except Exception as e:
-            self.mostrar_alerta("Erro", f"Erro ao salvar modificação do Cliente!/nErro:{e}")
+            self.mostrar_alerta("Erro", f"Erro ao salvar modificação do Cliente!\nErro: {e}")
             return False
             
-    ### FUNÇÃO DELETAR CLIENTE ###    
+    ### FUNÇÃO BOTÃO DELETAR CLIENTE
     def deletarCliente_TelaCadCliente(self):
-        # Obtém o item selecionado na tabela
+        """
+            Função responsável por excluir um cliente da tela de cadastro de clientes.
+
+            Esta função realiza as seguintes etapas:
+            1. Verifica se algum item da tabela de clientes foi selecionado.
+            2. Se nenhum item estiver selecionado, exibe um alerta e atualiza a tela.
+            3. Obtém os valores da linha selecionada da tabela de clientes (ID, código do cliente, nome do cliente e quantidade de notas fiscais isentas).
+            4. Pergunta ao usuário se deseja confirmar a exclusão do cliente.
+            5. Se o usuário confirmar, tenta excluir o cliente do banco de dados.
+            6. Se a exclusão for bem-sucedida, remove o item da tabela de clientes e exibe uma mensagem de sucesso.
+            7. Se ocorrer um erro durante a exclusão, exibe uma mensagem de erro.
+            8. Se o usuário cancelar a exclusão, exibe um alerta.
+            9. Atualiza a tela de cadastro de clientes após a ação.
+
+            Returns:
+                None
+        """
+        # Passo 1: Verifica se algum item da tabela de clientes foi selecionado.
         selected_itemTabCliente = self.treeview_tlClientes.selection()
-        
-        # Verifica se algum item foi selecionado
+
         if not selected_itemTabCliente:
+            # Passo 2: Se nenhum item estiver selecionado, exibe um alerta e atualiza a tela.
             self.mostrar_alerta("Nenhum item selecionado", "Por favor, selecione um item para deletar.")
             self._atualizarTelaCadCliente()
             return
-        
-        # Obtém informações do item selecionado
+
+        # Passo 3: Obtém os valores da linha selecionada da tabela de clientes (ID, código do cliente, nome do cliente e quantidade de notas fiscais isentas).
         cli_id, cli_codcliente, cli_nomeCliente, cli_qtdNFisenta = self.pegarValoresLinhaSelecionadaDaTabelaCliente()
-        
-        # Confirmação de exclusão com o usuário
-        if self.confirmar_solicitacao("Confirmar Exclusão", 'Tem certeza que deseja excluir o cliente: ', {cli_codcliente, cli_nomeCliente}):           
-            # Deleta o serviço do banco de dados
+
+        # Passo 4: Pergunta ao usuário se deseja confirmar a exclusão do cliente.
+        if self.confirmar_solicitacao("Confirmar Exclusão", f'Tem certeza que deseja excluir o cliente: {cli_codcliente}, {cli_nomeCliente}'):
+
+            # Passo 5: Se o usuário confirmar, tenta excluir o cliente do banco de dados.
             if self.manipular_ordens.deletarClienteDB(cli_id):
-                # Remove o item da tabela
+
+                # Passo 6: Se a exclusão for bem-sucedida, remove o item da tabela de clientes e exibe uma mensagem de sucesso.
                 self.treeview_tlClientes.delete(selected_itemTabCliente)
-                self.mostrar_sucesso('Exclusão bem sucedida do cliente: ',{cli_codcliente, cli_nomeCliente})
+                self.mostrar_sucesso(f'Exclusão bem-sucedida do cliente: {cli_codcliente}, {cli_nomeCliente}')
             else:
+                # Passo 7: Se ocorrer um erro durante a exclusão, exibe uma mensagem de erro.
                 self.mostrar_erro(f"Ocorreu um erro ao tentar deletar o cliente {cli_nomeCliente}.")
         else:
+            # Passo 8: Se o usuário cancelar a exclusão, exibe um alerta.
             self.mostrar_alerta("Cancelado", "A exclusão foi cancelada pelo usuário.")
-        
-        # Atualiza a tela de cadastro de Cliente
+
+        # Passo 9: Atualiza a tela de cadastro de clientes após a ação.
         self._atualizarTelaCadCliente()
-    
-    
+
     ### FUNÇÃO DE IMPRIMIR LISTA CLIENTES ###
     def gerarRelatorioCadCliente(self):
         """
@@ -1770,26 +2348,63 @@ class LoginGUI:
     
     #@@@@@ Função botão 'REL. À FATURAR' @@@@@#
     def gerarRelatorioOrdensNAOfaturadas(self):
-        #gerar relatório das ordens que ainda não foram faturados
+        """
+            Função responsável por gerar um relatório das ordens de serviço não faturadas.
+
+            Esta função realiza as seguintes etapas:
+            1. Chama a função 'gerarRelatorioOdensServicoNAOfaturadas' para gerar o relatório.
+            2. Seleciona o local onde o relatório será salvo.
+
+            Returns:
+                str: O caminho do arquivo de saída do relatório gerado.
+        """
+        # Passo 1: Chama a função 'gerarRelatorioOdensServicoNAOfaturadas' para gerar o relatório.
         output_file = self.manipular_relatorios.gerarRelatorioOdensServicoNAOfaturadas()
-        #escolhe onde salvar o relatório
+
+        # Passo 2: Seleciona o local onde o relatório será salvo.
         self.manipular_relatorios.selecionalLocalSalvarRelatorio(output_file)
+
+        # Retorna o caminho do arquivo de saída do relatório gerado.
         return output_file
         
     #@@@@@ Função botão 'FECHAMENTO' @@@@@#    
     def fazerFechamentoFaturamento(self):
-        # chama a função que gera o relatório
+        """
+            Função responsável por realizar o fechamento do faturamento das ordens em aberto.
+
+            Esta função realiza as seguintes etapas:
+            1. Gera um relatório das ordens não faturadas.
+            2. Solicita uma senha para confirmar o fechamento.
+            3. Verifica se a senha fornecida está correta.
+            4. Se a senha estiver correta, modifica a situação de faturamento para 'SIM' em todas as ordens que estiverem com 'NÃO' no faturamento.
+            5. Confirma a solicitação de fechamento com o usuário.
+            6. Atualiza a tela principal após o fechamento.
+
+            Args:
+                self: Uma referência à instância da classe que contém esse método.
+
+            Returns:
+                None
+        """
+        # Passo 1: Gera um relatório das ordens não faturadas.
         self.gerarRelatorioOrdensNAOfaturadas()
-        #gera caixa de diálogo para colocar a senha e efetuar o fechamento
-        senha = simpledialog.askstring("Confirmar Fechamento", "\nATENÇÃO\nApós o fechamento totas as ordens terão 'SIM' em faturado\ne não irão mais aparecer no relatório À FATURAR!\nDigite a senha para confirmar o fechamento:")
-        
-        # Verificar se a senha está correta (substitua 'senha_correta' pela senha correta)
+
+        # Passo 2: Solicita uma senha para confirmar o fechamento.
+        senha = simpledialog.askstring("Confirmar Fechamento", "\nATENÇÃO\nApós o fechamento, todas as ordens terão 'SIM' em faturado\ne não irão mais aparecer no relatório À FATURAR!\nDigite a senha para confirmar o fechamento:")
+
+        # Passo 3: Verifica se a senha fornecida está correta (substitua 'senha_correta' pela senha correta).
         senha_correta = "senha123"
-        if senha == senha_correta:        
+        if senha == senha_correta:
+            # Passo 4: Se a senha estiver correta, modifica a situação de faturamento para 'SIM' em todas as ordens.
             self.manipular_ordens.modificarsituacaoFaturamentoParaSIM()
+
+            # Passo 5: Confirma a solicitação de fechamento com o usuário.
             self.confirmar_solicitacao("Confirmar Fechamento", 'Tem certeza que deseja FATURAR todas as ordens em aberta?')
+
+            # Passo 6: Atualiza a tela principal após o fechamento.
             self._atualizarTelaPrincipal()
         else:
+            # Senha incorreta.
             self.mostrar_alerta("Senha Incorreta", "Senha incorreta. Tente novamente.")
             
     ############### FUNÇÕES GERAIS ###############
@@ -1904,15 +2519,19 @@ class LoginGUI:
         
     def confirmar_solicitacao(self, tituloMSG, textoMSG,*variavelMSGErro):
         """
-        Exibe uma caixa de diálogo de confirmação para verificar se o usuário deseja excluir.
+            Exibe uma caixa de diálogo de confirmação com um título e uma mensagem,
+            opcionalmente acompanhada de mensagens de erro adicionais.
 
-        Parâmetros:
-        variavelMSGErro (str): A mensagem utiliza o valor da variável para confirmar as exclusão.
+            Args:
+                tituloMSG (str): O título da caixa de diálogo.
+                textoMSG (str): O texto da mensagem principal a ser exibida na caixa de diálogo.
+                *variavelMSGErro (tuple): Uma tupla de strings contendo mensagens de erro
+                    adicionais que podem ser exibidas na caixa de diálogo.
 
-        Retorna:
-        bool: True se o usuário confirmar a exclusão, False caso contrário.
+            Returns:
+                bool: True se o usuário selecionar 'Sim' na caixa de diálogo, False caso contrário.
         """
-        
+                
         resposta = messagebox.askyesno(f"{tituloMSG}", f"{textoMSG} {variavelMSGErro}")
         
         return resposta
@@ -1943,15 +2562,21 @@ class LoginGUI:
 
     def _criarBotaoSalvarModificacoes(self, janela, comando, posicaoX, posicaoY, width, height,file_img):
         """
-        Cria e posiciona um botão para salvar modificações na tela ativa no momento.
+            Cria e configura um botão "Salvar Modificações" em uma janela.
 
-        Parâmetros:
-        janela (Tk): A janela da interface gráfica onde o botão será colocado.
-        comando (function): A função que será executada quando o botão for clicado.
+            Args:
+                janela (Tkinter.Tk): A janela na qual o botão será criado.
+                comando (function): A função que será executada quando o botão for clicado.
+                posicaoX (int): A coordenada X de posicionamento do botão na janela.
+                posicaoY (int): A coordenada Y de posicionamento do botão na janela.
+                width (int): A largura do botão.
+                height (int): A altura do botão.
+                file_img (str): O caminho do arquivo de imagem a ser usado como ícone do botão.
 
-        Retorna:
-        None
+            Returns:
+                None
         """
+        
         # Carrega a imagem do botão "Salvar Modificações" a partir de um arquivo
         self.img_btnSalvarModificacoes = PhotoImage(file= file_img)
 
@@ -1964,7 +2589,6 @@ class LoginGUI:
             command=comando,
             relief="flat"
         )
-
         # Posiciona o botão na janela usando coordenadas e define as dimensões
         self.btnSalvarModificacoes.place(
             x=posicaoX, y=posicaoY,
@@ -1972,7 +2596,47 @@ class LoginGUI:
             height=height
         )             
     
-        
+    ############# FUNÇÕES ORDENAR TREEVIEW COM CLIQUE NO CABEÇALHO ##################
+         
+    def ordenarPeloCabecalhoTreview(self, treeview, coluna):
+        """
+        Ordena os itens na Treeview com base na coluna especificada.
+
+        Args:
+            treeview (ttk.Treeview): O widget Treeview que contém os itens a serem ordenados.
+            coluna (int): O índice da coluna pela qual os itens serão ordenados.
+
+        Note:
+            Esta função classifica os itens na Treeview com base na coluna especificada. Os valores são classificados como números
+            se forem conversíveis em float, caso contrário, são classificados como texto.
+
+        Example:
+            ordenarPeloCabecalhoTreview(self.treeviewTelaPrincipal, 0)
+        """
+        data = treeview.get_children()
+        data = sorted(data, key=lambda item: (self._get_sort_key(treeview.item(item, "values")[coluna]), treeview.item(item, "values")[coluna]))
+        for i, item in enumerate(data):
+            treeview.move(item, "", i)
+
+    def _get_sort_key(self, value):
+        """
+        Converte o valor em um número se possível, caso contrário, retorna o valor como texto.
+
+        Args:
+            value (str): O valor a ser convertido.
+
+        Returns:
+            float ou str: O valor convertido em float se possível, caso contrário, o valor original como texto.
+
+        Example:
+            _get_sort_key("123.45")  # Retorna 123.45 (float)
+            _get_sort_key("abc")     # Retorna "abc" (str)
+        """
+        try:
+            return float(value)
+        except ValueError:
+            return value
+    
         
         
         

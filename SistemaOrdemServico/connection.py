@@ -1,13 +1,29 @@
 import sqlite3 as lite
 
-
 def conectarBD():
-  conexao = lite.connect('db_OrdemServicos.db')
-  return conexao
+    """
+    Cria uma conexão com o banco de dados 'db_OrdemServicos.db'.
 
-
+    Returns:
+        lite.Connection: Objeto de conexão com o banco de dados.
+    """
+    conexao = lite.connect('db_OrdemServicos.db')
+    return conexao
 
 def criarTabela(tb_nome, tb_sql):
+    """
+    Cria uma tabela no banco de dados se ela ainda não existir.
+
+    Args:
+        tb_nome (str): Nome da tabela a ser criada.
+        tb_sql (str): Comando SQL para criar a tabela.
+
+    Returns:
+        None
+
+    Example:
+        criarTabela("tb_usuarios", tb_usuarios_sql)
+    """
     conexao = lite.connect('db_OrdemServicos.db')
     cursor = conexao.cursor()
     
@@ -23,7 +39,8 @@ def criarTabela(tb_nome, tb_sql):
     else:
         # Como a tabela já existe, não é necessário fazer nada
         print(f"Tabela {tb_nome} já existe.")
-        
+
+#@@@@@@@@@@@@@ Comandos SQL para criar as tabelas @@@@@@@@@@@@@#
 
 # Criar tabela tb_usuario
 tb_usuarios_sql = """

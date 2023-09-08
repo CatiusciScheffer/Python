@@ -1,3 +1,0 @@
-### FUNÇÕES PARA MODIFICAR ORDEM DE SERVIÇO
-  
-    
