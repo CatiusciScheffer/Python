@@ -121,7 +121,22 @@ class ManipularCriacaodeRelatorios():
         
         # Abrir o PDF no navegador padrão
         webbrowser.open(output_file, new=2)
-        
+    
+    def selecionalLocalSalvarRelatorio(self, relatorioSalvar):
+        # Solicitar o local onde o usuário deseja salvar o relatório
+        file_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF files", "*.pdf")])
+
+        if not file_path:
+            return  # O usuário cancelou a operação de salvamento
+
+        # Copie o relatório gerado para o local escolhido pelo usuário
+        try:
+            import shutil
+            shutil.copy(relatorioSalvar, file_path)
+            messagebox.showinfo("Relatório Salvo", f"O relatório foi salvo em:\n{file_path}")
+        except Exception as e:
+            messagebox.showerror("Erro ao Salvar Relatório", f"Ocorreu um erro ao salvar o relatório:\n{str(e)}")
+                
     def gerarRelatorioOdensServicoNAOfaturadas(self):
         # Conectar ao banco de dados
         cursor = self.db_manager.get_cursor()
@@ -243,29 +258,12 @@ class ManipularCriacaodeRelatorios():
         #webbrowser.open(output_file, new=2)
         return output_file
         
-    def selecionalLocalSalvarRelatorio(self, relatorioSalvar):
-        # Solicitar o local onde o usuário deseja salvar o relatório
-        file_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF files", "*.pdf")])
-
-        if not file_path:
-            return  # O usuário cancelou a operação de salvamento
-
-        # Copie o relatório gerado para o local escolhido pelo usuário
-        try:
-            import shutil
-            shutil.copy(relatorioSalvar, file_path)
-            messagebox.showinfo("Relatório Salvo", f"O relatório foi salvo em:\n{file_path}")
-        except Exception as e:
-            messagebox.showerror("Erro ao Salvar Relatório", f"Ocorreu um erro ao salvar o relatório:\n{str(e)}")
-
-        
-    def gerarRelatorioOrdensServicoCompleto(self, output_file):
-        
+    def gerarRelatorioOdensServicoTodas(self, output_file):
         # Conectar ao banco de dados
         cursor = self.db_manager.get_cursor()
 
         # Obter os dados da tabela
-        cursor.execute("SELECT cli_id, cli_codCliente, cli_nomeCliente, cli_qtdNFisenta FROM tb_cliente")
+        cursor.execute("SELECT * FROM tb_ordens_servicos AS os ORDER BY os.os_dtServico")
         data = cursor.fetchall()
 
         # Configurações de estilo
@@ -274,24 +272,26 @@ class ManipularCriacaodeRelatorios():
         footer_style = styles['Normal']
 
         # Criar um documento PDF
-        doc = SimpleDocTemplate(output_file, pagesize=pagesizes.A4,
-                                topMargin=1.5*units.cm, bottomMargin=1.5*units.cm)
+        
+        doc = SimpleDocTemplate(output_file, pagesize=landscape(A4),
+                                topMargin=1*units.cm, bottomMargin=1*units.cm)
         elements = []
 
         # Título do PDF centralizado
-        title = Paragraph("Relatório dos Clientes Cadastrados", title_style)
+        title = Paragraph("Relatório Geral dos Serviços", title_style)
         title.alignment = TA_CENTER
         elements.append(title)        
         elements.append(Spacer(1, 20))  # Espaço entre o título e a tabela
 
         # Criar a tabela com os dados do banco de dados
-        table_data = [['ID', 'Código do Cliente', 'Razão Social', 'Qtd Isenção de NF']]
+        table_data = [['ID', 'Data', 'Código\nCliente', 'Cliente', 'Código\nServiço', 'Descrição do Serviço', 'Qtd','Valor\nUnit.', 'Valor\nTotal', 'Descr.\nCompl.', 'Sit.\nFat.', 'Data\nFaturamento', 'Responsável']]
         table_data.extend(data)
 
         table = Table(table_data)
-        table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                                   # ... (estilos da tabela)
-                                   ('GRID', (0, 0), (-1, -1), 1, colors.black)]))
+        table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
+                                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Alinhamento horizontal no centro
+                                ('GRID', (0, 0), (-1, -1), 1, colors.lightgrey),
+                                ('FONTSIZE', (0, 0), (-1, -1), 8)]))
         elements.append(table)
         
         elements.append(Spacer(1, 20))  # Espaço entre a tabela e o rodapé

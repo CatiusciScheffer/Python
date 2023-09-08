@@ -362,7 +362,7 @@ class LoginGUI:
             height = 30)
         
             
-        #### BOTÃO FINANCEIRO ####
+        #### BOTÃO REL À FATURAR ####
         img_tlPrincipal_btnFinanceiro = PhotoImage(file="./img/img_tlPrincipal_btnFinanceiro.png")
         btnFinanceiro_tlPrincipal = Button(
             image = img_tlPrincipal_btnFinanceiro,
@@ -396,7 +396,7 @@ class LoginGUI:
             image = img_tlPrincipal_btnImprimir,
             borderwidth = 0,
             highlightthickness = 0,
-            #command = self.gerarRelatorioOrdensNAOfaturadas,
+            command = self.gerarRelatorioOrdensGeral,
             relief = "flat")
 
         btnImprimir_tlPrincipal.place(
@@ -474,17 +474,55 @@ class LoginGUI:
         scrollbar_x.place(x=14, y=690, width=973)
         
         self.mostrarOrdensServico_TelaPrincipal()
-        #self.resize_columns()    
+        
+        self.ajustarLarguraColunaTreeview(self.treeviewTelaPrincipal) 
+        # --------------- ORDENAR A TREEVIEW (CLIQUE CABEÇALHO) ----------------#   
+        # Chamando a função para ordenar pelo clique nos cabeçalhos
+        self.treeviewTelaPrincipal.heading("ID", text="ID", anchor="center")
+        self.treeviewTelaPrincipal.heading("ID", command=lambda: self.ordenarPeloCabecalhoTreview(0))
+        
+        self.treeviewTelaPrincipal.heading("Data", text="Data", anchor="center")
+        self.treeviewTelaPrincipal.heading("Data", command=lambda: self.ordenarPeloCabecalhoTreview(1))
+        
+        self.treeviewTelaPrincipal.heading("CodCliente", text="CodCliente", anchor="center")
+        self.treeviewTelaPrincipal.heading("CodCliente", command=lambda: self.ordenarPeloCabecalhoTreview(2))
+        
+        self.treeviewTelaPrincipal.heading("Cliente", text="Cliente", anchor="center")
+        self.treeviewTelaPrincipal.heading("Cliente", command=lambda: self.ordenarPeloCabecalhoTreview(3))
+        
+        self.treeviewTelaPrincipal.heading("CodServ", text="CodServ", anchor="center")
+        self.treeviewTelaPrincipal.heading("CodServ", command=lambda: self.ordenarPeloCabecalhoTreview(4))
+        
+        self.treeviewTelaPrincipal.heading("DescrServico", text="DescrServico", anchor="center")
+        self.treeviewTelaPrincipal.heading("DescrServico", command=lambda: self.ordenarPeloCabecalhoTreview(5))
+        
+        self.treeviewTelaPrincipal.heading("Faturado", text="Faturado", anchor="center")
+        self.treeviewTelaPrincipal.heading("Faturado", command=lambda: self.ordenarPeloCabecalhoTreview(10))
+        
+        self.treeviewTelaPrincipal.heading("Dt.Faturamento", text="Dt.Faturamento", anchor="center")
+        self.treeviewTelaPrincipal.heading("Dt.Faturamento", command=lambda: self.ordenarPeloCabecalhoTreview(11))
+        
+        self.treeviewTelaPrincipal.heading("Responsavel", text="Responsavel", anchor="center")
+        self.treeviewTelaPrincipal.heading("Responsavel", command=lambda: self.ordenarPeloCabecalhoTreview(12))       
+        # --------------- ************************************* ----------------#
             
         # Iniciar o loop principal do Tkinter
         self.telaPrincipal.resizable(False, False)
         self.telaPrincipal.mainloop()
     
     
-    def abrir_janela_financeiro(self):
-        self.manipular_telaFinanceiro.criarTelaFinanceiro()
+    ############# FUNÇÕES TREEVIEW ##################
+    
+    def ordenarPeloCabecalhoTreview(self, coluna):
+        data = self.treeviewTelaPrincipal.get_children()
+        data = sorted(data, key=lambda item: self.treeviewTelaPrincipal.item(item, "values")[coluna])
+        for i, item in enumerate(data):
+            self.treeviewTelaPrincipal.move(item, "", i)
 
-            
+
+
+
+    
     ############# CRIANDO TELA CADASTRO DE SERVIÇOS #############
     def criar_TelaCadServ(self):
         
@@ -1097,7 +1135,6 @@ class LoginGUI:
                 
         except Exception as e:
             self.mostrar_alerta('Erro de Preenchimento', f'Preencha todos os campos!{e}')
-            #return False
         
     def fechar_TelaPrincipal(self):
         self.telaPrincipal.destroy()
@@ -1118,9 +1155,12 @@ class LoginGUI:
             os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado, os_dtFaturamento, os_usuario = resultado
             
             self.treeviewTelaPrincipal.insert("", "0", values=(os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_observacao, os_faturado, os_dtFaturamento, os_usuario))
-
+        
         # Redimensionar as colunas para ajustar o conteúdo
-        #self.resize_columns()
+        self.ajustarLarguraColunaTreeview(self.treeviewTelaPrincipal)
+        
+    def gerarRelatorioOrdensGeral(self):
+        self.manipular_relatorios.gerarRelatorioOdensServicoTodas('Relatorio geral de retrabalho.pdf')
 
     #FUNÇÃO BOTÃO DELETAR NA TELA PRINCIPAL ORDEM DE SERVIÇOS
     def deletarOrdemServico_TelaPrincipal(self):
@@ -1167,25 +1207,6 @@ class LoginGUI:
         
         # Atualiza a tela de cadastro de serviços
         self._atualizarTelaPrincipal()
-    
-    def fazerFechamentoFaturamento(self):
-        #gerar relatório das ordens que ainda não foram faturados
-        output_file = self.manipular_relatorios.gerarRelatorioOdensServicoNAOfaturadas()
-        #escolhe onde salvar o relatório
-        self.manipular_relatorios.selecionalLocalSalvarRelatorio(output_file)
-        #gera caixa de diálogo para colocar a senha e efetuar o fechamento
-        senha = simpledialog.askstring("Confirmar Fechamento", "\nATENÇÃO\nApós o fechamento totas as ordens terão 'SIM' em faturado\ne não irão mais aparecer no relatório À FATURAR!\nDigite a senha para confirmar o fechamento:")
-        
-        # Verificar se a senha está correta (substitua 'senha_correta' pela senha correta)
-        senha_correta = "senha123"
-        if senha == senha_correta:        
-            self.manipular_ordens.modificarsituacaoFaturamentoParaSIM()
-            self.confirmar_solicitacao("Confirmar Fechamento", 'Tem certeza que deseja FATURAR todas as ordens em aberta?')
-            self._atualizarTelaPrincipal()
-        else:
-            self.mostrar_alerta("Senha Incorreta", "Senha incorreta. Tente novamente.")
-        
-    
     
     def _atualizarTelaPrincipal(self):
         self.fechar_TelaPrincipal()
@@ -1514,7 +1535,7 @@ class LoginGUI:
         Retorna:
         None
         """
-        #self.resize_columns()  # Redimensiona as colunas da tabela
+        self.ajustarLarguraColunaTreeview(self.treeview_tlServicos)  # Redimensiona as colunas da tabela
         self.mostrarTabelaServicos_TelaCadServ()  # Mostra a tabela de serviços
         self.fechar_TelaCadServ()  # Fecha a tela de cadastro de serviços
         self.criar_TelaCadServ()  # Recria a tela de cadastro de serviços 
@@ -1564,7 +1585,7 @@ class LoginGUI:
         self.inputNotasIsentas_tlCadCliente.delete(0, 'end')
         
     def _atualizarTelaCadCliente(self):
-        #self.resize_columns()  # Redimensiona as colunas da tabela
+        self.ajustarLarguraColunaTreeview(self.treeview_tlClientes)  # Redimensiona as colunas da tabela
         self.mostrarTabelaClientes_TelaCadClientes()  # Mostra a tabela de serviços
         self.fechar_TelaCadCliente()  # Fecha a tela de cadastro de serviços
         self.abrirTelaCadCliente()  # Recria a tela de cadastro de serviços 
@@ -1746,8 +1767,30 @@ class LoginGUI:
         self.manipular_relatorios.gerarRelatorioCadCliente('Relatório dos Clientes Cadastrados.pdf')
         
     ############### FINANCEIRO ###################
+    
+    #@@@@@ Função botão 'REL. À FATURAR' @@@@@#
     def gerarRelatorioOrdensNAOfaturadas(self):
-        self.manipular_relatorios.gerarRelatorioOdensServicoNAOfaturadas('Relatório Ordens há faturar.pdf')
+        #gerar relatório das ordens que ainda não foram faturados
+        output_file = self.manipular_relatorios.gerarRelatorioOdensServicoNAOfaturadas()
+        #escolhe onde salvar o relatório
+        self.manipular_relatorios.selecionalLocalSalvarRelatorio(output_file)
+        return output_file
+        
+    #@@@@@ Função botão 'FECHAMENTO' @@@@@#    
+    def fazerFechamentoFaturamento(self):
+        # chama a função que gera o relatório
+        self.gerarRelatorioOrdensNAOfaturadas()
+        #gera caixa de diálogo para colocar a senha e efetuar o fechamento
+        senha = simpledialog.askstring("Confirmar Fechamento", "\nATENÇÃO\nApós o fechamento totas as ordens terão 'SIM' em faturado\ne não irão mais aparecer no relatório À FATURAR!\nDigite a senha para confirmar o fechamento:")
+        
+        # Verificar se a senha está correta (substitua 'senha_correta' pela senha correta)
+        senha_correta = "senha123"
+        if senha == senha_correta:        
+            self.manipular_ordens.modificarsituacaoFaturamentoParaSIM()
+            self.confirmar_solicitacao("Confirmar Fechamento", 'Tem certeza que deseja FATURAR todas as ordens em aberta?')
+            self._atualizarTelaPrincipal()
+        else:
+            self.mostrar_alerta("Senha Incorreta", "Senha incorreta. Tente novamente.")
             
     ############### FUNÇÕES GERAIS ###############
     
@@ -1795,30 +1838,29 @@ class LoginGUI:
         """
         self.tela_login.mainloop()
         
-    # def resize_columns(self):
-    #     """
-    #     Redimensiona dinamicamente as colunas de um widget Treeview para acomodar o conteúdo.
+    def ajustarLarguraColunaTreeview(self, treeview):
+        """
+            Ajusta automaticamente a largura das colunas em um ttk.Treeview para acomodar o conteúdo das células.
 
-    #     Para cada coluna do widget Treeview, esta função redefine o texto do cabeçalho para centralizar
-    #     corretamente e calcula a largura ideal da coluna com base no maior comprimento do conteúdo da coluna.
-    #     Uma largura mínima também é definida para garantir que a coluna seja sempre visível.
+            Args:
+                treeview: Usado para definir em qual Treeview as colunas devem ser ajustadas.
 
-    #     Parâmetros:
-    #     Nenhum
-
-    #     Retorna:
-    #     None
-    #     """
-    #     for col in self.treeview["columns"]:
-    #         self.treeview.heading(col, text=col, anchor="center")  # Redefinir o texto do cabeçalho para alinhar corretamente
-
-    #         # Calcular a largura ideal da coluna com base no maior comprimento do conteúdo da coluna
-    #         col_width = max(len(self.treeview.set(row, col)) for row in self.treeview.get_children()) * 10
+            Returns:
+                None
             
-    #         # Definir uma largura mínima para a coluna
-    #         col_width = max(col_width, 100)
+            Exemplo de uso: self.resize_columns(self.treeviewTelaPrincipal)  # Substitua 'self.treeviewTelaPrincipal' pelo seu objeto 'ttk.Treeview'
+        """
+        for col in treeview["columns"]:
+            treeview.heading(col, text=col, anchor="center")  # Redefinir o texto do cabeçalho para alinhar corretamente
 
-    #         self.treeview.column(col, width=col_width)  # Redimensionar a coluna
+            # Calcular a largura ideal da coluna com base no maior comprimento do conteúdo da coluna
+            col_width = max(len(treeview.set(row, col)) for row in treeview.get_children()) * 10
+            #Esta parte do código calcula a largura ideal da coluna multiplicando o comprimento do conteúdo da célula (texto) pelo valor 10. Isso significa que a largura ideal da coluna será 10 vezes o comprimento do texto mais longo naquela coluna.
+
+            # Definir uma largura mínima para a coluna no caso 60px
+            col_width = max(col_width, 60)
+
+            treeview.column(col, width=col_width)  # Redimensionar a coluna
         
     def _verificarValor_Inteiro(self, valorInteiro):
         """

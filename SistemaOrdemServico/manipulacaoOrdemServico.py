@@ -121,7 +121,7 @@ class ManipularOrdemServicos():
             WHERE os_faturado = 'NÃO';
             """
             # Obtenha a data atual no formato "YYYY-MM-DD HH:MM:SS"
-            data_atual = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+            data_atual = datetime.now().strftime('%d-%m-%Y')
             # Execute o comando SQL
             self.db_manager.cursor.execute(update_sql, (data_atual,))
             self.db_manager.connection.commit()

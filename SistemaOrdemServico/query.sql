@@ -6,6 +6,6 @@
 --DELETE FROM tb_cliente;
 
 -- Deletar a tabela usuarios;
-DROP TABLE tb_ordens_servicos;
+--DROP TABLE tb_ordens_servicos;
 
-
+SELECT * FROM tb_ordens_servicos AS os ORDER BY os.os_dtServico;
