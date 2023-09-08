@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Tk, Button, Entry, PhotoImage, Canvas, ttk, messagebox, END, Toplevel
+from tkinter import Tk, Button, Entry, PhotoImage, Canvas, ttk, messagebox, END, Toplevel, simpledialog
 from tkcalendar import DateEntry
 from user import UserManager
 from manipulacaoOrdemServico import ManipularOrdemServicos
@@ -284,6 +284,10 @@ class LoginGUI:
             x = 30.0, y = 195,
             width = 595.0,
             height = 97)
+        # Insira o valor preenchido no campo de texto
+        descricaoComplementarPadrao = "Não esqueça de detalhar aqui o serviço"
+        self.input_DescrCompl.insert("1.0", descricaoComplementarPadrao)
+        
 
         # CRIANDO BOTÕES TELA PRINCIPAL #
         
@@ -401,7 +405,7 @@ class LoginGUI:
             height = 30)
         
         # botões que serão ocultos ao chamar a função de modificação:
-        self.botoesParaOcultar_TelaPrincipal = [btnFinanceiro_tlPrincipal, btnCadServ_tlPrincipal, btnCadCliente_tlPrincipal, btnInsertOS_tlPrincipal, btnDeleteOS_tlPrincipal, btnModifyOS_tlPrincipal, btnFechamento_tlPrincipal]
+        self.botoesParaOcultar_TelaPrincipal = [btnFinanceiro_tlPrincipal, btnCadServ_tlPrincipal, btnCadCliente_tlPrincipal, btnInsertOS_tlPrincipal, btnDeleteOS_tlPrincipal, btnModifyOS_tlPrincipal, btnFechamento_tlPrincipal, btnImprimir_tlPrincipal]
         
         ############# CRIANDO TREEVIEW ORDEM DE SERVIÇOS #############
               
@@ -903,23 +907,23 @@ class LoginGUI:
         os_quantidade = int(self.input_Quantidade.get())
         os_vlrUnit = self.input_VlrUnitario.get()
         os_total = float(self.input_VlrTotal.get())
-        os_faturado = self.input_Faturado.get()
         os_descComplementar = self.input_DescrCompl.get('1.0', 'end-1c').upper()
+        os_faturado = self.input_Faturado.get()
 
-        return os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado
+        return os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_faturado, os_descComplementar
 
     def pegarValoresLinhaSelecionadaDaTabelaOrdemServico(self):
         itemSelecionadoTbOrdemServicos = self.treeviewTelaPrincipal.selection()
         
         item = self.treeviewTelaPrincipal.item(itemSelecionadoTbOrdemServicos, 'values')
         
-        os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado = item
+        os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado, os_dtFaturamento, os_usuario = item
         
-        return os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado
+        return os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado, os_dtFaturamento, os_usuario
     
     def _verificarSeCamposTelaOrdemServicosPreenchidos(self):
         
-        os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_faturado, os_descComplementar = self.pegandoValoresTelaPrincipalOS()
+        os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado  = self.pegandoValoresTelaPrincipalOS()
         
         # Retorna True se todos os campos estiverem preenchidos, caso contrário, retorna False
         return bool(os_dtServico and os_codCliente and os_cliente and os_codServico and os_descrServico and os_quantidade and os_vlrUnit and os_total and os_faturado and os_descComplementar)
@@ -933,14 +937,16 @@ class LoginGUI:
         self.input_VlrUnitario.delete(0, 'end')
         self.input_VlrTotal.delete(0, 'end')
         self.input_Faturado.delete(0, 'end')
-    
+        
     # FUNÇÃO BOTÃO MODIFICAR TELA PRINCIPAL
     def modificarItemSelecionadoDaTabOrdemServico(self): 
         try:
             # Obtém os valores da linha selecionada na tabela de serviços
-            os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado = self.pegarValoresLinhaSelecionadaDaTabelaOrdemServico()
+            os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado, os_dtFaturamento, os_usuario = self.pegarValoresLinhaSelecionadaDaTabelaOrdemServico()
             
-            print(f'id{type(os_id)}/n, data{type(os_dtServico)}/n, codCliente{type(os_codCliente)}/n, cliente{type(os_cliente)}/n, codServ{type(os_codServico)}/n, descServ{type(os_descrServico)}/n, qtd{type(os_quantidade)}/n, unit{type(os_vlrUnit)}/n, total{type(os_total)}/n, faturado{type(os_faturado)}/n, descricao{type(os_descComplementar)}/n')
+            if os_faturado == 'SIM':
+                self.mostrar_alerta("Atenção", "Este serviço já foi faturado, NÃO é possível modificar")
+                return
             
             # Preenche os campos com os valor do item selecionado na lista
             self.input_DataOS.delete(0, 'end')
@@ -957,12 +963,12 @@ class LoginGUI:
             
             self.input_VlrUnitario.delete(0, 'end')
             self.input_VlrUnitario.insert(0, os_vlrUnit)
-                        
-            self.input_DescrCompl.delete('1.0', 'end-1c')
-            self.input_DescrCompl.insert('1.0', os_descComplementar)
             
-            self.input_Faturado.delete(0, 'end')
-            self.input_Faturado.insert(0, os_faturado)
+            self.input_VlrUnitario.delete(0, 'end')
+            self.input_VlrUnitario.insert(0, os_vlrUnit)
+                        
+            self.input_VlrTotal.delete(0, 'end')
+            self.input_VlrTotal.insert(0, os_total)
             
             #Remove os botões anteriores e cria um botão "Salvar Modificações"
             self._apagarListaBotoes(self.botoesParaOcultar_TelaPrincipal)
@@ -982,33 +988,21 @@ class LoginGUI:
         try:
             dtServico, codCliente, cliente, codServico, descrServico, quantidade, vlrUnit, total, descComplementar, faturado = self.pegandoValoresTelaPrincipalOS()
             
-            dtServico = dtServico
-            codCliente = codCliente
-            cliente = cliente.strip().upper()
-            codServico = codServico
-            descrServico = descrServico.strip().upper()
-            quantidade = quantidade
-            vlrUnit = vlrUnit
             vlrUnit = vlrUnit.replace(",", ".")           
-            total = total
-            faturado = faturado.strip().upper()
-            descComplementar = descComplementar.strip().upper()
-            
+                        
             if not self._verificarSeCamposTelaOrdemServicosPreenchidos:
                 self.mostrar_alerta("Campos Vazios", "Por favor, preencha todos os campos.")
                 return False
             
             # Obter o serviço selecionado na tabela
-            os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado = self.pegarValoresLinhaSelecionadaDaTabelaOrdemServico()
+            os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado, os_dtFaturamento, os_usuario = self.pegarValoresLinhaSelecionadaDaTabelaOrdemServico()
             
             # Modificar o serviço no banco de dados
-            if self.manipular_ordens.editarOrdemServicoPeloIDOrdensServicosDB(os_id, dtServico, codCliente, cliente, codServico, descrServico, quantidade, vlrUnit, total, descComplementar, faturado):
-                # Atualizar a tela de cadastro e limpar os campos
-                self._limparTelaPrincipal()
-                self._atualizarTelaPrincipal()
-                return True
-            else:
-                return False
+            self.manipular_ordens.editarOrdemServicoPeloIDOrdensServicosDB(os_id, dtServico, codCliente, cliente, codServico, descrServico, quantidade, vlrUnit, total, faturado, descComplementar)
+            # Atualizar a tela de cadastro e limpar os campos
+            self._limparTelaPrincipal()
+            self._atualizarTelaPrincipal()
+                
         except Exception as e:
             traceback_str = traceback.format_exc()
             #Exibir a mensagem de erro e a traceback
@@ -1089,19 +1083,21 @@ class LoginGUI:
             
 
     def cadastrarOrdemServicos(self):
-        os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado = self.pegandoValoresTelaPrincipalOS()
-        
-        nomeUsuario = self.usuarioLogado
-        print(nomeUsuario)
-        
-        if self._verificarSeCamposTelaOrdemServicosPreenchidos():
-            self.manipular_ordens.inserirOrdemServicosDB(os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado, nomeUsuario)
-
-            self.mostrar_alerta('Sucesso', 'Serviço inserido com sucesso!')
+        try:
+            os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado  = self.pegandoValoresTelaPrincipalOS()
             
-            self._atualizarTelaPrincipal()
-        else:
-            self.mostrar_alerta('Erro de Preenchimento', 'Preencha todos os campos!')
+            nomeUsuario = self.usuarioLogado 
+            
+            if self._verificarSeCamposTelaOrdemServicosPreenchidos():
+                self.manipular_ordens.inserirOrdemServicosDB(os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_faturado, os_descComplementar, nomeUsuario)
+
+                self.mostrar_alerta('Sucesso', 'Serviço inserido com sucesso!')
+                
+                self._atualizarTelaPrincipal()
+                
+        except Exception as e:
+            self.mostrar_alerta('Erro de Preenchimento', f'Preencha todos os campos!{e}')
+            #return False
         
     def fechar_TelaPrincipal(self):
         self.telaPrincipal.destroy()
@@ -1148,17 +1144,22 @@ class LoginGUI:
             self.mostrar_alerta("Nenhum item selecionado", "Por favor, selecione um item para deletar.")
             self._atualizarTelaPrincipal()
             return
-        
+                
         # Obtém informações do item selecionado
-        os_id,os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_faturado, os_descComplementar = self.pegarValoresLinhaSelecionadaDaTabelaOrdemServico()
+        os_id,os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total, os_descComplementar, os_faturado, os_dtFaturamento, os_usuario = self.pegarValoresLinhaSelecionadaDaTabelaOrdemServico()
+        
+        if os_faturado == 'SIM':
+            self.mostrar_alerta("Atenção", "Este serviço já foi faturado, NÃO é possível deletá-lo")
+            return
         
         # Confirmação de exclusão com o usuário
-        if self.confirmar_solicitacao(os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total):
+        if self.confirmar_solicitacao("Confirmar Exclusão", {'Tem certeza que deseja excluir o cliente: '}, {os_dtServico, os_codCliente, os_cliente, os_codServico, os_descrServico, os_quantidade, os_vlrUnit, os_total}):
+            
             # Deleta o serviço do banco de dados
             if self.manipular_ordens.deletarOrdemServicoDB(os_id):
                 # Remove o item da tabela
                 self.treeviewTelaPrincipal.delete(selected_item)
-                self.mostrar_sucesso(f'Exclusão bem sucedida do seguinte item, Cliente: {os_cliente}, Serviço: {os_descrServico}, Valor Total: {os_total}')
+                self.mostrar_sucesso(f'Exclusão bem sucedida do seguinte serviço: -> Cliente: {os_cliente}, -> Serviço: {os_descrServico}, -> Valor Total: {os_total}')
             else:
                 self.mostrar_erro("Ocorreu um erro ao tentar deletar Ordem de Serviços.")
         else:
@@ -1167,11 +1168,22 @@ class LoginGUI:
         # Atualiza a tela de cadastro de serviços
         self._atualizarTelaPrincipal()
     
-    
     def fazerFechamentoFaturamento(self):
-        self.manipular_ordens.modificarsituacaoFaturamentoParaSIM()
-        self.confirmar_solicitacao("Confirmar Fechamento", 'Tem certeza que deseja FATURAR todas as ordens em aberta?')
-        self._atualizarTelaPrincipal()
+        #gerar relatório das ordens que ainda não foram faturados
+        output_file = self.manipular_relatorios.gerarRelatorioOdensServicoNAOfaturadas()
+        #escolhe onde salvar o relatório
+        self.manipular_relatorios.selecionalLocalSalvarRelatorio(output_file)
+        #gera caixa de diálogo para colocar a senha e efetuar o fechamento
+        senha = simpledialog.askstring("Confirmar Fechamento", "\nATENÇÃO\nApós o fechamento totas as ordens terão 'SIM' em faturado\ne não irão mais aparecer no relatório À FATURAR!\nDigite a senha para confirmar o fechamento:")
+        
+        # Verificar se a senha está correta (substitua 'senha_correta' pela senha correta)
+        senha_correta = "senha123"
+        if senha == senha_correta:        
+            self.manipular_ordens.modificarsituacaoFaturamentoParaSIM()
+            self.confirmar_solicitacao("Confirmar Fechamento", 'Tem certeza que deseja FATURAR todas as ordens em aberta?')
+            self._atualizarTelaPrincipal()
+        else:
+            self.mostrar_alerta("Senha Incorreta", "Senha incorreta. Tente novamente.")
         
     
     

@@ -1,5 +1,6 @@
 import webbrowser
 from datetime import datetime
+from tkinter import simpledialog, messagebox, filedialog
 from reportlab.lib import pagesizes, colors, units
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
@@ -88,6 +89,7 @@ class ManipularCriacaodeRelatorios():
         footer_style = styles['Normal']
 
         # Criar um documento PDF
+        
         doc = SimpleDocTemplate(output_file, pagesize=pagesizes.A4,
                                 topMargin=1.5*units.cm, bottomMargin=1.5*units.cm)
         elements = []
@@ -120,7 +122,7 @@ class ManipularCriacaodeRelatorios():
         # Abrir o PDF no navegador padrão
         webbrowser.open(output_file, new=2)
         
-    def gerarRelatorioOdensServicoNAOfaturadas(self, output_file):
+    def gerarRelatorioOdensServicoNAOfaturadas(self):
         # Conectar ao banco de dados
         cursor = self.db_manager.get_cursor()
 
@@ -152,6 +154,7 @@ class ManipularCriacaodeRelatorios():
         title_style = styles['Heading1']
         footer_style = styles['Normal']
 
+        output_file = 'relatorio.pdf'
         # Criar um documento PDF
         doc = SimpleDocTemplate(output_file, pagesize=landscape(A4),
                                 leftMargin=1*units.cm, rightMargin=1*units.cm)
@@ -237,7 +240,24 @@ class ManipularCriacaodeRelatorios():
         doc.build(elements)
 
         # Abrir o PDF no navegador padrão
-        webbrowser.open(output_file, new=2)
+        #webbrowser.open(output_file, new=2)
+        return output_file
+        
+    def selecionalLocalSalvarRelatorio(self, relatorioSalvar):
+        # Solicitar o local onde o usuário deseja salvar o relatório
+        file_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF files", "*.pdf")])
+
+        if not file_path:
+            return  # O usuário cancelou a operação de salvamento
+
+        # Copie o relatório gerado para o local escolhido pelo usuário
+        try:
+            import shutil
+            shutil.copy(relatorioSalvar, file_path)
+            messagebox.showinfo("Relatório Salvo", f"O relatório foi salvo em:\n{file_path}")
+        except Exception as e:
+            messagebox.showerror("Erro ao Salvar Relatório", f"Ocorreu um erro ao salvar o relatório:\n{str(e)}")
+
         
     def gerarRelatorioOrdensServicoCompleto(self, output_file):
         
