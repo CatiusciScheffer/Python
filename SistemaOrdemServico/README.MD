@@ -7,11 +7,21 @@ Foi um desafio que propus pra mim mesma de criar algo com que já tinha estudado
 As janelas eu usei o figma pra desenhas, o proxlight designer para gerar o código a partir do figma o que me poupou muito tempo, usei SQLite que pra esta situação era o ideal.
 
 O sistema tem tela de login, com verificação de usuário ou cadastro automático do mesmo, após o login parte para a tela principal onde são lançadas as ordens de serviço, nesta tela principal temos acesso ao cadastro de novos clientes e dos serviços, por fim é possível gerar vários relatórios e além disso fazemos o fechamento das ordens em aberto para o financeiro efetuar a cobrança, este relatório de fechamento agrupa a cobrança por cliente e por tipo de serviço, além de descontar nas situações de determinado serviço conforme contrato do cliente.
-Abaixo vou colocar as imagens das telas e a funcionalidade das mesmas.
 
 Por ser uma necessidade interna todos os valores digitados são alterados para letra maiúscula para que haja uma padronização.
 
 A função de "MODIFICAR" em todas as telas apaga os demais botões deixando apenas o botão criado pra este fim de "SALVAR MODIFICAÇÕES".
+
+**Abaixo os links para visitar reposítório e até baixar o executável:**
+- [Link para baixar a pasta com arquivo executável;](https://github.com/CatiusciScheffer/Python/blob/main/SistemaOrdemServico/executavel/SistemaRetrabalho.zip)
+- [Link para o repositório;](https://github.com/CatiusciScheffer/Python/tree/main/SistemaOrdemServico)
+- [Link tela principal no Figma;](https://www.figma.com/file/4ap5dK4azpuPBBXEneyREf/Principal?type=design&node-id=0-1&mode=design&t=FSXtDVzmgzSF2N7q-0)
+- [Link tela cadastro de cliente no Figma;](https://www.figma.com/file/XEjd8SDFPqkoOYPwZTqaAk/Cadastro-Cliente?type=design&mode=design&t=FSXtDVzmgzSF2N7q-0)
+- [Link para tela de cadastro de serviço no Figma;](https://www.figma.com/file/aeJRtn2lLWXx7HFVL3GlZE/Cadastro-Servicos?type=design&node-id=0-1&mode=design&t=pX7DaG6vs187YeRc-0)
+
+Abaixo vou colocar as imagens das telas e a funcionalidade do sistema.
+
+---
 
 ###### Tela Login
 
