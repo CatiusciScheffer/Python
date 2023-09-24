@@ -187,8 +187,8 @@ class ManipularCriacaodeRelatorios():
             total_quantidade = row_dict['total_quantidade']
             total_novo = row_dict['total_valor_total']
             vlrUnitario_novo = row_dict['os_vlrUnit']
-            # Verifica se os_codServico é igual a 22
-            if os_codServico == 22:
+            # Verifica se os_codServico é igual a 15
+            if os_codServico == 15:
                 # Subtrai cli_qtdNFisenta de total_quantidade
                 quantidade = total_quantidade - cli_qtdNFisenta
                 total_novo = quantidade * vlrUnitario_novo
