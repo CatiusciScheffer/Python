@@ -32,7 +32,7 @@ class ManipularCriacaodeRelatorios():
         # Configurações de estilo
         styles = getSampleStyleSheet()
         title_style = styles['Heading1']
-        title_style.fontSize = 12
+        title_style.fontSize = 10
         footer_style = styles['Normal']
         footer_style.fontSize = 8
         # Criar um documento PDF
@@ -80,7 +80,7 @@ class ManipularCriacaodeRelatorios():
         # Configurações de estilo
         styles = getSampleStyleSheet()
         title_style = styles['Heading1']
-        title_style.fontSize = 12
+        title_style.fontSize = 10
         footer_style = styles['Normal']
         footer_style.fontSize = 8
         # Criar um documento PDF
@@ -165,7 +165,10 @@ class ManipularCriacaodeRelatorios():
         # Configurações de estilo
         styles = getSampleStyleSheet()
         title_style = styles['Heading1']
+        title_style.fontSize = 10
         footer_style = styles['Normal']
+        footer_style.fontSize = 8
+        
         output_file = 'relatorio.pdf'
         # Criar um documento PDF
         doc = SimpleDocTemplate(output_file, pagesize=landscape(A4),
@@ -188,15 +191,16 @@ class ManipularCriacaodeRelatorios():
             total_novo = row_dict['total_valor_total']
             vlrUnitario_novo = row_dict['os_vlrUnit']
             # Verifica se os_codServico é igual a 22
-            if os_codServico == 22:
+            if os_codServico == 15:
                 # Subtrai cli_qtdNFisenta de total_quantidade
                 quantidade = total_quantidade - cli_qtdNFisenta
                 total_novo = quantidade * vlrUnitario_novo
                 desconto = cli_qtdNFisenta
             else:
                 quantidade = total_quantidade
-                print(cli_qtdNFisenta)
                 desconto = cli_qtdNFisenta - cli_qtdNFisenta
+            if total_novo < 0:
+                total_novo = 0.00 * -1
             # Adiciona a linha à tabela com a quantidade calculada
             table_data.append([
                 row_dict['os_dtServico'],
@@ -216,12 +220,13 @@ class ManipularCriacaodeRelatorios():
         total_row = ['TOTAL À FATURAR', '', '', '', '', '', '', '', '', f'{total_total_novo:.2f}']
         table_data.append(total_row)
         # Calcula a largura das colunas com base no conteúdo
-        col_widths = [60, 40, 210, 40, 210,50, 60, 60, 50, 50]  # Ajuste conforme necessário
+        col_widths = [60, 40, 170, 40, 210,50, 60, 60, 50, 50]  # Ajuste conforme necessário
         # Crie a tabela com as larguras de coluna calculadas
         table = Table(table_data, colWidths=col_widths)
         table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
                                 ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Alinhamento horizontal no centro
-                                ('GRID', (0, 0), (-1, -1), 1, colors.lightgrey)]))
+                                ('GRID', (0, 0), (-1, -1), 1, colors.lightgrey),
+                                ('FONTSIZE', (0, 0), (-1, -1), 8)]))
         
         # Defina um estilo para a célula de total
         total_style = TableStyle([
@@ -253,7 +258,8 @@ class ManipularCriacaodeRelatorios():
         # Conectar ao banco de dados
         cursor = self.db_manager.get_cursor()
         # Obter os dados da tabela
-        cursor.execute("SELECT * FROM tb_ordens_servicos ORDER BY os_dtServico DESC;")
+        #cursor.execute("SELECT * FROM tb_ordens_servicos ORDER BY os_dtServico DESC;")
+        cursor.execute("SELECT os_id, os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_total, os_descrComplementar, os_faturado, os_dtFaturamento FROM tb_ordens_servicos ORDER BY os_dtServico DESC;")
         data = cursor.fetchall()        
         # Configurações de estilo
         styles = getSampleStyleSheet()
@@ -271,7 +277,7 @@ class ManipularCriacaodeRelatorios():
         elements.append(title)        
         elements.append(Spacer(1, 20))  # Espaço entre o título e a tabela
         # Criar a tabela com os dados do banco de dados
-        table_data = [['ID', 'Data', 'Código\nCliente', 'Cliente', 'Código\nServiço', 'Descrição do Serviço', 'Qtd','Valor\nUnit.', 'Valor\nTotal', 'Descr.\nCompl.', 'Sit.\nFat.', 'Data\nFaturamento', 'Responsável']]
+        table_data = [['ID', 'Data', 'Código\nCliente', 'Cliente', 'Código\nServiço', 'Descrição do Serviço', 'Qtd','Valor\nUnit.', 'Valor\nTotal', 'Descr.\nCompl.', 'Sit.\nFat.', 'Data\nFaturamento']]
         table_data.extend(data)
         table = Table(table_data)
         table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
@@ -287,3 +293,82 @@ class ManipularCriacaodeRelatorios():
         doc.build(elements)        
         # Abrir o PDF no navegador padrão
         webbrowser.open(nomeArquivoSaida, new=2)
+        
+# relatorio em csv para tentar agilizar
+import csv
+import os
+
+def gerarRelatorioOdensServicoNAOfaturadasX(self):
+    """
+    Gera um relatório em CSV das Ordens de Serviço não faturadas, calculando os totais de forma personalizada.
+
+    Returns:
+        str: O caminho completo para o arquivo de relatório gerado.
+    """
+    # Conectar ao banco de dados
+    cursor = self.db_manager.get_cursor()
+
+    # Obter os dados da tabela
+    cursor.execute("""
+        SELECT 
+            os.os_dtServico,
+            os.os_codCliente,
+            os.os_cliente,
+            os.os_codServico,
+            os.os_descServico,
+            SUM(os.os_qtd) as total_quantidade,
+            os.os_vlrUnit,
+            SUM(os.os_total) as total_valor_total,
+            c.cli_qtdNFisenta
+        FROM tb_ordens_servicos AS os
+        LEFT JOIN tb_cliente AS c ON os.os_codCliente = c.cli_codCliente
+        WHERE os.os_faturado = 'NÃO'
+        GROUP BY os.os_cliente, os.os_codServico, os.os_descServico, c.cli_qtdNFisenta
+        ORDER BY os.os_cliente, os.os_codServico
+    """)
+    column_names = [desc[0] for desc in cursor.description]  # Obter nomes das colunas
+    data = cursor.fetchall()
+
+    # Nome do arquivo CSV
+    output_file = 'relatorio.csv'
+
+    # Criar um arquivo CSV e escrever os dados
+    with open(output_file, mode='w', newline='') as csv_file:
+        csv_writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+        # Escrever o cabeçalho (nomes das colunas)
+        csv_writer.writerow(['Data', 'Código Cliente', 'Cliente', 'Código Serviço', 'Descrição do Serviço', 'NF Desconto', 'Quantidade', 'Quantidade (-) Desconto', 'Valor Unitário', 'Total Código Serviço'])
+
+        # Escrever os dados
+        for row in data:
+            row_dict = dict(zip(column_names, row))  # Converter a tupla em um dicionário
+            os_codServico = row_dict['os_codServico']
+            cli_qtdNFisenta = (row_dict['cli_qtdNFisenta'])
+            total_quantidade = row_dict['total_quantidade']
+            total_novo = row_dict['total_valor_total']
+            vlrUnitario_novo = row_dict['os_vlrUnit']
+
+            # Calcular quantidade e desconto com base no código do serviço
+            if os_codServico == 22:
+                quantidade = total_quantidade - cli_qtdNFisenta
+                total_novo = quantidade * vlrUnitario_novo
+                desconto = cli_qtdNFisenta
+            else:
+                quantidade = total_quantidade
+                desconto = cli_qtdNFisenta - cli_qtdNFisenta
+
+            # Escrever uma linha no arquivo CSV
+            csv_writer.writerow([
+                row_dict['os_dtServico'],
+                row_dict['os_codCliente'],
+                row_dict['os_cliente'],
+                row_dict['os_codServico'],
+                row_dict['os_descServico'],
+                desconto,
+                row_dict['total_quantidade'],
+                quantidade,  # Usamos a quantidade calculada aqui
+                row_dict['os_vlrUnit'],
+                total_novo
+            ])
+
+    return os.path.abspath(output_file)

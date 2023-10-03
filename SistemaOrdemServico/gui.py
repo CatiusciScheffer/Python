@@ -740,7 +740,7 @@ class LoginGUI:
             389.5, 311.0,
             image=background_img_tlCadCliente)
 
-        # !!!!!!!!!!!!!! ver se fica!!!!!!!!!!!!!!!!
+        
         verificaInteger = self.tlClientes.register(self._verificarValor_Inteiro)
         verificaFloat = self.tlClientes.register(self._verificarValor_Float)
         verificaTexto = self.tlClientes.register(self._verificarValor_Texto)
@@ -856,10 +856,10 @@ class LoginGUI:
             bg="#d9d9d9",
             highlightthickness=0,
             validate="key",
-            validatecommand=(verificaFloat, "%P")
+            validatecommand=(verificaInteger, "%P")
         )
 
-        self.inputNotasIsentas_tlCadCliente.pack()
+        #self.inputNotasIsentas_tlCadCliente.pack()
             
         self.inputNotasIsentas_tlCadCliente.place(
             x = 666.0, y = 65,
@@ -2029,7 +2029,7 @@ class LoginGUI:
             notasIsentas = 0
         
         # Passo 5: Retorna os valores obtidos em uma tupla (código de cliente, nome do cliente, quantidade de notas fiscais isentas).
-        return codCliente, nomeCliente, float(notasIsentas)
+        return codCliente, nomeCliente, notasIsentas
     
     def _verificaSeCamposTelaClientesPreenchidos(self):
         """
@@ -2213,7 +2213,7 @@ class LoginGUI:
             
             # Passo 5: Preenche o campo de quantidade de notas fiscais isentas com o valor do item selecionado.
             self.inputNotasIsentas_tlCadCliente.delete(0, 'end')
-            self.inputNotasIsentas_tlCadCliente.insert(0, float(qtdNFisenta))
+            self.inputNotasIsentas_tlCadCliente.insert(0, int(qtdNFisenta))
             
             # Passo 6: Remove os botões anteriores e cria um botão "Salvar Modificações" na tela.
             self._apagarListaBotoes(self.botoesParaOcultar_TelaCadCliente)
@@ -2256,7 +2256,7 @@ class LoginGUI:
             nomeCliente = nomeCliente.strip().upper()
 
             # Passo 3: Substitui vírgulas por pontos na quantidade de notas fiscais isentas.
-            qtdNFisenta = qtdNFisenta.replace(",", ".")
+            ################qtdNFisenta = qtdNFisenta.replace(",", ".")
 
             # Passo 4: Verifica se os campos obrigatórios (código e nome do cliente) estão preenchidos.
             if not codCliente or not nomeCliente:
@@ -2393,7 +2393,7 @@ class LoginGUI:
         senha = simpledialog.askstring("Confirmar Fechamento", "\nATENÇÃO\nApós o fechamento, todas as ordens terão 'SIM' em faturado\ne não irão mais aparecer no relatório À FATURAR!\nDigite a senha para confirmar o fechamento:")
 
         # Passo 3: Verifica se a senha fornecida está correta (substitua 'senha_correta' pela senha correta).
-        senha_correta = "senha123"
+        senha_correta = "Fin123!"
         if senha == senha_correta:
             # Passo 4: Se a senha estiver correta, modifica a situação de faturamento para 'SIM' em todas as ordens.
             self.manipular_ordens.modificarsituacaoFaturamentoParaSIM()

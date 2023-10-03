@@ -404,6 +404,4 @@ class ManipularOrdemServicos():
 
     #-------------fim tb ordens de serviços-------------#
         
-  
-    
-    
+        

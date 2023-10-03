@@ -10,7 +10,7 @@ def importarCadastroClientes():
         csv_reader = csv.DictReader(csv_file, delimiter=';')
         for row in csv_reader:
             cli_codCliente = int(row['CÓD.'])
-            cli_nomeCliente = row['EMPRESA']
+            cli_nomeCliente = str(row['EMPRESA'][:25])
             cli_qtdNFisenta = int(row['ISENTO NF'])
 
             cursor.execute('''
@@ -22,7 +22,7 @@ def importarCadastroClientes():
     conexao.close()
 
 
-# Agora você pode chamar a função diretamente
+
 #importarCadastroClientes()
 
 # Defina a função importarCadastroClientes
@@ -30,11 +30,11 @@ def importarCadastroServico():
     conexao = lite.connect('db_OrdemServicos.db')
     cursor = conexao.cursor()
 
-    with open(r'C:\Users\cpcsc\Downloads\servicos.csv', 'r', newline='') as csv_file:
+    with open(r'C:\Users\cpcsc\Downloads\precos.csv', 'r', newline='') as csv_file:
         csv_reader = csv.DictReader(csv_file, delimiter=';')
         for row in csv_reader:
             serv_codServ = int(row['EVENTO'])
-            serv_descrServico = row['DESCRIÇÕES PADROES']
+            serv_descrServico = str(row['DESCRIÇÕES PADROES'])
             serv_vlrUnit = float(row['VALOR'])
 
             cursor.execute('''
@@ -44,11 +44,37 @@ def importarCadastroServico():
 
     conexao.commit()
     conexao.close()
+    
+#importarCadastroServico()
+
+def importarRetrabalhoAgoSet2023():
+    conexao = lite.connect('db_OrdemServicos.db')
+    cursor = conexao.cursor()
+
+    with open(r'C:\Users\cpcsc\Downloads\servicos.csv', 'r', newline='') as csv_file:
+        csv_reader = csv.DictReader(csv_file, delimiter=';')
+        for row in csv_reader:
+            os_dtServico = str(row['DATA'])
+            os_codCliente = int(row['CODCLIENTE'])
+            os_cliente = str(row['CLIENTE'][:25])
+            os_codServico = int(row['CODSERV'])
+            os_descServico = str(row['DESCRSERV'])
+            os_descrComplementar = str(row['OBS'][:50])
+            os_qtd = int(row['QTD'])
+            os_vlrUnit = float(row['VLRUNIT'])
+            os_total = float(row['TOTAL']) 
+            #os_usuario = str(row['RESP'])           
+
+            cursor.execute('''
+                INSERT INTO tb_ordens_servicos(os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_descrComplementar, os_total)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (os_dtServico, os_codCliente, os_cliente, os_codServico, os_descServico, os_qtd, os_vlrUnit, os_descrComplementar, os_total))
+
+    conexao.commit()
+    conexao.close()
+    
+importarRetrabalhoAgoSet2023() 
 
 
-# Agora você pode chamar a função diretamente
-importarCadastroServico()
-
- 
         
         
