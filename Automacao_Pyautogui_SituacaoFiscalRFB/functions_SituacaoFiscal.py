@@ -24,7 +24,7 @@ class LerSituacaoFiscal:
             # Configura uma pausa de 4 segundos entre as ações
             # e ativa a função FAILSAFE.
         """
-        pyautogui.PAUSE = 8 
+        pyautogui.PAUSE = 4 
         pyautogui.FAILSAFE = True
         
 
@@ -60,7 +60,7 @@ class LerSituacaoFiscal:
             empresa (str): O nome da empresa.
             cnpj (str): O CNPJ da empresa.
             max_attempts (int, opcional): O número máximo de tentativas antes de desistir
-                de encontrar a imagem. O padrão é 3.
+                de encontrar a imagem. 
 
         Returns:
             tuple or None: Retorna uma tupla contendo as coordenadas (x, y) da posição da
@@ -247,7 +247,6 @@ class LerSituacaoFiscal:
         """
         # Pressiona 'Alt + F4' para fechar a janela do navegador ativa
         pyautogui.hotkey('alt', 'f4')
-        
 
     def sairComSeguranca(self):
         #self.esperarImagemCarregar(r'.\img\btn_sairSeguranca.png')
@@ -509,7 +508,7 @@ class LerSituacaoFiscal:
                     
                 
         # Aguarda por um período antes de recomeçar o processo
-        time.sleep(20)
+        time.sleep(10)
 
         
 
