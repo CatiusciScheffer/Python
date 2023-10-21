@@ -52,7 +52,7 @@ class ToDo:
         print(self.btn_checkbox)
         return self.btn_checkbox
     
-    #----------- FUNÇÕES BANCO DE DADOS -----------#  
+    #----------- MANIPULAR BANCO DE DADOS -----------#  
     def manipularDB(self, query, parametros=[]):
         #abrir e fechar a conexão
         with sqlite3.connect('db_tarefas.db') as conexao:
@@ -64,7 +64,7 @@ class ToDo:
             #retornar todas as linhas se a query tiver um select
             return cursor.fetchall()
         
-    def adicionarTarefaDB(self, e, tarefa):
+    def adicionarTarefa(self, e, tarefa):
                 
         tarefa = self.tarefa.upper()
         status = 'ANDAMENTO'
@@ -72,7 +72,7 @@ class ToDo:
             self.manipularDB(query='INSERT INTO tb_tarefas(tarefa, status) VALUES(?, ?)', parametros=[tarefa, status])        
         
             self.mostrarListaTarefa.controls.append(
-                Checkbox(label= tarefa, value=False, width=260, height=39.9, expand=False))
+                Checkbox(label= tarefa, value=False, width=250, height=39.9, expand=False))
             
             self.mostarBtnEditarTarefa.controls.append(
                 IconButton(icon=icons.MODE_EDIT_OUTLINE,icon_color='#62de14',icon_size=16,tooltip="Editar Tarefa",key='btnEditar',on_click=''))
@@ -80,10 +80,10 @@ class ToDo:
             self.mostarBtnDeletarTarefa.controls.append(
                 IconButton(icon=icons.DELETE_FOREVER_ROUNDED,icon_color="pink600",icon_size=16,tooltip="Deletar Tarefa",key='btnDeletar',on_click=''))
             
-        
+        e.control.value = ""
         self.page.update()
                 
-    def deletarTarefaDB(self, e):
+    def deletarTarefa(self, e):
         lista_botoes_del = self.mostarBtnDeletarTarefa.controls
         lista_tarefasView = self.mostrarListaTarefa.controls
         lista_botoes_editar = self.mostarBtnEditarTarefa.controls
@@ -107,26 +107,25 @@ class ToDo:
         # Execute uma operação de exclusão no banco de dados
         self.manipularDB('DELETE FROM tb_tarefas WHERE tarefa = ? AND status = ?', [tarefa, status])
 
+    def deletarTodasTarefas(self, e):
+        
+        self.page.update()
+        self.manipularDB('DELETE FROM tb_tarefas;')
+        self.page.update()
+        self.page.clean()
+        self.page.update()
+        self.main_page()
+        self.page.update()
+
+        
     def editarTarefaDB(self, e):
         pass
                        
     def filtarListaTarefas(self, query):
         query
         self.page.update()
-        return query
-    
-    
-    
-        
-    #----------- FIM FUNÇÕES BANCO DE DADOS -----------#  
+        return query 
             
-    def criar_lista_tarefas(self):
-        pass       
-        
-    def atualizar_lista_tarefas(self):
-        pass
-        
-    
     def mudar_abas(self, e):
         if e.control.selected_index == 0:
             self.query = self.manipularDB('SELECT * FROM tb_tarefas')
@@ -142,7 +141,7 @@ class ToDo:
             Checkbox(
                 label=res[0],
                 value=True if res[1] == 'CONCLUÍDA' else False,
-                width=260,
+                width=250,
                 height=39.9,
                 expand=False,
                 key='btnCheck',
@@ -159,7 +158,7 @@ class ToDo:
                 tooltip="Deletar Tarefa",
                 key='btnDeletar',
                 selected=True,
-                on_click=lambda e: self.deletarTarefaDB(e),  # Configure o on_click corretamente
+                on_click=lambda e: self.deletarTarefa(e),  # Configure o on_click corretamente
             )for res in self.query if res 
         ]
         
@@ -177,7 +176,6 @@ class ToDo:
         
         self.page.update()
  
-
     def concluirTarefa(self, e):
         lista_tarefasView = self.mostrarListaTarefa.controls
 
@@ -204,7 +202,7 @@ class ToDo:
                 Checkbox(
                     label= res[0],
                     value=True if res[1] == 'CONCLUÍDA' else False,
-                    width=260,
+                    width=250,
                     height=39.9,
                     expand=False,
                     key='btnCheck',
@@ -246,12 +244,13 @@ class ToDo:
                     tooltip="Deletar Tarefa",
                     key='btnDeletar',
                     selected=True,
-                    on_click=lambda e: self.deletarTarefaDB(e),  # Configure o on_click corretamente
+                    on_click=lambda e: self.deletarTarefa(e),  # Configure o on_click corretamente
                 ) for res in lista if res                
             ],
         ) 
         self.page.update()
         return btn_deletar
+
 
     def main_page(self):
         # CRIAR OBJETOS
@@ -265,19 +264,19 @@ class ToDo:
             autofocus=True,
             max_length=30,
             on_change=self.pegarValorInput,
-            on_submit=lambda e: self.adicionarTarefaDB(e, input_tarefa))
+            on_submit=lambda e: self.adicionarTarefa(e, input_tarefa))
         
         btn_add_tarefa = FloatingActionButton(
             icon=icons.ADD,
             tooltip='Adicionar Tarefa',
-            on_click=lambda e: self.adicionarTarefaDB(e, input_tarefa))
+            on_click=lambda e: self.adicionarTarefa(e, input_tarefa))
         
         contador_tarefas = Text('? tarefas acima')
         
         btn_apagar_tudo = OutlinedButton(
             text= 'Apagar tudo',
             icon='DELETE_SWEEP',
-            on_click=''
+            on_click=self.deletarTodasTarefas,
             )
         
          
@@ -317,7 +316,7 @@ class ToDo:
                 
         container_lista_tarefas = Column(
             scroll=ScrollMode.AUTO,
-            width=335,
+            width=340,
             spacing=0,
             expand=True,
             controls=[
