@@ -24,7 +24,7 @@ class AutomationUtils:
             # Configura uma pausa de 4 segundos entre as ações
             # e ativa a função FAILSAFE.
         """
-        pyautogui.PAUSE = 4
+        pyautogui.PAUSE = 5
         pyautogui.FAILSAFE = True
 
     def getPosition(self):
@@ -380,6 +380,11 @@ class AutomationUtils:
         # Localiza e clica no botão 'btn_alt_perfil.png'
         btn_alt_perfil = pyautogui.locateCenterOnScreen(r'.\img\btn_alt_perfil.png')
         pyautogui.click(btn_alt_perfil)
+        
+    def sairComSeguranca(self):
+        #self.esperarImagemCarregar(r'.\img\btn_sairSeguranca.png')
+        sairComSeguranca = pyautogui.locateOnScreen(r'.\img\btn_sairSeguranca.png')
+        pyautogui.click(sairComSeguranca)
     
     def verificarTermoExclusaoListaCNPJ(self, arquivo_csv):
         """
@@ -403,6 +408,9 @@ class AutomationUtils:
         # Itera sobre os CNPJs na lista
         for i, linha in enumerate(dados):
             cnpj = linha['CNPJ']
+            id_cliente = linha['ID']
+            nome_cliente = linha['EMPRESA']
+            print(cnpj, id_cliente, nome_cliente)
 
             # Abre o navegador e realiza o login com certificado digital
             self.abrirNavegador('chrome https://cav.receita.fazenda.gov.br/autenticacao/login')
@@ -451,6 +459,9 @@ class AutomationUtils:
             # Fecha o navegador
             time.sleep(5)
             i = i + 1
+            
+            self.sairComSeguranca()
+            time.sleep(3)
             self.fecharNavegador()
 
             # Verifica se todos os CNPJs foram processados
@@ -459,7 +470,7 @@ class AutomationUtils:
                 return
 
         # Aguarda por um período antes de recomeçar o processo
-        time.sleep(20)
+        time.sleep(30)
         self.verificarTermoExclusaoListaCNPJ(arquivo_csv)
 
     

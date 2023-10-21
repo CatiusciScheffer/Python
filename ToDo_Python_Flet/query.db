@@ -1,0 +1,11 @@
+DROP TABLE tb_tarefas;
+
+-- tarefa = input_tarefa
+--         status = 'incomplete'
+        
+--         if tarefa:
+--             self.manipular_db(query='INSERT INTO tb_tarefas(tarefa, status) VALUES(?,?)', parametros=[tarefa, status])
+--             self.input_tarefa.value = ''
+--             #self.results = self.manipular_db('SELECT * FROM tb_tarefas')
+--             self.buscaCompletaDB()
+--             self.atualizar_lista_tarefas() 

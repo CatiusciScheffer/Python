@@ -51,7 +51,7 @@ for arquivo_pdf in os.listdir(pasta_pdf):
                 
             # Loop pelos registros no CSV
             for index, row in df.iterrows():
-                cnpj_csv = row['CNPJ']
+                cnpj_csv = str(row['CNPJ'])  # Converta o valor para uma string
                     
                 # Verifique se o CNPJ do CSV está no texto do PDF
                 if cnpj_csv in texto_pdf:
