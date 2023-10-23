@@ -2,10 +2,10 @@ import os
 import fitz  # PyMuPDF
 
 # Diretório onde os arquivos PDF estão localizados
-diretorio = r'C:\Users\cpcsc\Downloads\situacaoFiscal'
+diretorio = r'C:\Users\cpcsc\Downloads\situacao_fiscal_102023'
 
 # Caminho para o arquivo de saída
-arquivo_saida = 'saida.txt'
+arquivo_saida = 'SituaçãoFiscal_PendenciasGeral.txt'
 
 def verificarTipoPendencias(ocorrencia, linha):
     if ocorrencia in linha:

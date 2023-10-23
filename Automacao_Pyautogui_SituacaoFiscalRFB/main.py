@@ -16,7 +16,7 @@ def msgConclusao():
   
 automation = LerSituacaoFiscal()
 
-avisoInicioAutomacao = pyautogui.confirm('Vamos começar a execução do programa, após selecionar a lista de CNPJ não mexa no computadodor até o programa acabar!')
+avisoInicioAutomacao = pyautogui.confirm('Vamos começar a execução do programa, após selecionar a lista de CNPJ não mexa no computador até o programa acabar!')
 
 arquivo_csv = obter_arquivo_csv()
 dados = automation.ler_csv(arquivo_csv)

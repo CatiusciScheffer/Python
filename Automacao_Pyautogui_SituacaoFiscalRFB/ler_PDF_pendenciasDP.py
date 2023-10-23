@@ -2,10 +2,10 @@ import os
 import fitz  # PyMuPDF
 
 # Diretório onde os arquivos PDF estão localizados
-diretorio = r'C:\Users\cpcsc\Downloads\situacaoFiscal'
+diretorio = r'C:\Users\cpcsc\Downloads\situacao_fiscal_102023'
 
 # Caminho para o arquivo de saída
-arquivo_saida = 'saida.txt'
+arquivo_saida = 'SituaçãoFiscal_PendenciasDP.txt'
 
 # Função para encontrar e extrair informações
 def extrair_informacoes(pdf_file):
@@ -35,9 +35,9 @@ def extrair_informacoes(pdf_file):
             # Verifica se a linha contém 'CNPJ:' e ainda não foi escrita
             if 'CNPJ:' in linha and not cnpj_gravado:
                 cnpj = linha.strip()
-                with open(arquivo_saida, 'a', encoding='utf-8') as output_file:
-                    output_file.write('\n' + '-' * 30 + 'INÍCIO' + '-' * 30 + '\n')
-                    output_file.write(cnpj + '\n')
+                #with open(arquivo_saida, 'a', encoding='utf-8') as output_file:
+                    #output_file.write('\n' + '-' * 30 + 'INÍCIO' + '-' * 30 + '\n')
+                    #output_file.write(cnpj + '\n')
                 cnpj_gravado = True
 
             # Verifica se a linha contém 'Omissão de DCTFWeb*'
@@ -45,6 +45,8 @@ def extrair_informacoes(pdf_file):
                 encontrou_omissao = True
                 omit_found = True  # Define omit_found como True
                 with open(arquivo_saida, 'a', encoding='utf-8') as output_file:
+                    output_file.write('\n' + '-' * 30 + 'INÍCIO' + '-' * 30 + '\n')
+                    output_file.write(cnpj + '\n')
                     output_file.write(linha[:31] + '\n')
                 continue
 
@@ -58,12 +60,12 @@ def extrair_informacoes(pdf_file):
                     with open(arquivo_saida, 'a', encoding='utf-8') as output_file:
                         output_file.write(linha + '\n')
 
-        # Verifica se uma omissão foi encontrada e escreve "DCTFWeb - Sem Omissões" somente se omit_found for False
-        if not omit_found:
-            semPendenciaDCTFWeb = 'DCTFWeb - Sem Omissões'
-            with open(arquivo_saida, 'a', encoding='utf-8') as output_file:
-                output_file.write(semPendenciaDCTFWeb + '\n')
-                output_file.write('\n' + '-' * 30 + 'FIM' + '-' * 30 + '\n')
+        # # Verifica se uma omissão foi encontrada e escreve "DCTFWeb - Sem Omissões" somente se omit_found for False
+        # if not omit_found:
+        #     semPendenciaDCTFWeb = 'DCTFWeb - Sem Omissões'
+        #     with open(arquivo_saida, 'a', encoding='utf-8') as output_file:
+        #         output_file.write(semPendenciaDCTFWeb + '\n')
+        #         output_file.write('\n' + '-' * 30 + 'FIM' + '-' * 30 + '\n')
 
 # Itera pelos arquivos PDF no diretório
 for root, dirs, files in os.walk(diretorio):

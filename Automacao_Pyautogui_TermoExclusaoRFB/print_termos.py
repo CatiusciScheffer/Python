@@ -3,10 +3,10 @@ import os
 import re
 
 # Caminho para a pasta contendo os arquivos PDF
-pasta_com_pdfs = r'C:\Users\cpcsc\Downloads\termos_exclusao-2209'
+pasta_com_pdfs = r'C:\Users\cpcsc\Downloads\termos_exclusao_102023'
 
 # Caminho para o arquivo de texto onde os prints serão salvos
-arquivo_de_texto = r'C:\Users\cpcsc\Downloads\termos_exclusao-2209\TermosExclusao_2023.txt'
+arquivo_de_texto = r'C:\Users\cpcsc\Downloads\termos_exclusao_102023\TermosExclusao_2023.txt'
 
 # Abra o arquivo de texto para escrita
 with open(arquivo_de_texto, 'w', encoding='utf-8') as arquivo_texto:
