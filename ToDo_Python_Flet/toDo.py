@@ -35,8 +35,8 @@ class ToDo:
         self.mostrarListaTarefa = self.mostrarListaTarefa()
         self.mostarBtnDeletarTarefa = self.mostarBtnDeletarTarefa()
         self.mostarBtnEditarTarefa = self.mostarBtnEditarTarefa()
-        #CAMPOS DO APP
         self.input_tarefa = ''
+        self.contador_tarefas = Text(value = self.contarTarefasAbaSelecionada())
         self.query = self.manipularDB('SELECT * FROM tb_tarefas')
         self.view = 'TUDO'
         self.main_page()
@@ -65,24 +65,26 @@ class ToDo:
             return cursor.fetchall()
         
     def adicionarTarefa(self, e, tarefa):
-                
         tarefa = self.tarefa.upper()
         status = 'ANDAMENTO'
+        
         if tarefa:
             self.manipularDB(query='INSERT INTO tb_tarefas(tarefa, status) VALUES(?, ?)', parametros=[tarefa, status])        
-        
+            
             self.mostrarListaTarefa.controls.append(
-                Checkbox(label= tarefa, value=False, width=250, height=39.9, expand=False))
+                Checkbox(label=tarefa, value=False, width=250, height=39.9, expand=False))
             
             self.mostarBtnEditarTarefa.controls.append(
-                IconButton(icon=icons.MODE_EDIT_OUTLINE,icon_color='#62de14',icon_size=16,tooltip="Editar Tarefa",key='btnEditar',on_click=''))
+                IconButton(icon=icons.MODE_EDIT_OUTLINE, icon_color='#62de14', icon_size=16, tooltip="Editar Tarefa", key='btnEditar', on_click=''))
             
             self.mostarBtnDeletarTarefa.controls.append(
-                IconButton(icon=icons.DELETE_FOREVER_ROUNDED,icon_color="pink600",icon_size=16,tooltip="Deletar Tarefa",key='btnDeletar',on_click=''))
+                IconButton(icon=icons.DELETE_FOREVER_ROUNDED, icon_color="pink600", icon_size=16, tooltip="Deletar Tarefa", key='btnDeletar', on_click=''))
             
-        e.control.value = ""
-        self.page.update()
-                
+            e.control.value = ""  # Limpe o valor do 'input_tarefa'
+            self.page.update()
+            self.contarTarefasAbaSelecionada()
+            self.page.update()
+
     def deletarTarefa(self, e):
         lista_botoes_del = self.mostarBtnDeletarTarefa.controls
         lista_tarefasView = self.mostrarListaTarefa.controls
@@ -96,7 +98,6 @@ class ToDo:
         del lista_botoes_editar[indexBtnDel]
         del lista_tarefasView[indexBtnDel]
         
-        self.page.update()
 
         # Agora, obtenha o registro correspondente no banco de dados
         registro_a_deletar = self.manipularDB('SELECT tarefa, status FROM tb_tarefas')[indexBtnDel]
@@ -106,15 +107,17 @@ class ToDo:
 
         # Execute uma operação de exclusão no banco de dados
         self.manipularDB('DELETE FROM tb_tarefas WHERE tarefa = ? AND status = ?', [tarefa, status])
+        self.page.update()
+        self.contarTarefasAbaSelecionada()
+        self.page.update()
 
     def deletarTodasTarefas(self, e):
         
-        self.page.update()
         self.manipularDB('DELETE FROM tb_tarefas;')
-        self.page.update()
-        self.page.clean()
-        self.page.update()
-        self.main_page()
+        self.mostarBtnDeletarTarefa.controls = []
+        self.mostrarListaTarefa.controls = []
+        self.mostarBtnEditarTarefa.controls = []
+        self.contarTarefasAbaSelecionada()
         self.page.update()
 
         
@@ -130,13 +133,14 @@ class ToDo:
         if e.control.selected_index == 0:
             self.query = self.manipularDB('SELECT * FROM tb_tarefas')
             self.view = 'TUDO'
+            
         elif e.control.selected_index == 1:
             self.query = self.manipularDB('SELECT * FROM tb_tarefas WHERE status="ANDAMENTO"')
             self.view = 'ANDAMENTO'
         else:
             self.query = self.manipularDB('SELECT * FROM tb_tarefas WHERE status="CONCLUÍDA"')
             self.view = 'CONCLUÍDA'
-        
+
         self.mostrarListaTarefa.controls = [
             Checkbox(
                 label=res[0],
@@ -149,7 +153,7 @@ class ToDo:
                 on_change=lambda e: self.concluirTarefa(e),
             ) for res in self.query if res
         ]
-        
+
         self.mostarBtnDeletarTarefa.controls = [
             IconButton(
                 icon=icons.DELETE_FOREVER_ROUNDED,
@@ -161,7 +165,7 @@ class ToDo:
                 on_click=lambda e: self.deletarTarefa(e),  # Configure o on_click corretamente
             )for res in self.query if res 
         ]
-        
+
         self.mostarBtnEditarTarefa.controls = [
             IconButton(
                 icon=icons.MODE_EDIT_OUTLINE,
@@ -169,13 +173,21 @@ class ToDo:
                 icon_size=16,
                 tooltip="Editar Tarefa",
                 key='btnEditar',
-                selected = False,
+                selected=False,
                 on_click=''
             )for res in self.query if res
         ]
-        
         self.page.update()
- 
+        self.contador_tarefas.value = self.contarTarefasAbaSelecionada()
+        self.page.update()
+
+    def contarTarefasAbaSelecionada(self):
+        total_tarefas_listadas_acima = len(self.mostrarListaTarefa.controls)
+        self.page.update()
+        return total_tarefas_listadas_acima
+
+
+
     def concluirTarefa(self, e):
         lista_tarefasView = self.mostrarListaTarefa.controls
 
@@ -189,10 +201,8 @@ class ToDo:
 
         if status_tarefa == True:
             self.manipularDB('UPDATE tb_tarefas SET status = "CONCLUÍDA" WHERE tarefa = ?', [nome_tarefa])
-            self.page.update()
         else:
             self.manipularDB('UPDATE tb_tarefas SET status = "ANDAMENTO" WHERE tarefa = ?', [nome_tarefa])
-            self.page.update()
         self.page.update()
     
     def mostrarListaTarefa(self):
@@ -271,7 +281,7 @@ class ToDo:
             tooltip='Adicionar Tarefa',
             on_click=lambda e: self.adicionarTarefa(e, input_tarefa))
         
-        contador_tarefas = Text('? tarefas acima')
+        text_inform_tarefas_acima = Text('Total de Tarefas:')
         
         btn_apagar_tudo = OutlinedButton(
             text= 'Apagar tudo',
@@ -331,6 +341,7 @@ class ToDo:
                                 self.mostarBtnEditarTarefa,
                             ],
                         ),
+                        
                     ],
                 ),
             ],
@@ -350,7 +361,8 @@ class ToDo:
             alignment=MainAxisAlignment.SPACE_BETWEEN,
             vertical_alignment=CrossAxisAlignment.CENTER,
             controls=[
-                contador_tarefas,
+                text_inform_tarefas_acima,
+                self.contador_tarefas,
                 btn_apagar_tudo
             ]
         )
