@@ -99,6 +99,7 @@ class ToDo:
         self.manipularDB('DELETE FROM tb_tarefas WHERE tarefa = ? AND status = ?', [tarefa, status])
         self.page.update()
         self.contador_tarefas.value = self.contarTarefasAbaSelecionada()
+        self.fecharModalExcluirTodas()
         self.page.update()
     
     
@@ -106,7 +107,6 @@ class ToDo:
     def modal_confirmarExclusao(self, e):
         modal = self.modal_excluir_Tarefas()  # Chame o método para obter o objeto AlertDialog
         self.abrirModalExclusao(e, modal)  # Passe o objeto como argumento
-        self.fecharModalExcluirTodas()
 
     def abrirModalExclusao(self, e, modal):
         self.page.dialog = modal
