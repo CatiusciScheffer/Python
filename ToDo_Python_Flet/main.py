@@ -20,16 +20,13 @@ from flet import (
     OutlinedButton, 
     Divider,
     ScrollMode,
-    TextThemeStyle,
-    AlertDialog,
-    TextButton,
-    ElevatedButton,
-    Theme)
+    TextThemeStyle)
 
 class ToDo:
     def __init__(self, page:Page):
         self.page = page
         self.page.horizontal_alignment = CrossAxisAlignment.CENTER
+        self.page.window_top = 20
         self.page.window_width=385
         self.page.window_min_width=385
         self.page.window_always_on_top = True
@@ -38,11 +35,11 @@ class ToDo:
         self.mostrarListaTarefa = self.mostrarListaTarefa()
         self.mostarBtnDeletarTarefa = self.mostarBtnDeletarTarefa()
         self.input_tarefa = ''
-        self.modalExcluirTodasTarefas = self.modal_excluir_Tarefas
         self.contador_tarefas = Text(value = self.contarTarefasAbaSelecionada())
         self.query = self.manipularDB('SELECT * FROM tb_tarefas')
-        self.view = 'TUDO'
-        self.main_page()      
+        self.view = ''
+        self.main_page()
+        self.page.update()      
     
     def pegarValorInput(self,e):
         self.tarefa = e.control.value
@@ -71,17 +68,17 @@ class ToDo:
         
         if tarefa:
             self.manipularDB(query='INSERT INTO tb_tarefas(tarefa, status) VALUES(?, ?)', parametros=[tarefa, status])        
-            
+            e.control.value = ""
             self.mostrarListaTarefa.controls.append(
                 Checkbox(label=tarefa, value=False, width=250, height=39.9, expand=False))
             
             self.mostarBtnDeletarTarefa.controls.append(
                 IconButton(icon=icons.DELETE_FOREVER_ROUNDED, icon_color="pink600", icon_size=16, tooltip="Deletar Tarefa", key='btnDeletar', on_click=''))
             
-            e.control.value = ""
-            self.page.update()
-            self.contador_tarefas.value = self.contarTarefasAbaSelecionada()
-            self.page.update()
+        e.control.value = ""
+        self.page.update()
+        self.contador_tarefas.value = self.contarTarefasAbaSelecionada()
+        self.page.update()
 
     def deletarTarefa(self, e):
         lista_botoes_del = self.mostarBtnDeletarTarefa.controls
@@ -99,48 +96,14 @@ class ToDo:
         self.manipularDB('DELETE FROM tb_tarefas WHERE tarefa = ? AND status = ?', [tarefa, status])
         self.page.update()
         self.contador_tarefas.value = self.contarTarefasAbaSelecionada()
-        self.fecharModalExcluirTodas()
         self.page.update()
     
-    
-        
-    def modal_confirmarExclusao(self, e):
-        modal = self.modal_excluir_Tarefas()  # Chame o método para obter o objeto AlertDialog
-        self.abrirModalExclusao(e, modal)  # Passe o objeto como argumento
-
-    def abrirModalExclusao(self, e, modal):
-        self.page.dialog = modal
-        modal.open = True
-        self.page.update()
-
-    def deletarTodasTarefas(self, e=None):
+    def deletarTodasTarefas(self, e):
         self.manipularDB('DELETE FROM tb_tarefas;')
         self.mostarBtnDeletarTarefa.controls = []
         self.mostrarListaTarefa.controls = []
         self.contador_tarefas.value = self.contarTarefasAbaSelecionada()
-        self.fecharModalExcluirTodas()
         self.page.update()
-
-
-    def fecharModalExcluirTodas(self):
-        modal = self.modal_excluir_Tarefas()
-        modal.open = False
-        self.page.update()
-        
-        
-    def modal_excluir_Tarefas(self):
-        modal = AlertDialog(
-            modal=False,
-            title=Text("Por favor, confirme"),
-            content=Text("Você realmente deseja excluir todas essas tarefas?"),
-            actions=[
-                TextButton("Sim", on_click=self.deletarTodasTarefas),
-                TextButton("Não", on_click=self.fecharModalExcluirTodas),
-            ],
-            actions_alignment=MainAxisAlignment.END,
-            on_dismiss=lambda e: self.fecharModalExcluirTodas,
-        )
-        return modal
     
     def filtarListaTarefas(self, query):
         query
@@ -148,18 +111,21 @@ class ToDo:
         return query 
             
     def mudar_abas(self, e):
-        self.page.update()
+        
         
         if e.control.selected_index == 0:
             self.query = self.manipularDB('SELECT * FROM tb_tarefas')
             self.view = 'TUDO'
+            self.page.update()
             
         elif e.control.selected_index == 1:
             self.query = self.manipularDB('SELECT * FROM tb_tarefas WHERE status="ANDAMENTO"')
             self.view = 'ANDAMENTO'
+            self.page.update()
         else:
             self.query = self.manipularDB('SELECT * FROM tb_tarefas WHERE status="CONCLUÍDA"')
             self.view = 'CONCLUÍDA'
+            self.page.update()
 
         self.mostrarListaTarefa.controls = [
             Checkbox(
@@ -204,15 +170,20 @@ class ToDo:
 
         if status_tarefa == True:
             self.manipularDB('UPDATE tb_tarefas SET status = "CONCLUÍDA" WHERE tarefa = ?', [nome_tarefa])
+                        
         else:
             self.manipularDB('UPDATE tb_tarefas SET status = "ANDAMENTO" WHERE tarefa = ?', [nome_tarefa])
-
+            
+        
         if aba == 'TUDO':
             self.query = self.manipularDB('SELECT * FROM tb_tarefas')
+            
         elif aba == 'ANDAMENTO':
             self.query = self.manipularDB('SELECT * FROM tb_tarefas WHERE status="ANDAMENTO"')
+            
         else:
             self.query = self.manipularDB('SELECT * FROM tb_tarefas WHERE status="CONCLUÍDA"')
+            
 
         self.mostrarListaTarefa.controls = [
             Checkbox(
@@ -235,7 +206,7 @@ class ToDo:
                 tooltip="Deletar Tarefa",
                 key='btnDeletar',
                 selected=True,
-                on_click=lambda e: self.deletarTarefa(e, aba),
+                on_click=lambda e: self.deletarTarefa(e),
             ) for res in self.query if res
         ]
 
@@ -284,8 +255,9 @@ class ToDo:
 
     def main_page(self):
         ############ CRIAR OBJETOS ############
-        titulo = Text(value="Lista de Tarefas", 
-                      style=TextThemeStyle.HEADLINE_MEDIUM)
+        titulo = Text(value="Lista de Tarefas",
+                      style=TextThemeStyle.HEADLINE_MEDIUM,
+                      height=30)
         
         input_tarefa = TextField(
             label='Digite uma tarefa', 
@@ -305,26 +277,31 @@ class ToDo:
         btn_apagar_tudo = OutlinedButton(
             text= 'Apagar tudo',
             icon='DELETE_SWEEP',
-            on_click=lambda e: self.modal_confirmarExclusao(e),
+            on_click=self.deletarTodasTarefas,
             )
          
         ############ EMPACOTANDO OBJETO NOS CONTAINER ############
-        container_inserir_tarefa = Column(
-            controls=[
-                Row(
-                    alignment=MainAxisAlignment.CENTER,
-                    controls=[titulo
-                    ],
-                ),
-                Row(
-                    alignment=MainAxisAlignment.CENTER,
-                    vertical_alignment= CrossAxisAlignment.START,
+        container_inserir_tarefa = Container(
+            margin=0,
+            content=(
+                Column(
                     controls=[
-                        input_tarefa,
-                        btn_add_tarefa,
+                        Row(
+                            alignment=MainAxisAlignment.CENTER,
+                            controls=[titulo
+                            ],
+                        ),
+                        Row(
+                            alignment=MainAxisAlignment.CENTER,
+                            vertical_alignment= CrossAxisAlignment.START,
+                            controls=[
+                                input_tarefa,
+                                btn_add_tarefa,
+                            ],
+                        ),
                     ],
-                ),
-            ],
+                )
+            )
         )
         
         container_abas_tarefas = Container(

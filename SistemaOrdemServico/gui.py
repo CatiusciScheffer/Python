@@ -506,7 +506,7 @@ class LoginGUI:
         # --------------- ************************************* ----------------#
             
         # Iniciar o loop principal do Tkinter
-        self.telaPrincipal.resizable(False, False)
+        self.telaPrincipal.resizable(False, True)
         self.telaPrincipal.mainloop()
       
     ############# CRIANDO TELA CADASTRO DE SERVIÇOS #############
