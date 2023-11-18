@@ -1,5 +1,6 @@
 import time
 import pyautogui
+import sys
 import numpy as np
 import pyperclip
 import cv2
@@ -27,7 +28,6 @@ class LerSituacaoFiscal:
         pyautogui.PAUSE = 4 
         pyautogui.FAILSAFE = True
         
-
     def getPosition(self):
         """
         Obtém a posição atual do cursor na tela.
@@ -46,7 +46,7 @@ class LerSituacaoFiscal:
         position = pyautogui.position()
         return position
 
-    def esperarImagemCarregar(self, imagem, id_empresa=None, empresa=None, cnpj=None, max_attempts=6):
+    def esperarImagemCarregar(self, imagem, id_empresa=None, empresa=None, cnpj=None, max_attempts=3):
         """
         Espera até que uma imagem seja localizada na tela.
 
@@ -74,10 +74,8 @@ class LerSituacaoFiscal:
             else:
                 texto_pag_carreg = 'Erro ao carregar página, situação fiscal não baixada!'
                 dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_pag_carreg}
-                self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
+                #self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
                 continue
-
-        
 
     def procurarTexto(self, texto_colar):
         """
@@ -447,6 +445,8 @@ class LerSituacaoFiscal:
             pyautogui.click(btn_alt_cnpj)
             time.sleep(3)
                 
+            contagem_downloads = 0
+            
             # se aparecer mensagem de automação ele apaga o campo e reescreve e clica em alterar                
             msg_robotizado = pyautogui.locateOnScreen(r'.\img\msg_automacao.png')
             if msg_robotizado:
@@ -458,21 +458,43 @@ class LerSituacaoFiscal:
             # Verifica e lês as mensagens da caixa de entrada 
             msg_nova_cx_postal = pyautogui.locateOnScreen(r'.\img\cx_ir_caixa_entrada.png')
             if msg_nova_cx_postal is not None:
-                texto_msg_cx_entrada = 'Existe mensagem não lida na caixa de entrada, situação fiscal não baixada!'
+                texto_msg_cx_entrada = '---> Mensagem na Caixa de Entrada(situação fiscal pendente)!!!'
                 dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_msg_cx_entrada}
                 self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
                 self.sairSeMSGCaixaEntrada()
                 continue
+            
+            # Se o problema for relacionado a procuração 
+            procuracao_problema = pyautogui.locateOnScreen(r'.\img\proc_expirou.png')
+            if procuracao_problema is not None:
+                texto_msg_erro_procuracao = '---> Ausência de procuração (situação fiscal pendente)!!!'
+                dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_msg_erro_procuracao}
+                self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
+                self.sairSeMSGCaixaEntrada()
+                print('erro procuração')
+                continue
+            
+            # página expitou 
+            pagina_expirada = pyautogui.locateOnScreen(r'.\img\pagina_expirou.png')
+            print(pagina_expirada)
+            if pagina_expirada is not None:
+                texto_msg_erro_procuracao = '******** Página expirou, operação cancelada *********'
+                dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_msg_erro_procuracao}
+                self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
+                self.sairSeMSGCaixaEntrada()
+                print('página expirada')
+                sys.exit()
                     
             else:
                 # Escreva as informações no CSV
-                dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': 'Sim'}
+                dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': 'Download da Situação Fiscal _ OK!!!'}
                 self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
+                contagem_downloads += 1
                 
             #clicar no primeiro situação fiscal (botão azul)
             self.esperarImagemCarregar(r'.\img\btn_click_situacaoFiscalx.png')            
             btn_sitFiscal = pyautogui.locateCenterOnScreen(r'.\img\btn_click_situacaoFiscalx.png')
-            print(btn_sitFiscal)
+            #print(btn_sitFiscal)
             pyautogui.click(btn_sitFiscal)
                 
             #clicar na situação fiscal da lista menor
@@ -499,12 +521,15 @@ class LerSituacaoFiscal:
                                     
                 
             time.sleep(3)
-                
+            
             print(f'LINHA VERIFICADO:{i}')
             i = i + 1
             # Verifica se todos os CNPJs foram processados
             if i <= len(dados):
-                    continue
+                print(len(dados))
+                continue
+            if i >= len(dados):
+                self.escrever_dados_no_csv('relatorio.csv', contagem_downloads)   
                     
                 
         # Aguarda por um período antes de recomeçar o processo
