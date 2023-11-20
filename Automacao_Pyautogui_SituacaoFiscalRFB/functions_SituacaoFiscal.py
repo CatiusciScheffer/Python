@@ -25,7 +25,7 @@ class LerSituacaoFiscal:
             # Configura uma pausa de 4 segundos entre as ações
             # e ativa a função FAILSAFE.
         """
-        pyautogui.PAUSE = 4 
+        pyautogui.PAUSE = 10 
         pyautogui.FAILSAFE = True
         
     def getPosition(self):
@@ -46,7 +46,7 @@ class LerSituacaoFiscal:
         position = pyautogui.position()
         return position
 
-    def esperarImagemCarregar(self, imagem, id_empresa=None, empresa=None, cnpj=None, max_attempts=3):
+    def esperarImagemCarregar(self, imagem, id_empresa=None, empresa=None, cnpj=None, max_attempts=6):
         """
         Espera até que uma imagem seja localizada na tela.
 
@@ -135,7 +135,7 @@ class LerSituacaoFiscal:
         else:
             print("Imagem 'home.png' não encontrada. Certifique-se de que a imagem corresponde ao botão 'HOME'.")
 
-    def procurarCorLaranja(self):
+    def procurarCor(self):
         # tive que criar esta função porque os outros métodos de clicar onde precisava na tela da caixa de entrada da receita federal não funcionaram, não podia ser por coordenadas e salvando as imagens também não funcionou, então quando com ctrl+f para localizar um texo, o mesmo era marcado com a cor aranja o que me permitiu procurar esta cor, pegar o primeiro ponto dela na lista e clicar.
         """
         Procura por pixels de cor laranja em uma captura de tela.
@@ -149,7 +149,7 @@ class LerSituacaoFiscal:
 
         Exemplo de uso:
             automation = AutomationUtils()
-            coordenadas_laranja = automation.procurarCorLaranja()
+            coordenadas_laranja = automation.procurarCor()
             if coordenadas_laranja:
                 print("Coordenadas dos pixels de cor laranja:", coordenadas_laranja)
             else:
@@ -159,13 +159,16 @@ class LerSituacaoFiscal:
         screen = np.array(ImageGrab.grab(bbox=(0, 0, 1920, 1080)))
 
         # Define a cor laranja que você deseja procurar (no formato BGR)
-        color_to_find = (255, 150, 50)
-
+        color_to_find_laranja = (255, 150, 50)
+        color_to_find_amarelo = (255, 255, 0)
         # Encontra os pixels correspondentes à cor laranja na imagem
-        mask = cv2.inRange(screen, color_to_find, color_to_find)
-
+        mask = cv2.inRange(screen, color_to_find_laranja, color_to_find_laranja)
+        mask1 = cv2.inRange(screen, color_to_find_amarelo, color_to_find_amarelo)
         # Obtém as coordenadas dos pixels de cor laranja
-        coordinates = np.column_stack(np.where(mask > 0))
+        if np.any(mask > 0):
+            coordinates = np.column_stack(np.where(mask > 0))
+        elif np.any(mask1 > 0):
+            coordinates = np.column_stack(np.where(mask1 > 0))
 
         return coordinates
 
@@ -187,7 +190,7 @@ class LerSituacaoFiscal:
                 print("Nenhuma cor laranja encontrada na tela.")
         """
         # Verifica se há coordenadas de pixels de cor laranja
-        if len(listaCoordenadas := self.procurarCorLaranja()) > 0:
+        if len(listaCoordenadas := self.procurarCor()) > 0:
             for coord in listaCoordenadas:
                 pyautogui.click(coord[1], coord[0])
                 break
@@ -250,6 +253,9 @@ class LerSituacaoFiscal:
         #self.esperarImagemCarregar(r'.\img\btn_sairSeguranca.png')
         sairComSeguranca = pyautogui.locateOnScreen(r'.\img\btn_sairSeguranca.png')
         pyautogui.click(sairComSeguranca)
+        time.sleep(0.5)
+        self.fecharNavegador()
+        
    
     def sairSeMSGCaixaEntrada(self):
         # Localiza e clica no botão do alerta para ir direto pra caixa
@@ -461,6 +467,8 @@ class LerSituacaoFiscal:
                 texto_msg_cx_entrada = '---> Mensagem na Caixa de Entrada(situação fiscal pendente)!!!'
                 dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_msg_cx_entrada}
                 self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
+                time.sleep(2)
+                print(f'caixa postal com mensagem não lida{msg_nova_cx_postal}')
                 self.sairSeMSGCaixaEntrada()
                 continue
             
@@ -470,8 +478,11 @@ class LerSituacaoFiscal:
                 texto_msg_erro_procuracao = '---> Ausência de procuração (situação fiscal pendente)!!!'
                 dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_msg_erro_procuracao}
                 self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
-                self.sairSeMSGCaixaEntrada()
-                print('erro procuração')
+                time.sleep(0.5)
+                pyautogui.press('esc')
+                time.sleep(0.5)
+                self.sairComSeguranca()
+                time.sleep(1)
                 continue
             
             # página expitou 
@@ -481,15 +492,11 @@ class LerSituacaoFiscal:
                 texto_msg_erro_procuracao = '******** Página expirou, operação cancelada *********'
                 dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_msg_erro_procuracao}
                 self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
-                self.sairSeMSGCaixaEntrada()
+                time.sleep(2)
+                self.sairComSeguranca()
                 print('página expirada')
                 sys.exit()
                     
-            else:
-                # Escreva as informações no CSV
-                dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': 'Download da Situação Fiscal _ OK!!!'}
-                self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
-                contagem_downloads += 1
                 
             #clicar no primeiro situação fiscal (botão azul)
             self.esperarImagemCarregar(r'.\img\btn_click_situacaoFiscalx.png')            
@@ -503,25 +510,53 @@ class LerSituacaoFiscal:
             pyautogui.click(btn_sitFiscal_lista)
                 
             time.sleep(3)
-                
+            
+            
             #clicar na gerar relatório da esquerda
             self.procurarTexto('Gerar Relatório')
-            self.clicarSeCorLaranja()
+            process = self.clicarSeCorLaranja()
+            print(f'cor laranja: {process}')
+            
+            if process == True:
+                self.clicarSeCorLaranja()
+                gerar_relatorio = pyautogui.position(x=941, y=382)
+                pyautogui.click(gerar_relatorio)
+                time.sleep(3)
+                self.sairComSeguranca()
+                time.sleep(3)
+                self.fecharNavegador()
+                                            
+                # Escreva as informações no CSV
+                dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': 'Download daSituação Fiscal _ OK!!!'}
+                self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
+                contagem_downloads += 1
+            
+            if process is None:
+                # Escreva as informações no CSV
+                dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': 'Processando Situação Fiscal, fazer nova consulta!!!'}
+                self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
+                contagem_downloads += 1
+                
+                
+            # gera_relatorio_img = self.esperarImagemCarregar(r'.\img\gerar_relatorio1.png')  
+            # time.sleep(3)          
+            # if gera_relatorio_img is not None:
+            #     pyautogui.click(gera_relatorio_img)
+            #     time.sleep(3)
+            #     print('achei a imagem')
+            # else:
+            #     self.procurarTexto('Gerar Relatório')
+            #     time.sleep(3)
+            #     self.clicarSeCorLaranja()
+            #     time.sleep(3)
+            #     ('não achei, cliquei no laranja')
+                    
+                #clicar em gerar relatório da direita 
+            
                 
                     
             time.sleep(3)
                 
-            #clicar em gerar relatório da direita 
-            gerar_relatorio = pyautogui.position(x=938, y=370)
-            pyautogui.click(gerar_relatorio)
-            time.sleep(3)
-            self.sairComSeguranca()
-            time.sleep(3)
-            self.fecharNavegador()
-                                    
-                
-            time.sleep(3)
-            
             print(f'LINHA VERIFICADO:{i}')
             i = i + 1
             # Verifica se todos os CNPJs foram processados
@@ -530,8 +565,8 @@ class LerSituacaoFiscal:
                 continue
             if i >= len(dados):
                 self.escrever_dados_no_csv('relatorio.csv', contagem_downloads)   
+                        
                     
-                
         # Aguarda por um período antes de recomeçar o processo
         time.sleep(10)
 
