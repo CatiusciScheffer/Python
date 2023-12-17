@@ -1,4 +1,4 @@
-# LEITOR XML GENÉRICO
+# LEITOR XML GENÉRICO (lê todo o xml e passa para excel)
 
 <div style="text-align: justify">
   Desenvolvi este leitor de xml que é capaz de ler e exportar para o excel qualquer xml, independente se é nota fiscal de serviço, danfe ou do e-social.
