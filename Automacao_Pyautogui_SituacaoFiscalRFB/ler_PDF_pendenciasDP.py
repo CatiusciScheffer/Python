@@ -2,7 +2,7 @@ import os
 import fitz  # PyMuPDF
 
 # Diretório onde os arquivos PDF estão localizados
-diretorio = r'C:\Users\cpcsc\Downloads\situacao_fiscal_102023'
+diretorio = r'C:\Users\cpcsc\Downloads\SITUACAO_FISCAL'
 
 # Caminho para o arquivo de saída
 arquivo_saida = 'SituaçãoFiscal_PendenciasDP.txt'

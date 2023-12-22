@@ -24,8 +24,9 @@ class AutomationUtils:
             # Configura uma pausa de 4 segundos entre as ações
             # e ativa a função FAILSAFE.
         """
-        pyautogui.PAUSE = 15
+        pyautogui.PAUSE = 8
         pyautogui.FAILSAFE = True
+        pyautogui.DEBUG = True
 
     def getPosition(self):
         """
@@ -72,7 +73,7 @@ class AutomationUtils:
                 print("Imagem não encontrada após 5 tentativas.")
         """
         for _ in range(max_attempts):
-            imagem_procurada = pyautogui.locateOnScreen(imagem, grayscale=True, confidence=0.5)
+            imagem_procurada = pyautogui.locateOnScreen(imagem, grayscale=True, confidence=0.3)
             if imagem_procurada:
                 return imagem_procurada
             else:
@@ -379,6 +380,7 @@ class AutomationUtils:
 
         # Localiza e clica no botão 'btn_alt_perfil.png'
         btn_alt_perfil = pyautogui.locateCenterOnScreen(r'.\img\btn_alt_perfil.png')
+        time.sleep(1.5)
         pyautogui.click(btn_alt_perfil)
         
     def sairComSeguranca(self):
@@ -413,8 +415,8 @@ class AutomationUtils:
             print(cnpj, id_cliente, nome_cliente)
 
             # Abre o navegador e realiza o login com certificado digital
-            self.abrirNavegador('chrome https://cav.receita.fazenda.gov.br/autenticacao/login')
-            self.logarCertificadoECAC()
+            self.abrirNavegador('chrome https://cav.receita.fazenda.gov.br')
+            # self.logarCertificadoECAC()
             self.alterarPerfil()
 
             # Insere o CNPJ e confirma
@@ -427,12 +429,13 @@ class AutomationUtils:
             pyautogui.click(btn_alt_cnpj)
             time.sleep(3)
 
-            # Verifica se há mensagem nova na caixa postal e a abre
-            msg_nova_cx_postal = pyautogui.locateOnScreen(r'.\img\cx_ir_caixa_entrada.png')
-            if msg_nova_cx_postal is not None:
-                btn_ir_cx_entrada = pyautogui.locateCenterOnScreen(r'.\img\btn_ir_cx_entrada.png')
-                pyautogui.click(btn_ir_cx_entrada)
-            time.sleep(3)
+            # # Verifica se há mensagem nova na caixa postal e a abre
+            # msg_nova_cx_postal = pyautogui.locateOnScreen(r'.\img\cx_ir_caixa_entrada.png')
+            # print(msg_nova_cx_postal)
+            # if msg_nova_cx_postal is not None:
+            #     btn_ir_cx_entrada = pyautogui.locateCenterOnScreen(r'.\img\btn_ir_cx_entrada.png')
+            #     pyautogui.click(btn_ir_cx_entrada)
+            # time.sleep(3)
 
             # Navega até a caixa postal
             self.esperarImagemCarregar(r'.\img\espera_caixa_postal.png', max_attempts=5)

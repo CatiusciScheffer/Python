@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
-from functions_TermoExclusao import AutomationUtils
+from functions_TermoExclusao_copy import AutomationUtils
 import pyautogui
 
 def obter_arquivo_csv():

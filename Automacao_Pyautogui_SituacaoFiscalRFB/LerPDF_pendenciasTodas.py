@@ -1,8 +1,8 @@
 import os
-import fitz  # PyMuPDF
+import PyPDF2
 
 # Diretório onde os arquivos PDF estão localizados
-diretorio = r'C:\Users\cpcsc\Downloads\situacao_fiscal_102023'
+diretorio = r'C:\Users\cpcsc\Downloads\SITUACAO_FISCAL'
 
 # Caminho para o arquivo de saída
 arquivo_saida = 'SituaçãoFiscal_PendenciasGeral.txt'
@@ -17,11 +17,13 @@ def verificarTipoPendencias(ocorrencia, linha):
 
 # Função para encontrar e extrair informações
 def extrair_informacoes(pdf_file):
-    # Abre o arquivo PDF usando o PyMuPDF (PyMuPDF é usado para trabalhar com PDFs)
-    with fitz.open(pdf_file) as pdf_document:
+    with open(pdf_file, 'rb') as file:
+        # Usa PdfReader en lugar de PdfFileReader
+        pdf_reader = PyPDF2.PdfReader(file)
+
         texto = ""
-        encontrou_omissao = False  # Variável de controle para rastrear se uma omissão foi encontrada
-        cnpj_gravado = False  # Variável de controle para rastrear se o CNPJ foi escrito
+        encontrou_omissao = False
+        cnpj_gravado = False
         
         tipos_omissoes_pendencias = [
             'Omissão de DCTFWeb*',
@@ -48,10 +50,9 @@ def extrair_informacoes(pdf_file):
         omit_found = False  # Variável para rastrear se uma omissão foi encontrada
 
         # Itera por cada página do PDF
-        for page_number in range(len(pdf_document)):
-            page = pdf_document.load_page(page_number)
-            page_text = page.get_text("text")
-            texto += page_text
+        for page_number in range(len(pdf_reader.pages)):
+            page = pdf_reader.pages[page_number]
+            texto += page.extract_text()
 
         # Divide o texto em linhas
         linhas = texto.splitlines()
