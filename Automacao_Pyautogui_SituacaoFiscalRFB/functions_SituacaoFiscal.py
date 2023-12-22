@@ -25,27 +25,10 @@ class LerSituacaoFiscal:
             # Configura uma pausa de 4 segundos entre as ações
             # e ativa a função FAILSAFE.
         """
-        pyautogui.PAUSE = 6
+        pyautogui.PAUSE = 4
         pyautogui.FAILSAFE = True
-        
-    def getPosition(self):
-        """
-        Obtém a posição atual do cursor na tela.
-
-        Esta função utiliza a biblioteca PyAutoGUI para determinar a posição atual
-        do cursor na tela e a retorna como uma tupla de coordenadas (x, y).
-
-        Retorna:
-            tuple: Uma tupla contendo as coordenadas (x, y) da posição atual do cursor.
-
-        Exemplo de uso:
-            automation = AutomationUtils()
-            current_position = automation.getPosition()
-            print("Posição atual do cursor:", current_position)
-        """
-        position = pyautogui.position()
-        return position
-
+        self.tempo_esperar_carregar = 1
+      
     def esperarImagemCarregar(self, imagem, id_empresa=None, empresa=None, cnpj=None, max_attempts=20):
         """
         Espera até que uma imagem seja localizada na tela.
@@ -68,13 +51,13 @@ class LerSituacaoFiscal:
                 todas as tentativas.
         """
         for _ in range(max_attempts):
-            imagem_procurada = pyautogui.locateOnScreen(imagem, grayscale=True, confidence=0.30)
+            imagem_procurada = pyautogui.locateOnScreen(imagem, grayscale=True, confidence=0.3)
             if imagem_procurada:
                 return imagem_procurada
             else:
                 texto_pag_carreg = 'Erro ao carregar página, situação fiscal não baixada!'
                 dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_pag_carreg}
-                #self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
+                self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
                 continue
 
     def procurarTexto(self, texto_colar):
@@ -128,11 +111,12 @@ class LerSituacaoFiscal:
         """
         # Localiza o centro da imagem 'home.png' na tela
         try:
-            volta_home = pyautogui.locateCenterOnScreen(r'.\img\home.png')
+            volta_home = pyautogui.locateOnScreen(r'.\img\home.png')
 
             if volta_home:
+                centro_volta_home = pyautogui.locateCenterOnScreen (r'.\img\home.png')
                 # Clica no centro da imagem para voltar à página inicial
-                pyautogui.click(volta_home)
+                pyautogui.click(centro_volta_home)
             else:
                 print("Imagem 'home.png' não encontrada. Certifique-se de que a imagem corresponde ao botão 'HOME'.")
         except pyautogui.ImageNotFoundException:
@@ -237,10 +221,10 @@ class LerSituacaoFiscal:
         
     def fecharNavegador(self):
         """
-        Fecha a janela do navegador ativa.
+        Fecha apenas a janela do navegador ativa, para permitir que o login com certificado permaneça.
 
         Esta função utiliza a biblioteca PyAutoGUI para pressionar as teclas de atalho
-        'Alt + F4', o que geralmente fecha a janela do navegador que está em foco.
+        'ctrl + w', o que fecha a janela do navegador que está ativa.
 
         Exemplo de uso:
             automation = AutomationUtils()
@@ -253,109 +237,6 @@ class LerSituacaoFiscal:
         # Pressiona 'Alt + F4' para fechar a janela do navegador ativa
         pyautogui.hotkey('ctrl', 'w')
 
-    def sairComSeguranca(self):
-        #self.esperarImagemCarregar(r'.\img\btn_sairSeguranca.png')
-        sairComSeguranca = pyautogui.locateOnScreen(r'.\img\btn_sairSeguranca.png')
-        pyautogui.click(sairComSeguranca)
-        time.sleep(0.5)
-        self.voltarHome()
-        
-   
-    def sairSeMSGCaixaEntrada(self):
-        # Localiza e clica no botão do alerta para ir direto pra caixa
-        btn_ir_cx_entrada = pyautogui.locateCenterOnScreen(r'.\img\btn_ir_cx_entrada.png')
-        # entra na caixa de entrada
-        pyautogui.click(btn_ir_cx_entrada)
-            
-        self.sairComSeguranca()
-        self.voltarHome()            
-            
-            #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#
-            # MELHORARIAS NO CÓDIGO#
-            #@@@@@@ esta parte do código estava lendo as mensagens na caixa de entrada, porém se tiver um termo de exclusão ou outra mensagem que realmente deveria ser lida com este código estaria apenas abrindo com robô sem dar o devido tratamento, mais tarde expandi o código para ler as mensagens e enviar conforme critério para a equipe correta@@@@@@@#
-            # Verifica se existem mensagens não lidas na caixa de entrada (localiza envelope azul)
-            # #lista com todas as ocorrências dos envelopes azúis
-            # btn_msg_nova_esc= pyautogui.locateAllOnScreen(r'.\img\btn_msg_cx_postal_escuro.png')
-            # #lista com todas as ocorrências dos envelopes azúis 
-            # btn_msg_nova_clara= pyautogui.locateAllOnScreen(r'.\img\btn_msg_cx_postal_claro.png')
-            # if btn_msg_nova_esc or btn_msg_nova_clara:
-            #     for mensagen in btn_msg_nova_esc:
-                    
-            #         envelope_esc= pyautogui.locateCenterOnScreen(r'.\img\btn_msg_cx_postal_escuro.png')
-                    
-            #         time.sleep(1)
-            #         pyautogui.click(envelope_esc)
-                    
-            #         time.sleep(1)
-            #         pyautogui.press('pagedown', presses=3)
-                    
-            #         time.sleep(1)
-            #         btn_voltar_cx_msg = pyautogui.locateCenterOnScreen(r'.\img\btn_voltar.png')                   
-            #         pyautogui.click(btn_voltar_cx_msg)
-                    
-            #     time.sleep(1)    
-            #     for mensagen in btn_msg_nova_clara:
-            #         self.esperarImagemCarregar(r'.\img\btn_msg_cx_postal_claro.png')
-            #         envelope_claro= pyautogui.locateCenterOnScreen(r'.\img\btn_msg_cx_postal_claro.png')
-                    
-            #         pyautogui.click(envelope_claro)
-                    
-            #         time.sleep(1)
-            #         pyautogui.press('pagedown', presses=3)
-                    
-            #         time.sleep(1)
-            #         btn_voltar_cx_msg = pyautogui.locateCenterOnScreen(r'.\img\btn_voltar.png')
-            #         pyautogui.click(btn_voltar_cx_msg)
-                    
-            # else:
-            #         self.voltarHome()
-            #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#            
-
-    def logarCertificadoECAC(self):
-        """
-        Realiza o login no ECAC utilizando certificado digital.
-
-        Esta função automatiza o processo de login no ECAC (Centro Virtual de Atendimento ao Contribuinte)
-        utilizando um certificado digital. Ela clica nos botões relevantes e pressiona 'Enter' para escolher
-        o certificado digital quando solicitado.
-
-        Exemplo de uso:
-            automation = AutomationUtils()
-            automation.logarCertificadoECAC()
-
-        Observações:
-            Certifique-se de que as imagens correspondentes aos botões 'btn_Entrar_gov.br.png',
-            'btn_entrar_certificado1.png' e 'espera_lista_certifi.png' estejam corretamente
-            configuradas e que a janela relevante esteja em foco antes de chamar esta função.
-        """
-        # Clica no botão 'ENTRAR COM GOV'
-        self.esperarImagemCarregar(r'.\img\espera_pg_inicial.png')
-        btn_entrar_gov = pyautogui.locateCenterOnScreen(r'.\img\btn_Entrar_gov.br.png')
-        pyautogui.click(btn_entrar_gov)
-
-        # Clica no botão 'ENTRAR COM CERTIFICADO DIGITAL'
-        self.esperarImagemCarregar(r'.\img\espera_escolhe_cert.png')
-        btn_entrar_certificado = pyautogui.locateCenterOnScreen(r'.\img\btn_entrar_seu_sertificado.png')
-        pyautogui.click(btn_entrar_certificado)
-
-        #se der erro 400 bad requests
-        erro_400_bad_requests = pyautogui.locateOnScreen(r'.\img\erro_400_bad_request.png', confidence=0.5) 
-        time.sleep(3)       
-        print(f'ERRRRRRRROOOOOO 40000000{erro_400_bad_requests}')
-        if erro_400_bad_requests is not None:
-            pyautogui.hotkey('alt', 'left')
-            pyautogui.click(btn_entrar_certificado)
-            print('sem erroooooooooooo')
-
-
-        # Pressiona 'Enter' para escolher o certificado digital
-        self.esperarImagemCarregar(r'.\img\btn_entrar_certificado1.png')
-        # pyautogui.press('enter')
-        botao_escolher_certificado = pyautogui.locateOnScreen(r'.\img\btn_entrar_certificado1.png', confidence=0.5)
-        pyautogui.click(botao_escolher_certificado)
-        
-        #@@@@@@@@@@@@@PROGRAMAR DEPOIS A ESCOLHA DO CERTIFICADO NA LISTA@@@@@@@@@@@@@#
-    
     def ler_csv(self, arquivo_csv):
         """
         Lê os dados de um arquivo CSV e retorna uma lista de dicionários.
@@ -406,25 +287,74 @@ class LerSituacaoFiscal:
             correspondam aos elementos desejados e que a janela relevante esteja em foco antes
             de chamar esta função.
         """
-        # # Localiza e clica no botão 'btn_alt_perfil.png'
-        # btn_alt_perfil = pyautogui.locateCenterOnScreen(r'.\img\link_alt_perfil_corpo_pagina.png')
-        # time.sleep(1)
-        # print(f'BOTÃOOOOOOOOO{btn_alt_perfil}')
-        # self.esperarImagemCarregar(btn_alt_perfil)
-        # time.sleep(1.5)
-        # pyautogui.click(btn_alt_perfil)
-        time.sleep(0.5)
-        pyautogui.click(x=950, y= 539)
-        time.sleep(1)
+        try:
+            alterar_perfil = pyautogui.locateCenterOnScreen(r'.\img\btn_alt_perfil.png')
+
+            if alterar_perfil:
+                # Clica no centro da imagem para voltar à página inicial
+                pyautogui.click(alterar_perfil)
+
+        except pyautogui.ImageNotFoundException:
+            time.sleep(self.tempo_esperar_carregar)
+            pyautogui.click(x=1167, y= 223)
+            print('imagem para alterar perfil não localizada, cliquei nas coordenadas')
         
+    def digitarCNPJ_AlterarPerfil(self, cnpj):
+        try:
+            self.esperarImagemCarregar(r'.\img\cp_digitar_cnpj.png')
+            campo_digitar_cnpj = pyautogui.locateCenterOnScreen(r'.\img\cp_digitar_cnpj.png')
+            
+            if campo_digitar_cnpj:
+                pyautogui.click(campo_digitar_cnpj)
+                pyautogui.write(cnpj)
+        
+        except pyautogui.ImageNotFoundException:
+            time.sleep(self.tempo_esperar_carregar)
+            pyautogui.click(x=582, y= 450)
+            print('imagem para digitar cnpj não localizada, cliquei nas coordenadas')
+
+    def clicar_AlterarPerfil(self):
+        try:
+            # clica no botão alterar cnpj                
+            self.esperarImagemCarregar(r'.\img\btn_conf_alt_cnpj1.png')
+            btn_alt_cnpj = pyautogui.locateCenterOnScreen(r'.\img\btn_conf_alt_cnpj1.png')
+            
+            if btn_alt_cnpj:
+                pyautogui.click(btn_alt_cnpj)
+
+        except pyautogui.ImageNotFoundException:
+            pyautogui.click(x=816, y= 473)
+            print('imagem do botão de alterar perfil não localizada, cliquei nas coordenadas')
+
+    def clicar_CertidaoSituacaoFiscal(self):
+        try:
+            self.esperarImagemCarregar(r'.\img\btn_click_situacaoFiscalx.png')            
+            btn_sitFiscal = pyautogui.locateCenterOnScreen(r'.\img\btn_click_situacaoFiscalx.png')
+            
+            if btn_sitFiscal:
+                pyautogui.click(btn_sitFiscal)
+        
+        except pyautogui.ImageNotFoundException:
+            pyautogui.click(x=505, y= 270)
+            print('imagem certidão e situação fiscal(azul) não localizada, cliquei nas coordenadas')
+
+    def clicar_CertidaoSituacaoFiscalList(self):
+        try:
+            self.esperarImagemCarregar(r'.\img\espera_btn_lista_sitFiscal.png')
+            btn_sitFiscal_lista = pyautogui.locateOnScreen(r'.\img\btn_escolhe_situacaoFiscal.png')
+            
+            if btn_sitFiscal_lista:
+                pyautogui.click(btn_sitFiscal_lista)
+
+        except pyautogui.ImageNotFoundException:
+            pyautogui.click(x=362, y= 445)
+            print('imagem consulta pendências - situação fiscal(lista) não localizada, cliquei nas coordenadas')
     
     def escrever_dados_no_csv(self, arquivo_csv, dados_relatorio):
-        # Função para escrever os dados no arquivo CSV
         with open(arquivo_csv, mode='a', newline='', encoding='utf-8') as arquivo_csv:
             campo_nomes = ['ID', 'EMPRESA', 'CNPJ', 'VERIFICADO']
-            escritor_csv = csv.DictWriter(arquivo_csv, fieldnames=campo_nomes)  
-                      
-            # Escreva os dados no CSV
+            escritor_csv = csv.DictWriter(arquivo_csv, fieldnames=campo_nomes)                      
+            # Escreve os dados no CSV
             escritor_csv.writerow(dados_relatorio)
     
     def verificarSituacaoFiscalCNPJ(self, arquivo_csv):
@@ -433,11 +363,21 @@ class LerSituacaoFiscal:
         dados = self.ler_csv(arquivo_csv)        
 
         # Abre o navegador e realiza o login com certificado digital
-        time.sleep(0.5)
+        time.sleep(self.tempo_esperar_carregar)
         self.abrirNavegador('chrome https://cav.receita.fazenda.gov.br')
-        #self.logarCertificadoECAC()
+        time.sleep(self.tempo_esperar_carregar)
 
-        # Itera sobre os CNPJs na lista
+        #clicar no primeiro situação fiscal (botão azul)
+        self.clicar_CertidaoSituacaoFiscal()
+            
+        time.sleep(self.tempo_esperar_carregar)
+
+        #clicar na situação fiscal da lista menor
+        self.clicar_CertidaoSituacaoFiscalList()
+                            
+        time.sleep(self.tempo_esperar_carregar)
+
+        # Itera sobre os CNPJs na lista e consulta no ecac cada item(cnpj) dela
         for i, linha in enumerate(dados):
                 
             cnpj = linha['CNPJ']
@@ -455,22 +395,20 @@ class LerSituacaoFiscal:
             # Adicione as informações à lista de dados
             dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': verificado}                
             
-            time.sleep(0.5)
+            contagem_downloads = 0
+            
+            time.sleep(self.tempo_esperar_carregar)
+
+            # clica para alterar perfil
             self.alterarPerfil()
 
-            # Insere o CNPJ e confirma
-            self.esperarImagemCarregar(r'.\img\cp_digitar_cnpj.png')
-            campo_CNPJ = pyautogui.locateCenterOnScreen(r'.\img\cp_digitar_cnpj.png')
-            pyautogui.click(campo_CNPJ)
-            pyautogui.write(cnpj)
-                
-            # clica no botão alterar cnpj                
-            self.esperarImagemCarregar(r'.\img\btn_conf_alt_cnpj1.png')
-            btn_alt_cnpj = pyautogui.locateCenterOnScreen(r'.\img\btn_conf_alt_cnpj1.png')
-            pyautogui.click(btn_alt_cnpj)
-            time.sleep(3)
-                
-            contagem_downloads = 0
+            # Insere o CNPJ
+            self.digitarCNPJ_AlterarPerfil(cnpj)
+                           
+            # clica no botão alterar cnpj
+            self.clicar_AlterarPerfil()
+                        
+            time.sleep(self.tempo_esperar_carregar)                
             
             # Verifica e lê as mensagens da caixa de entrada
             try:
@@ -482,9 +420,7 @@ class LerSituacaoFiscal:
                     self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
                     time.sleep(2)
                     print(f'Caixa postal com mensagem não lida {msg_nova_cx_postal}')
-                    self.voltarHome()
-                else:
-                    print('Sem mensagem na caixa de entrada')
+                    self.voltarHome()                
 
             except pyautogui.ImageNotFoundException:
                     print('Imagem "cx_ir_caixa_entrada" não encontrada. Executando as próximas linhas mesmo assim.')
@@ -502,8 +438,7 @@ class LerSituacaoFiscal:
                     self.voltarHome()
                     time.sleep(2)
                     continue
-                else:
-                    print('procuração ok')
+                
             except pyautogui.ImageNotFoundException:
                 print('Imagem "proc_expirou.png" não encontrada. Executando as próximas linhas mesmo assim.')
             
@@ -520,8 +455,7 @@ class LerSituacaoFiscal:
                     self.voltarHome()
                     print('página expirada')
                     sys.exit()
-                else:
-                    print('página não expirou')
+
             except pyautogui.ImageNotFoundException:
                 print('Imagem "pagina_expirou.png" não encontrada. Executando as próximas linhas mesmo assim.')
                     
@@ -529,75 +463,58 @@ class LerSituacaoFiscal:
             try:
                 msg_robotizado = pyautogui.locateOnScreen(r'.\img\msg_automacao.png')
                 if msg_robotizado is not None:
-                    pyautogui.click(campo_CNPJ)
+                    self.digitarCNPJ_AlterarPerfil(cnpj)
                     pyautogui.press('backspace', presses=14)
                     pyautogui.write(cnpj)
-                    pyautogui.click(btn_alt_cnpj)
-                else:
-                    print('sem mensagem de automação')
+                    self.clicar_AlterarPerfil()
+                
             except pyautogui.ImageNotFoundException:
                 print('Imagem "msg_automacao.png" não encontrada. Executando as próximas linhas mesmo assim.')
                 
-            time.sleep(2)
-            #clicar no primeiro situação fiscal (botão azul)
-            self.esperarImagemCarregar(r'.\img\btn_click_situacaoFiscalx.png')            
-            btn_sitFiscal = pyautogui.locateCenterOnScreen(r'.\img\btn_click_situacaoFiscalx.png')
-            pyautogui.click(btn_sitFiscal)
+            time.sleep(self.tempo_esperar_carregar)
 
-            time.sleep(2)
-
-            #clicar na situação fiscal da lista menor
-            self.esperarImagemCarregar(r'.\img\espera_btn_lista_sitFiscal.png')
-            btn_sitFiscal_lista = pyautogui.locateOnScreen(r'.\img\btn_escolhe_situacaoFiscal.png')
-            pyautogui.click(btn_sitFiscal_lista)
-                
-            time.sleep(1.5) 
+            self.esperarImagemCarregar(r'.\img\espera_relatorios_aparecer.png')
+            img_tela_download_relatorio = pyautogui.locateOnScreen(r'.\img\espera_relatorios_aparecer.png')
 
             try:
-                #espera tela de situação fiscal carregar
-                self.esperarImagemCarregar(r'.\img\espera_relatorios_aparecer.png')
-                print(f'esperei')
-            except:
-                time.sleep(10)
-            
-            time.sleep(2) 
+                if img_tela_download_relatorio:
+                    print('achei a tela de relatório')
+                    #clicar na gerar relatório da esquerda
+                    self.procurarTexto('Gerar Relatório')
+                    time.sleep(self.tempo_esperar_carregar)
+                    process = self.clicarSeCorLaranja()
+                    time.sleep(self.tempo_esperar_carregar)
+                                
+                    if process == True:
+                        #self.clicarSeCorLaranja()
+                        gerar_relatorio = pyautogui.position(x=941, y=382)
+                        time.sleep(self.tempo_esperar_carregar)
+                        pyautogui.click(gerar_relatorio)
+                        time.sleep(self.tempo_esperar_carregar)
+                        #self.voltarHome()
+                                                                    
+                        # Escreva as informações no CSV
+                        dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': 'Download daSituação Fiscal _ OK!!!'}
+                        
+                        self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
+                        
+                        contagem_downloads += 1
 
-            #clicar na gerar relatório da esquerda
-            self.procurarTexto('Gerar Relatório')
-            time.sleep(3)
-            process = self.clicarSeCorLaranja()
-            time.sleep(3)
-            print(f'cor laranja: {process}')
-            
-            if process == True:
-                self.clicarSeCorLaranja()
-                gerar_relatorio = pyautogui.position(x=941, y=382)
-                time.sleep(1.5)
-                pyautogui.click(gerar_relatorio)
-                time.sleep(3)
-                self.voltarHome()
-                time.sleep(1.5)
-                
-                                            
-                # Escreva as informações no CSV
-                dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': 'Download daSituação Fiscal _ OK!!!'}
-                time.sleep(0.5)
+            except pyautogui.ImageNotFoundException:
                 self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
-                time.sleep(0.5)
-                contagem_downloads += 1
+                if process is None:
+                    texto_msg_erro_download = '******** Download não efetuado, demora no carregamento *********'
+                    dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_msg_erro_download}
+                    # Escreva as informações no CSV
+                    self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
+                    #self.voltarHome()
+                    contagem_downloads += 1
+                    print('não achei a tela de download')
+                break #se não carregar a tela de download do relatório, volta para o início buscanto o próximo cnpj da lista
             
-            if process is None:
-                # Escreva as informações no CSV
-                dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': 'Processando Situação Fiscal, fazer nova consulta!!!'}
-                time.sleep(.5)
-                self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
-                time.sleep(.5)
-                self.voltarHome()
-                contagem_downloads += 1                
+            time.sleep(self.tempo_esperar_carregar)
 
-            self.voltarHome()
-
-            time.sleep(2)
+            
                 
             print(f'LINHA VERIFICADO:{i}')
             i = i + 1
@@ -610,7 +527,7 @@ class LerSituacaoFiscal:
                         
                     
         # Aguarda por um período antes de recomeçar o processo
-        time.sleep(12)
+        time.sleep(self.tempo_esperar_carregar)
 
         
 

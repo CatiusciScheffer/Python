@@ -14,6 +14,7 @@ def obter_arquivo_csv():
 
 def msgConclusao():
   pyautogui.alert('Tarefa concluída, o computador é seu novamente!')
+  pyautogui.hotkey('Ctrl', 'w')
   
 automation = LerSituacaoFiscal()
 

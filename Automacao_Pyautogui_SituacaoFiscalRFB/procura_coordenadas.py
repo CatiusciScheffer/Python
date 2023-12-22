@@ -1,7 +1,7 @@
 import pyautogui
 import time
 
-time.sleep(2)
+time.sleep(5)
 # Obtém as coordenadas atuais do mouse
 posicao = pyautogui.position()
 
