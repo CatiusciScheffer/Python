@@ -29,7 +29,7 @@ class LerSituacaoFiscal:
         pyautogui.FAILSAFE = True
         self.tempo_esperar_carregar = 1
       
-    def esperarImagemCarregar(self, imagem, id_empresa=None, empresa=None, cnpj=None, max_attempts=20):
+    def esperarImagemCarregar(self, imagem, id_empresa=None, empresa=None, cnpj=None, max_attempts=50):
         """
         Espera até que uma imagem seja localizada na tela.
 
@@ -51,6 +51,7 @@ class LerSituacaoFiscal:
                 todas as tentativas.
         """
         for _ in range(max_attempts):
+            time.sleep(self.tempo_esperar_carregar)
             imagem_procurada = pyautogui.locateOnScreen(imagem, grayscale=True, confidence=0.3)
             if imagem_procurada:
                 return imagem_procurada
@@ -83,13 +84,10 @@ class LerSituacaoFiscal:
         """
         # Pressiona 'Ctrl + F' para abrir a caixa de pesquisa
         pyautogui.hotkey('ctrl', 'f')
-
         # Converte o texto a ser procurado em uma string (caso não seja)
         texto_procurar = str(texto_colar)
-
         # Copia o texto para a área de transferência (clipboard)
         pyperclip.copy(texto_procurar)
-
         # Cole o texto na caixa de pesquisa usando 'Ctrl + V'
         pyautogui.hotkey('ctrl', 'v')
 
@@ -143,22 +141,27 @@ class LerSituacaoFiscal:
             else:
                 print("Nenhum pixel de cor laranja encontrado na captura de tela.")
         """
-        # Captura uma região da tela (no exemplo, toda a tela: 1920x1080 pixels)
-        screen = np.array(ImageGrab.grab(bbox=(0, 0, 1920, 1080)))
+        try:    
+            # Captura uma região da tela (no exemplo, toda a tela: 1920x1080 pixels)
+            screen = np.array(ImageGrab.grab(bbox=(0, 0, 1920, 1080)))
+            # Define a cor laranja que você deseja procurar (no formato BGR)
+            color_to_find_laranja = (255, 150, 50)
+            color_to_find_amarelo = (255, 255, 0)
+            # Encontra os pixels correspondentes à cor laranja na imagem
+            mask = cv2.inRange(screen, color_to_find_laranja, color_to_find_laranja)
+            mask1 = cv2.inRange(screen, color_to_find_amarelo, color_to_find_amarelo)
+            # Obtém as coordenadas dos pixels de cor laranja
+            if np.any(mask > 0):
+                coordinates = np.column_stack(np.where(mask > 0))
+            elif np.any(mask1 > 0):
+                coordinates = np.column_stack(np.where(mask1 > 0))
 
-        # Define a cor laranja que você deseja procurar (no formato BGR)
-        color_to_find_laranja = (255, 150, 50)
-        color_to_find_amarelo = (255, 255, 0)
-        # Encontra os pixels correspondentes à cor laranja na imagem
-        mask = cv2.inRange(screen, color_to_find_laranja, color_to_find_laranja)
-        mask1 = cv2.inRange(screen, color_to_find_amarelo, color_to_find_amarelo)
-        # Obtém as coordenadas dos pixels de cor laranja
-        if np.any(mask > 0):
-            coordinates = np.column_stack(np.where(mask > 0))
-        elif np.any(mask1 > 0):
-            coordinates = np.column_stack(np.where(mask1 > 0))
-
-        return coordinates
+            return coordinates
+        except:
+            time.sleep(self.tempo_esperar_carregar)
+            print('erro na função procura cor')
+            return coordinates
+        
 
     def clicarSeCorLaranja(self):
         """
@@ -209,13 +212,10 @@ class LerSituacaoFiscal:
         """
         # Abre o diálogo "Executar" pressionando 'Win + R'
         pyautogui.hotkey('win', 'r')
-
         # Aguarda até que a imagem 'tl_win_exec.png' seja carregada
         self.esperarImagemCarregar(r'.\img\tl_win_exec.png')
-
         # Escreve o endereço HTTP no campo de texto do diálogo
         pyautogui.write(enderecoHTTP)
-
         # Pressiona Enter para abrir o navegador com o URL especificado
         pyautogui.press('enter')
         
@@ -269,7 +269,7 @@ class LerSituacaoFiscal:
                 dados_csv.append(row)
         return dados_csv
         
-    def alterarPerfil(self):
+    def alterarPerfildeAcesso(self):
         """
         Realiza a ação de alterar o perfil de acesso.
 
@@ -306,12 +306,13 @@ class LerSituacaoFiscal:
             
             if campo_digitar_cnpj:
                 pyautogui.click(campo_digitar_cnpj)
+                time.sleep(self.tempo_esperar_carregar)
                 pyautogui.write(cnpj)
         
         except pyautogui.ImageNotFoundException:
             time.sleep(self.tempo_esperar_carregar)
             pyautogui.click(x=582, y= 450)
-            print('imagem para digitar cnpj não localizada, cliquei nas coordenadas')
+            
 
     def clicar_AlterarPerfil(self):
         try:
@@ -324,7 +325,7 @@ class LerSituacaoFiscal:
 
         except pyautogui.ImageNotFoundException:
             pyautogui.click(x=816, y= 473)
-            print('imagem do botão de alterar perfil não localizada, cliquei nas coordenadas')
+            
 
     def clicar_CertidaoSituacaoFiscal(self):
         try:
@@ -336,8 +337,7 @@ class LerSituacaoFiscal:
         
         except pyautogui.ImageNotFoundException:
             pyautogui.click(x=505, y= 270)
-            print('imagem certidão e situação fiscal(azul) não localizada, cliquei nas coordenadas')
-
+            
     def clicar_CertidaoSituacaoFiscalList(self):
         try:
             self.esperarImagemCarregar(r'.\img\espera_btn_lista_sitFiscal.png')
@@ -348,8 +348,7 @@ class LerSituacaoFiscal:
 
         except pyautogui.ImageNotFoundException:
             pyautogui.click(x=362, y= 445)
-            print('imagem consulta pendências - situação fiscal(lista) não localizada, cliquei nas coordenadas')
-    
+                
     def escrever_dados_no_csv(self, arquivo_csv, dados_relatorio):
         with open(arquivo_csv, mode='a', newline='', encoding='utf-8') as arquivo_csv:
             campo_nomes = ['ID', 'EMPRESA', 'CNPJ', 'VERIFICADO']
@@ -357,25 +356,24 @@ class LerSituacaoFiscal:
             # Escreve os dados no CSV
             escritor_csv.writerow(dados_relatorio)
     
+    def chegar_download(self):
+        time.sleep(self.tempo_esperar_carregar)
+        self.abrirNavegador('chrome https://cav.receita.fazenda.gov.br')
+        time.sleep(self.tempo_esperar_carregar)
+        self.clicar_CertidaoSituacaoFiscal()
+        time.sleep(self.tempo_esperar_carregar)
+        self.clicar_CertidaoSituacaoFiscalList()                  
+        time.sleep(self.tempo_esperar_carregar)
+
+    def msg_logar_certificado(self):
+        pyautogui.alert('SIGA AS INSTRUÇÕES:\n1) Feche todas as janelas do Chrome;\n2) Logue novamente com Chrome o site da RFB com certificado do escritório;\n3) Agora clique em ok e não mexa mais no PC;')
+
     def verificarSituacaoFiscalCNPJ(self, arquivo_csv):
         
         # Lê os dados do arquivo CSV
         dados = self.ler_csv(arquivo_csv)        
 
-        # Abre o navegador e realiza o login com certificado digital
-        time.sleep(self.tempo_esperar_carregar)
-        self.abrirNavegador('chrome https://cav.receita.fazenda.gov.br')
-        time.sleep(self.tempo_esperar_carregar)
-
-        #clicar no primeiro situação fiscal (botão azul)
-        self.clicar_CertidaoSituacaoFiscal()
-            
-        time.sleep(self.tempo_esperar_carregar)
-
-        #clicar na situação fiscal da lista menor
-        self.clicar_CertidaoSituacaoFiscalList()
-                            
-        time.sleep(self.tempo_esperar_carregar)
+        self.chegar_download()
 
         # Itera sobre os CNPJs na lista e consulta no ecac cada item(cnpj) dela
         for i, linha in enumerate(dados):
@@ -383,8 +381,7 @@ class LerSituacaoFiscal:
             cnpj = linha['CNPJ']
             id_empresa = linha['ID']
             empresa = linha['EMPRESA']
-            status = linha['VERIFICADO']
-                
+            status = linha['VERIFICADO']                
                 
             # Verifica o status e atribui 'Sim' ou 'Não' a 'verificado'
             if status == 'NAO':
@@ -400,7 +397,7 @@ class LerSituacaoFiscal:
             time.sleep(self.tempo_esperar_carregar)
 
             # clica para alterar perfil
-            self.alterarPerfil()
+            self.alterarPerfildeAcesso()
 
             # Insere o CNPJ
             self.digitarCNPJ_AlterarPerfil(cnpj)
@@ -408,50 +405,88 @@ class LerSituacaoFiscal:
             # clica no botão alterar cnpj
             self.clicar_AlterarPerfil()
                         
-            time.sleep(self.tempo_esperar_carregar)                
+            time.sleep(self.tempo_esperar_carregar) 
+
+            ################EXCEPT NAS MENSAGENS POR ERRO AO ALTERAR PERFIL################
             
-            # Verifica e lê as mensagens da caixa de entrada
+            #NÃO ALTEROU O PERFIL_MENSAGEN NA CAIXA DE ENTRADA
             try:
                 msg_nova_cx_postal = pyautogui.locateOnScreen(r'.\img\cx_ir_caixa_entrada.png')
 
                 if msg_nova_cx_postal is not None:
-                    texto_msg_cx_entrada = '---> Mensagem na Caixa de Entrada (situação fiscal pendente)!!!'
+                    #escrever no relatório
+                    texto_msg_cx_entrada = '---> Mensagem na Caixa de Entrada!!!'
                     dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_msg_cx_entrada}
                     self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
-                    time.sleep(2)
-                    print(f'Caixa postal com mensagem não lida {msg_nova_cx_postal}')
-                    self.voltarHome()                
+                    time.sleep(self.tempo_esperar_carregar)
+                    # se entrar na caixa postal poderá ter várias mensagens que precisam ser lidas
+                    # então não quero fazer isso, tenho que voltar para o início do for mas no póximo índice
+                    contagem_downloads += 1
+                    # vou ter que fechar todas as abas do navegador
+                    pyautogui.hotkey('ctrl', 'shift', 'w')
+                    # logar novamento com certificado
+                    self.msg_logar_certificado()
+                    #vou ter que começar o código do início 
+                    self.chegar_download()
+                    continue
 
             except pyautogui.ImageNotFoundException:
                     print('Imagem "cx_ir_caixa_entrada" não encontrada. Executando as próximas linhas mesmo assim.')
-
-            # Se o problema for relacionado a procuração 
+                
+            #NÃO ALTEROU O PERFIL_FALTA PROCURAÇÃO
             try:
-                procuracao_problema = pyautogui.locateOnScreen(r'.\img\proc_expirou.png')
+                procuracao_problema = pyautogui.locateOnScreen(r'.\img\proc_inexistente.png')
                 if procuracao_problema is not None:
-                    texto_msg_erro_procuracao = '---> Ausência de procuração (situação fiscal pendente)!!!'
+                    texto_msg_erro_procuracao = '---> Ausência de procuração!!!'
+                    
                     dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_msg_erro_procuracao}
                     self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
-                    time.sleep(1)
-                    pyautogui.press('esc')
-                    time.sleep(1)
-                    self.voltarHome()
-                    time.sleep(2)
+                    
+                    #se não tem procuração, vou er que sair completamente de todas as páginas do chrome, começar novamente deste indice em diante
+                    contagem_downloads += 1
+                    # vou ter que fechar todas as abas do navegador
+                    pyautogui.hotkey('ctrl', 'shift', 'w')
+                    # logar novamento com certificado
+                    self.msg_logar_certificado()
+                    #vou ter que começar o código do início 
+                    self.chegar_download()
                     continue
                 
             except pyautogui.ImageNotFoundException:
-                print('Imagem "proc_expirou.png" não encontrada. Executando as próximas linhas mesmo assim.')
+                print('Imagem "proc_inexistente.png" não encontrada. Executando as próximas linhas mesmo assim.')
+
+            #NÃO ALTEROU O PERFIL_PROCURAÇÃO EXPIRADA
+            try:
+                procuracao_problema = pyautogui.locateOnScreen(r'.\img\proc_expirada.png')
+                if procuracao_problema is not None:
+                    texto_msg_erro_procuracao = '---> Procuração Vencida!!!'
+                    
+                    dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_msg_erro_procuracao}
+                    self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
+                    
+                    #se não tem procuração, vou er que sair completamente de todas as páginas do chrome, começar novamente deste indice em diante
+                    contagem_downloads += 1
+                    # vou ter que fechar todas as abas do navegador
+                    pyautogui.hotkey('ctrl', 'shift', 'w')
+                    # logar novamento com certificado
+                    self.msg_logar_certificado()
+                    #vou ter que começar o código do início 
+                    self.chegar_download()
+                    continue
+                
+            except pyautogui.ImageNotFoundException:
+                print('Imagem "proc_expirada.png" não encontrada. Executando as próximas linhas mesmo assim.')
             
 
-            # página expitou 
+            #NÃO ALTEROU O PERFIL_PÁGINA EXPIRADA 
             try:
                 pagina_expirada = pyautogui.locateOnScreen(r'.\img\pagina_expirou.png')
                 print(pagina_expirada)
                 if pagina_expirada is not None:
-                    texto_msg_erro_procuracao = '******** Página expirou, operação cancelada *********'
-                    dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_msg_erro_procuracao}
+                    texto_msg_erro_pg = '******** Página expirou, operação cancelada *********'
+                    dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_msg_erro_pg}
                     self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
-                    time.sleep(2)
+                    time.sleep(self.tempo_esperar_carregar)
                     self.voltarHome()
                     print('página expirada')
                     sys.exit()
@@ -459,7 +494,7 @@ class LerSituacaoFiscal:
             except pyautogui.ImageNotFoundException:
                 print('Imagem "pagina_expirou.png" não encontrada. Executando as próximas linhas mesmo assim.')
                     
-            #se aparecer mensagem de automação ele apaga o campo e reescreve e clica em alterar
+            ##NÃO ALTEROU O PERFIL_MENSAGEM DE QUE ESTE ACESSO É ROBOTIZADO
             try:
                 msg_robotizado = pyautogui.locateOnScreen(r'.\img\msg_automacao.png')
                 if msg_robotizado is not None:
@@ -470,51 +505,59 @@ class LerSituacaoFiscal:
                 
             except pyautogui.ImageNotFoundException:
                 print('Imagem "msg_automacao.png" não encontrada. Executando as próximas linhas mesmo assim.')
+
+            ###############AQUI AS MENSAGENS NÃO ACONTECERAM OU FORAM RESOLVIDAS E COMEÇAMOS O DOWNLOAD DOS RELTÓRIOS DE SITUAÇÃO FISCAL.###############
+
+            try:   
+                time.sleep(self.tempo_esperar_carregar) 
+                self.esperarImagemCarregar(r'.\img\espera_relatorios_aparecer.png')
                 
-            time.sleep(self.tempo_esperar_carregar)
+                time.sleep(self.tempo_esperar_carregar)
 
-            self.esperarImagemCarregar(r'.\img\espera_relatorios_aparecer.png')
-            img_tela_download_relatorio = pyautogui.locateOnScreen(r'.\img\espera_relatorios_aparecer.png')
+                img_tela_download_relatorio = pyautogui.locateOnScreen(r'.\img\espera_relatorios_aparecer.png')
 
-            try:
+                time.sleep(self.tempo_esperar_carregar)
+
                 if img_tela_download_relatorio:
                     print('achei a tela de relatório')
+                    print(img_tela_download_relatorio)
                     #clicar na gerar relatório da esquerda
                     self.procurarTexto('Gerar Relatório')
                     time.sleep(self.tempo_esperar_carregar)
                     process = self.clicarSeCorLaranja()
-                    time.sleep(self.tempo_esperar_carregar)
-                                
+                    time.sleep(self.tempo_esperar_carregar)                
+                                    
                     if process == True:
-                        #self.clicarSeCorLaranja()
-                        gerar_relatorio = pyautogui.position(x=941, y=382)
-                        time.sleep(self.tempo_esperar_carregar)
+                        gerar_relatorio = pyautogui.position(x=941, y=382)#gerar relatório da direita
+                        time.sleep(0.5)
                         pyautogui.click(gerar_relatorio)
                         time.sleep(self.tempo_esperar_carregar)
-                        #self.voltarHome()
-                                                                    
+                        time.sleep(0.5)
+                        pyautogui.press('esc')
+                        time.sleep(0.1)
+                        pyautogui.press('esc')
+                        time.sleep(0.1)
+                                                                        
                         # Escreva as informações no CSV
-                        dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': 'Download daSituação Fiscal _ OK!!!'}
-                        
-                        self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
-                        
+                        dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': 'Download OK!!!'}
+                            
                         contagem_downloads += 1
 
+                        self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
+                        continue                    
+                            
             except pyautogui.ImageNotFoundException:
+                texto_msg_erro_download = '******** Erro, vou tentar novamente!********'
+                                
+                dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_msg_erro_download}
+                                
+                # Escreva as informações no CSV
                 self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
-                if process is None:
-                    texto_msg_erro_download = '******** Download não efetuado, demora no carregamento *********'
-                    dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_msg_erro_download}
-                    # Escreva as informações no CSV
-                    self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
-                    #self.voltarHome()
-                    contagem_downloads += 1
-                    print('não achei a tela de download')
-                break #se não carregar a tela de download do relatório, volta para o início buscanto o próximo cnpj da lista
+                print('não achei a tela de download')
+                contagem_downloads -= 1
+                print('não achei a tela de download')                
             
-            time.sleep(self.tempo_esperar_carregar)
-
-            
+            time.sleep(self.tempo_esperar_carregar)            
                 
             print(f'LINHA VERIFICADO:{i}')
             i = i + 1

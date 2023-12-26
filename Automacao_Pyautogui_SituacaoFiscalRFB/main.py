@@ -13,12 +13,12 @@ def obter_arquivo_csv():
     return file_path
 
 def msgConclusao():
-  pyautogui.alert('Tarefa concluída, o computador é seu novamente!')
+  pyautogui.alert('AVISO\nTarefa concluída, o computador é seu novamente!')
   pyautogui.hotkey('Ctrl', 'w')
   
 automation = LerSituacaoFiscal()
 
-avisoInicioAutomacao = pyautogui.confirm('Vamos começar a execução do programa, após selecionar a lista de CNPJ não mexa no computador até o programa acabar!')
+avisoInicioAutomacao = pyautogui.confirm('ATENÇÃO\n''\nSelecione o arquivo(.csv) com a lista de CNPJ\n''\nNÃO MEXA NO COMPUTARDOR ATÉ SER PERMITIDO!')
 
 arquivo_csv = obter_arquivo_csv()
 dados = automation.ler_csv(arquivo_csv)
