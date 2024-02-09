@@ -547,7 +547,7 @@ class LerSituacaoFiscal:
                         continue                    
                             
             except pyautogui.ImageNotFoundException:
-                texto_msg_erro_download = '******** Erro, vou tentar novamente!********'
+                texto_msg_erro_download = '******** Erro no download!********'
                                 
                 dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_msg_erro_download}
                                 
