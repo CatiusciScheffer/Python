@@ -1,0 +1,371 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>NFS-e | Portal Contribuinte</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+    <link href="/EmissorNacional/Content/Base?v=Yote91y0UCAwaAD2m7Fpg9io5NBZ83aGCI8xAkZ_efk1" rel="stylesheet"/>
+
+    
+    <link href="/EmissorNacional/Content/dashboard.css" rel="stylesheet" />
+
+    <script type="text/javascript">
+        window.UrlBase = "https://www.nfse.gov.br/emissornacional/";
+        window.UrlRest = "https://restnfseprod.srv.cd.serpro";
+        window.sessionStorage.setItem("accessToken", 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRobWV0aG9kIjoiU0VOSEEiLCJ1bmlxdWVfbmFtZSI6IiIsImluc2NyaWNhbyI6IjQ1OTE2MjU3MDAwMTI2IiwidGlwb19pbnNjcmljYW8iOiJDTlBKIiwibm9tZSI6IiIsInJvbGUiOiJDT05UUklCVUlOVEUiLCJuYmYiOjE3MDgxMTU2NDYsImV4cCI6MTcwODIwNTY0NiwiaWF0IjoxNzA4MTE1NjQ2LCJpc3MiOiJodHRwOi8vd3d3LnNlcnByby5nb3YuYnIifQ.8uZMelPDp9G9maddthQ_NZQLtJ7PW0dXlgrO8WT1drM');
+    </script>
+    <script src="/EmissorNacional/Scripts/Base?v=pzABZdmkAgzcg_iH8WSI4iKQLcXL1SqOPpqr_kb_1Gs1"></script>
+
+    
+    <script src="/EmissorNacional/Scripts/dashboard.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Inicializa o dashboard
+            $('#dashboard').jDashboard();            
+            // Evento click do botão adicionar acesso
+            $('#btnAdicionarAcesso').on('click', function () {
+                ExibirAlerta('Funcionalidade indisponível');
+            });
+        });
+    </script>
+
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <div class="navbar-brand completa">
+                    <a href="/EmissorNacional/"><img src="/EmissorNacional/img/logo-nfse-assinatura-horizontal.svg" /></a>
+                </div>
+                <div class="navbar-brand simples">
+                    <a href="/EmissorNacional/"><img src="/EmissorNacional/img/logo-header-simples.svg" /></a>
+                </div>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/EmissorNacional/" data-toggle="tooltip" data-placement="bottom"
+                           title="Principal"><div><img src="/EmissorNacional/img/menu-home-35.svg" /></div><span class="nome-mobile">Página Principal</span></a>
+                    </li>
+                    
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                           role="button" aria-haspopup="true" aria-expanded="false" data-hover="dropdown">
+                            <div><img src="/EmissorNacional/img/menu-nova-35.svg" /><span class="caret"></span></div><span class="nome-mobile">Nova NFS-e</span>
+                        </a>
+                        <ul class="dropdown-menu main-menu" style="right: -5px; margin-top: 5px;">
+                            <li class="dropdown-header titulo-menu">Tipos de emissão:</li>
+                            <li>
+                                <a href="/EmissorNacional/DPS/Pessoas">Emissão completa</a>
+                            </li>
+                            <li>
+                                <a href="/EmissorNacional/DPS/Simplificada">Emissão simplificada</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="/EmissorNacional/Notas/Emitidas" data-toggle="tooltip" data-placement="bottom"
+                           title="NFS-e Emitidas"><div><img src="/EmissorNacional/img/menu-emitidas-35.svg" style="top: -10px;" /></div><span class="nome-mobile">NFS-e Emitidas</span></a>
+                    </li>
+                    <li>
+                        <a href="/EmissorNacional/Notas/Recebidas" data-toggle="tooltip" data-placement="bottom"
+                           title="NFS-e Recebidas"><div><img src="/EmissorNacional/img/menu-recebidas-35.svg" /></div><span class="nome-mobile">NFS-e Recebidas</span></a>
+                    </li>
+                    <li>
+                        <a href="/EmissorNacional/Notas/Rascunhos" data-toggle="tooltip" data-placement="bottom"
+                           title="Rascunhos"><div><img src="/EmissorNacional/img/menu-rascunhos-35.svg" /></div><span class="nome-mobile">Rascunhos</span></a>
+                    </li>
+                    <li>
+                        <a href="/EmissorNacional/Perfil/Configuracao" data-toggle="tooltip" data-placement="bottom"
+                           title="Configurações"><div><img src="/EmissorNacional/img/menu-config-35.svg" /></div><span class="nome-mobile">Configurações</span></a>
+                    </li>
+                    <li>
+                        <a href="/EmissorNacional/Perfil/ServicosFavoritos" data-toggle="tooltip" data-placement="bottom"
+                           title="Serviços Favoritos"><div><img src="/EmissorNacional/img/menu-favoritos-35.svg" style="top: -2px;" /></div><span class="nome-mobile">Serviços Favoritos</span></a>
+                    </li>
+                    <li class="divisor"></li>
+                    <li class="dropdown perfil">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                           role="button" aria-haspopup="true" aria-expanded="false" data-hover="dropdown">
+                            <div><img style="top: 2px" src="/EmissorNacional/img/menu-user-35.svg" /><span class="caret"></span></div>
+                        </a>
+                        <ul class="dropdown-menu main-menu" style="right: -5px; margin-top: 5px;">
+                            <li class="dropdown-header">
+                                <br />
+                                    <span>CNPJ: </span><span class="cnpj">45916257000126</span><br />
+                            </li>
+                            <li><a href="/EmissorNacional/Login/Sair">Sair com segurança</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <nav class="navbar navbar-default navbar-breadcrumbs">
+        <div class="container">
+            <div class="breadcrumbs">
+    <span class="nome-sistema">
+        <a href="/EmissorNacional/">
+            <i class="fa fa-home"></i>Home
+        </a>
+    </span>
+</div>
+        </div>
+    </nav>
+
+    <div class="container container-body">
+        
+
+
+
+
+
+<div id="dashboard">
+
+    <div id="wgtAcessoRapido" class="widget">
+        <div class="cabecalho"><img class="icone" src="/EmissorNacional/img/acesso-azul-20.svg" />Acesso Rápido</div>
+        <div class="jdash-body">
+            <a href="/EmissorNacional/DPS/Pessoas" class="btnAcesso" data-toggle="tooltip" data-original-title="Nova NFS-e">
+                <img src="/EmissorNacional/img/menu-nova-35.svg" />
+            </a>
+            <a href="/EmissorNacional/Perfil/Configuracao" class="btnAcesso" data-toggle="tooltip" data-original-title="Configurações">
+                <img src="/EmissorNacional/img/menu-config-35.svg" />
+            </a>
+            <a href="/EmissorNacional/Perfil/ServicosFavoritos" class="btnAcesso" data-toggle="tooltip" data-original-title="Meus Favoritos">
+                <img src="/EmissorNacional/img/menu-favoritos-35.svg" />
+            </a>
+            <a id="btnAdicionarAcesso" href="javascript:void(0);" class="btnAcesso adicionar" data-toggle="tooltip" 
+               data-original-title="Incluir opção" style="display:none;">
+                <img src="/EmissorNacional/img/btn-novo.svg" />
+            </a>
+        </div>
+    </div>
+
+    <div id="wgtMeusDados" class="widget">
+        <div class="cabecalho"><img class="icone" src="/EmissorNacional/img/user-azul-20.svg" />Meus dados</div>
+        <div class="jdash-body">
+            <p>
+                    <b>CNPJ: </b>
+                    <span class="cnpj">45916257000126</span><br />
+            </p>
+            <p>
+                <b>Nome:</b> 
+            </p>
+            <p>
+                <b>E-mail:</b> N&#227;o informado
+            </p>
+            <p>
+                <b>Telefone:</b> N&#227;o informado
+            </p>
+        </div>
+    </div>
+
+    <div id="wgtUltimasNFSe" class="widget">
+        <div class="cabecalho"><img class="icone" src="/EmissorNacional/img/emitidas-azul-20.svg" />Últimas NFS-e emitidas</div>
+        <div class="jdash-body table">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th class="td-data">
+                                Geração
+                            </th>
+                            <th>
+                                Emitida para
+                            </th>
+                            <th class="td-valor">
+                                Valor (R$)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dURCU3VlQk5hd1J0VS9QbXBQT21pTStMVEpKaEFSdFA4PQ2">
+                                <td class="td-data" data-label="Geração">
+                                    05/02/2024
+                                </td>
+                                <td class="td-texto-grande" data-label="Emitida para">
+                                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                                <span class="cnpj">14525684000311</span>
+                                                -
+ESSOR SEGUROS S.A.                                    </div>
+                                </td>
+                                <td class="td-valor">
+                                    561,80
+                                </td>
+                                <td class="td-opcoes">
+                                    <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000013524027227970839"
+                                       data-toggle="tooltip" data-placement="top" title="Visualizar">
+                                        <img src="/EmissorNacional/img/tb-visualizar.svg" />
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dGMwOFUwVWtRdVhDUkRhd2I1VkttNmZEQXdRWi9XeC9BPQ2">
+                                <td class="td-data" data-label="Geração">
+                                    01/02/2024
+                                </td>
+                                <td class="td-texto-grande" data-label="Emitida para">
+                                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                                <span class="cnpj">94831294000228</span>
+                                                -
+INSTITUTO DE ONCOLOGIA KAPLAN S.A.                                    </div>
+                                </td>
+                                <td class="td-valor">
+                                    231,52
+                                </td>
+                                <td class="td-opcoes">
+                                    <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000013424028676596513"
+                                       data-toggle="tooltip" data-placement="top" title="Visualizar">
+                                        <img src="/EmissorNacional/img/tb-visualizar.svg" />
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dEtQMFQrNzA5NUJ3cHN2MnNhWGlEV2xSdllBV0xyRkFrPQ2">
+                                <td class="td-data" data-label="Geração">
+                                    01/02/2024
+                                </td>
+                                <td class="td-texto-grande" data-label="Emitida para">
+                                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                                <span class="cnpj">94831294000147</span>
+                                                -
+INSTITUTO DE ONCOLOGIA KAPLAN S.A.                                    </div>
+                                </td>
+                                <td class="td-valor">
+                                    549,86
+                                </td>
+                                <td class="td-opcoes">
+                                    <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000013324023345999438"
+                                       data-toggle="tooltip" data-placement="top" title="Visualizar">
+                                        <img src="/EmissorNacional/img/tb-visualizar.svg" />
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0c1J3T0RNbm9aU3MzVnVReDl0bGVtclBYOWVYWERxbC8wPQ2">
+                                <td class="td-data" data-label="Geração">
+                                    01/02/2024
+                                </td>
+                                <td class="td-texto-grande" data-label="Emitida para">
+                                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                                <span class="cnpj">94831294000490</span>
+                                                -
+INSTITUTO DE ONCOLOGIA KAPLAN S.A.                                    </div>
+                                </td>
+                                <td class="td-valor">
+                                    28,94
+                                </td>
+                                <td class="td-opcoes">
+                                    <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000013224022983431086"
+                                       data-toggle="tooltip" data-placement="top" title="Visualizar">
+                                        <img src="/EmissorNacional/img/tb-visualizar.svg" />
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dlgyc2s0ODJMWjdQUnBUeElrTkJ2K24vMGxjYzdLRHEwPQ2">
+                                <td class="td-data" data-label="Geração">
+                                    01/02/2024
+                                </td>
+                                <td class="td-texto-grande" data-label="Emitida para">
+                                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                                <span class="cnpj">94831294000309</span>
+                                                -
+INSTITUTO DE ONCOLOGIA KAPLAN S.A.                                    </div>
+                                </td>
+                                <td class="td-valor">
+                                    217,05
+                                </td>
+                                <td class="td-opcoes">
+                                    <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000013124026366466177"
+                                       data-toggle="tooltip" data-placement="top" title="Visualizar">
+                                        <img src="/EmissorNacional/img/tb-visualizar.svg" />
+                                    </a>
+                                </td>
+                            </tr>
+                    </tbody>
+                </table>
+        </div>
+    </div>    
+
+</div>
+
+    </div>
+
+    <footer>
+        <div class="parceiros">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-offset-1 col-md-2">
+                        <a href="http://idg.receita.fazenda.gov.br/" target="_blank">
+                            <img src="/EmissorNacional/img/logo-rfb.png" class="logo" alt="Receita Federal do Brasil">
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="http://www.sebrae.com.br/" target="_blank">
+                            <img src="/EmissorNacional/img/logo-sebrae.png" class="logo" alt="Sebrae">
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="http://www.cnm.org.br/" target="_blank">
+                            <img src="/EmissorNacional/img/logo-cnm.png" class="logo" alt="Confederação Nacional dos Municípios">
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="http://www.abrasf.org.br/" target="_blank">
+                            <img src="/EmissorNacional/img/logo-abrasf.png" class="logo" alt="Associação Brasileira das Secretarias de Finanças das Capitais">
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="http://portal.siscomex.gov.br/legislacao/orgaos/secretaria-de-comercio-exterior-secex" target="_blank">
+                            <img src="/EmissorNacional/img/logo-secex.png" class="logo" alt="Secretaria de Comércio Exterior" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="info">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 logo">
+                        <img src="/EmissorNacional/img/logo-nfse-branca-sm.svg" class="logo-branca" alt="NFS-e" />
+                    </div>
+                    <div class="col-md-8 versao">
+                        Portal de Gestão NFS-e - Contribuinte | Versão 1.1.0.4
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="modalLoading" class="modalBgLoading" style="display:none;">
+        <div class="loading">
+            <div class="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+            <div class="texto">Por favor, aguarde...</div>
+        </div>
+    </div>
+
+    <div id="modalPessoa" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

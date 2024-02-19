@@ -1,0 +1,1032 @@
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>NFS-e | Portal Contribuinte</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+    <link href="/EmissorNacional/Content/Base?v=Yote91y0UCAwaAD2m7Fpg9io5NBZ83aGCI8xAkZ_efk1" rel="stylesheet"/>
+
+    
+
+    <script type="text/javascript">
+        window.UrlBase = "https://www.nfse.gov.br/emissornacional/";
+        window.UrlRest = "https://restnfseprod.srv.cd.serpro";
+        window.sessionStorage.setItem("accessToken", 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRobWV0aG9kIjoiU0VOSEEiLCJ1bmlxdWVfbmFtZSI6IiIsImluc2NyaWNhbyI6IjQ1OTE2MjU3MDAwMTI2IiwidGlwb19pbnNjcmljYW8iOiJDTlBKIiwibm9tZSI6IiIsInJvbGUiOiJDT05UUklCVUlOVEUiLCJuYmYiOjE3MDgxMTU2NDYsImV4cCI6MTcwODIwNTY0NiwiaWF0IjoxNzA4MTE1NjQ2LCJpc3MiOiJodHRwOi8vd3d3LnNlcnByby5nb3YuYnIifQ.8uZMelPDp9G9maddthQ_NZQLtJ7PW0dXlgrO8WT1drM');
+    </script>
+    <script src="/EmissorNacional/Scripts/Base?v=pzABZdmkAgzcg_iH8WSI4iKQLcXL1SqOPpqr_kb_1Gs1"></script>
+
+    
+    <script src="/EmissorNacional/Areas/Notas/Scripts/Emitidas.js"></script>
+
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <div class="navbar-brand completa">
+                    <a href="/EmissorNacional/"><img src="/EmissorNacional/img/logo-nfse-assinatura-horizontal.svg" /></a>
+                </div>
+                <div class="navbar-brand simples">
+                    <a href="/EmissorNacional/"><img src="/EmissorNacional/img/logo-header-simples.svg" /></a>
+                </div>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/EmissorNacional/" data-toggle="tooltip" data-placement="bottom"
+                           title="Principal"><div><img src="/EmissorNacional/img/menu-home-35.svg" /></div><span class="nome-mobile">Página Principal</span></a>
+                    </li>
+                    
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                           role="button" aria-haspopup="true" aria-expanded="false" data-hover="dropdown">
+                            <div><img src="/EmissorNacional/img/menu-nova-35.svg" /><span class="caret"></span></div><span class="nome-mobile">Nova NFS-e</span>
+                        </a>
+                        <ul class="dropdown-menu main-menu" style="right: -5px; margin-top: 5px;">
+                            <li class="dropdown-header titulo-menu">Tipos de emissão:</li>
+                            <li>
+                                <a href="/EmissorNacional/DPS/Pessoas">Emissão completa</a>
+                            </li>
+                            <li>
+                                <a href="/EmissorNacional/DPS/Simplificada">Emissão simplificada</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="/EmissorNacional/Notas/Emitidas" data-toggle="tooltip" data-placement="bottom"
+                           title="NFS-e Emitidas"><div><img src="/EmissorNacional/img/menu-emitidas-35.svg" style="top: -10px;" /></div><span class="nome-mobile">NFS-e Emitidas</span></a>
+                    </li>
+                    <li>
+                        <a href="/EmissorNacional/Notas/Recebidas" data-toggle="tooltip" data-placement="bottom"
+                           title="NFS-e Recebidas"><div><img src="/EmissorNacional/img/menu-recebidas-35.svg" /></div><span class="nome-mobile">NFS-e Recebidas</span></a>
+                    </li>
+                    <li>
+                        <a href="/EmissorNacional/Notas/Rascunhos" data-toggle="tooltip" data-placement="bottom"
+                           title="Rascunhos"><div><img src="/EmissorNacional/img/menu-rascunhos-35.svg" /></div><span class="nome-mobile">Rascunhos</span></a>
+                    </li>
+                    <li>
+                        <a href="/EmissorNacional/Perfil/Configuracao" data-toggle="tooltip" data-placement="bottom"
+                           title="Configurações"><div><img src="/EmissorNacional/img/menu-config-35.svg" /></div><span class="nome-mobile">Configurações</span></a>
+                    </li>
+                    <li>
+                        <a href="/EmissorNacional/Perfil/ServicosFavoritos" data-toggle="tooltip" data-placement="bottom"
+                           title="Serviços Favoritos"><div><img src="/EmissorNacional/img/menu-favoritos-35.svg" style="top: -2px;" /></div><span class="nome-mobile">Serviços Favoritos</span></a>
+                    </li>
+                    <li class="divisor"></li>
+                    <li class="dropdown perfil">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                           role="button" aria-haspopup="true" aria-expanded="false" data-hover="dropdown">
+                            <div><img style="top: 2px" src="/EmissorNacional/img/menu-user-35.svg" /><span class="caret"></span></div>
+                        </a>
+                        <ul class="dropdown-menu main-menu" style="right: -5px; margin-top: 5px;">
+                            <li class="dropdown-header">
+                                <br />
+                                    <span>CNPJ: </span><span class="cnpj">45916257000126</span><br />
+                            </li>
+                            <li><a href="/EmissorNacional/Login/Sair">Sair com segurança</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <nav class="navbar navbar-default navbar-breadcrumbs">
+        <div class="container">
+            <div class="breadcrumbs">
+    <span class="nome-sistema">
+        <a href="/EmissorNacional/">
+            <i class="fa fa-home"></i>Home
+        </a>
+    </span>
+                <span class="separador">::</span>
+
+    NFS-e
+            <span class="separador">::</span>
+
+    Emitidas
+</div>
+        </div>
+    </nav>
+
+    <div class="container container-body">
+        
+
+
+
+
+
+<h2>Notas emitidas</h2>
+<div id="pnlComandos" class="navbar navbar-nfse">
+    <div class="navbar-collapse" id="searchbar">
+        <ul class="nav navbar-nav">
+            <li>
+                <a id="btnNovaNFSe" href="/EmissorNacional/DPS/Pessoas" class="btn btn-lg btn-primary">
+                    <img src="/EmissorNacional/img/btn-novo.svg" /><span>Nova NFS-e</span>
+                </a>
+            </li>
+            <li>
+                <a id="btnRecarregar" href="/EmissorNacional/Notas/Emitidas" class="btn btn-lg btn-info" data-toggle="tooltip" title="Recarregar">
+                    <img src="/EmissorNacional/img/btn-recarregar.svg" style="height: 21px;" /><span>Recarregar lista</span>
+                </a>
+            </li>
+        </ul>
+<form action="/EmissorNacional/Notas/Emitidas" class="navbar-form" method="get">            <div class="form-group" style="display:inline;">
+                <div class="input-group input-group-lg" style="display:table;">
+                    <input class="form-control" name="busca" placeholder="Pesquisar pessoa física ou jurídica" type="text">
+                    <span class="input-group-btn" style="width:1%;">
+                        <button id="btnPesquisar" class="btn btn-default" type="submit"><img src="/EmissorNacional/img/btn-pesquisar-esq.svg" /></button>
+                    </span>
+                </div>
+            </div>
+</form>    </div>
+</div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th class="td-data">
+                    <a href="/EmissorNacional/Notas/Emitidas?col=data_desc">Geração<span class="fa fa-angle-down sortIcon"></span></a>
+                </th>
+                <th>
+                    
+                    Emitida para
+                </th>
+                <th class="td-center" style="width: 200px;">
+                    Município
+                </th>
+                <th class="td-valor">
+                    <a href="/EmissorNacional/Notas/Emitidas?col=valor_asc">Valor (R$)<span></span></a>
+                </th>
+                <th class="td-situacao">
+                    <a href="/EmissorNacional/Notas/Emitidas?col=situacao_asc">Situação<span></span></a>
+                </th>
+                <th class="td-impostos">Impostos</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dldxWUs2YzlhTVpQTUJ2dzlKTHE1RzZkNjA5d2ZvWTlNPQ2" data-situacao="P100_GERADA" data-valor="578,80">
+                <td class="td-data">
+                    26/12/2023
+                    
+                </td>
+                <td class="td-texto-grande">
+                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                <span class="cnpj">03486745000109</span>
+                                -
+AGROBRASIL - ADMINISTRACAO E PARTICIPACOES LTDA                    </div>
+                </td>
+                <td class="td-center">
+                    Porto Alegre/RS
+                </td>
+                <td class="td-valor">
+                    578,80
+                </td>
+                <td class="td-situacao">
+<img data-toggle="tooltip" src="/EmissorNacional\img/tb-gerada.svg" title="NFS-e Gerada"></img>                </td>
+                <td class="td-impostos">
+                    <img data-toggle="tooltip" title="Pendente" src="/EmissorNacional/img/tb-sitpendente.svg" />
+                </td>
+                <td class="td-opcoes">
+                    <div class="menu-suspenso-tabela">
+                        <a class="icone-trigger" href="javascript:void(0);">
+                            <i class="glyphicon glyphicon-option-vertical"></i>
+                        </a>
+                        <div class="list-group menu-content" style="display: none">
+                            <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000004523124026926490" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-visualizar.svg" />Visualizar
+                            </a>
+                                <a href="/EmissorNacional/DPS/Pessoas?subst=cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dldxWUs2YzlhTVpQTUJ2dzlKTHE1RzZkNjA5d2ZvWTlNPQ2"
+                                   class="list-group-item btnSubstituir">
+                                    <img src="/EmissorNacional/img/op-substituir.svg" />Substituir
+                                </a>
+                                <a href="javascript:void(0);" class="list-group-item btnCancelar">
+                                    <img src="/EmissorNacional/img/op-cancelar.svg" />Cancelar NFS-e
+                                </a>
+                            <a href="/EmissorNacional/Notas/Download/NFSe/43149022245916257000126000000000004523124026926490" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-xml.svg" />Download XML
+                            </a>
+                            <a href="/EmissorNacional/Notas/Download/DANFSe/43149022245916257000126000000000004523124026926490" class="list-group-item" download>
+                                <img src="/EmissorNacional/img/op-pdf.svg" />Download DANFS-e
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0djFIamFKUFBLMC83SFZzNGd2UG1MY2hoMFgxbkwzZ3FzPQ2" data-situacao="P100_GERADA" data-valor="134,46">
+                <td class="td-data">
+                    26/12/2023
+                    
+                </td>
+                <td class="td-texto-grande">
+                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                <span class="cnpj">07140408000108</span>
+                                -
+ADRIANA ALTERMANN                    </div>
+                </td>
+                <td class="td-center">
+                    Porto Alegre/RS
+                </td>
+                <td class="td-valor">
+                    134,46
+                </td>
+                <td class="td-situacao">
+<img data-toggle="tooltip" src="/EmissorNacional\img/tb-gerada.svg" title="NFS-e Gerada"></img>                </td>
+                <td class="td-impostos">
+                    <img data-toggle="tooltip" title="Pendente" src="/EmissorNacional/img/tb-sitpendente.svg" />
+                </td>
+                <td class="td-opcoes">
+                    <div class="menu-suspenso-tabela">
+                        <a class="icone-trigger" href="javascript:void(0);">
+                            <i class="glyphicon glyphicon-option-vertical"></i>
+                        </a>
+                        <div class="list-group menu-content" style="display: none">
+                            <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000004423120414584581" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-visualizar.svg" />Visualizar
+                            </a>
+                                <a href="/EmissorNacional/DPS/Pessoas?subst=cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0djFIamFKUFBLMC83SFZzNGd2UG1MY2hoMFgxbkwzZ3FzPQ2"
+                                   class="list-group-item btnSubstituir">
+                                    <img src="/EmissorNacional/img/op-substituir.svg" />Substituir
+                                </a>
+                                <a href="javascript:void(0);" class="list-group-item btnCancelar">
+                                    <img src="/EmissorNacional/img/op-cancelar.svg" />Cancelar NFS-e
+                                </a>
+                            <a href="/EmissorNacional/Notas/Download/NFSe/43149022245916257000126000000000004423120414584581" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-xml.svg" />Download XML
+                            </a>
+                            <a href="/EmissorNacional/Notas/Download/DANFSe/43149022245916257000126000000000004423120414584581" class="list-group-item" download>
+                                <img src="/EmissorNacional/img/op-pdf.svg" />Download DANFS-e
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dmY3WEFMT3dkUjczMklTeGVYOU5iaXd5NThkai9yOGtZPQ2" data-situacao="P100_GERADA" data-valor="113,30">
+                <td class="td-data">
+                    26/12/2023
+                    
+                </td>
+                <td class="td-texto-grande">
+                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                <span class="cnpj">17375177000175</span>
+                                -
+PNEU EXPRESS COMERCIAL LTDA                    </div>
+                </td>
+                <td class="td-center">
+                    Porto Alegre/RS
+                </td>
+                <td class="td-valor">
+                    113,30
+                </td>
+                <td class="td-situacao">
+<img data-toggle="tooltip" src="/EmissorNacional\img/tb-gerada.svg" title="NFS-e Gerada"></img>                </td>
+                <td class="td-impostos">
+                    <img data-toggle="tooltip" title="Pendente" src="/EmissorNacional/img/tb-sitpendente.svg" />
+                </td>
+                <td class="td-opcoes">
+                    <div class="menu-suspenso-tabela">
+                        <a class="icone-trigger" href="javascript:void(0);">
+                            <i class="glyphicon glyphicon-option-vertical"></i>
+                        </a>
+                        <div class="list-group menu-content" style="display: none">
+                            <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000004323125609534041" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-visualizar.svg" />Visualizar
+                            </a>
+                                <a href="/EmissorNacional/DPS/Pessoas?subst=cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dmY3WEFMT3dkUjczMklTeGVYOU5iaXd5NThkai9yOGtZPQ2"
+                                   class="list-group-item btnSubstituir">
+                                    <img src="/EmissorNacional/img/op-substituir.svg" />Substituir
+                                </a>
+                                <a href="javascript:void(0);" class="list-group-item btnCancelar">
+                                    <img src="/EmissorNacional/img/op-cancelar.svg" />Cancelar NFS-e
+                                </a>
+                            <a href="/EmissorNacional/Notas/Download/NFSe/43149022245916257000126000000000004323125609534041" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-xml.svg" />Download XML
+                            </a>
+                            <a href="/EmissorNacional/Notas/Download/DANFSe/43149022245916257000126000000000004323125609534041" class="list-group-item" download>
+                                <img src="/EmissorNacional/img/op-pdf.svg" />Download DANFS-e
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dFZtbUhKMG1aZjNhbUY4SlhvaTBJeGZsajlRbWpOOXNZPQ2" data-situacao="P100_GERADA" data-valor="611,82">
+                <td class="td-data">
+                    21/12/2023
+                    
+                </td>
+                <td class="td-texto-grande">
+                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                <span class="cnpj">13328205000142</span>
+                                -
+RIOSUL DISTRIBUIDORA DE PNEUMATICOS LTDA                    </div>
+                </td>
+                <td class="td-center">
+                    Porto Alegre/RS
+                </td>
+                <td class="td-valor">
+                    611,82
+                </td>
+                <td class="td-situacao">
+<img data-toggle="tooltip" src="/EmissorNacional\img/tb-gerada.svg" title="NFS-e Gerada"></img>                </td>
+                <td class="td-impostos">
+                    <img data-toggle="tooltip" title="Pendente" src="/EmissorNacional/img/tb-sitpendente.svg" />
+                </td>
+                <td class="td-opcoes">
+                    <div class="menu-suspenso-tabela">
+                        <a class="icone-trigger" href="javascript:void(0);">
+                            <i class="glyphicon glyphicon-option-vertical"></i>
+                        </a>
+                        <div class="list-group menu-content" style="display: none">
+                            <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000004223120353010966" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-visualizar.svg" />Visualizar
+                            </a>
+                                <a href="/EmissorNacional/DPS/Pessoas?subst=cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dFZtbUhKMG1aZjNhbUY4SlhvaTBJeGZsajlRbWpOOXNZPQ2"
+                                   class="list-group-item btnSubstituir">
+                                    <img src="/EmissorNacional/img/op-substituir.svg" />Substituir
+                                </a>
+                                <a href="javascript:void(0);" class="list-group-item btnCancelar">
+                                    <img src="/EmissorNacional/img/op-cancelar.svg" />Cancelar NFS-e
+                                </a>
+                            <a href="/EmissorNacional/Notas/Download/NFSe/43149022245916257000126000000000004223120353010966" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-xml.svg" />Download XML
+                            </a>
+                            <a href="/EmissorNacional/Notas/Download/DANFSe/43149022245916257000126000000000004223120353010966" class="list-group-item" download>
+                                <img src="/EmissorNacional/img/op-pdf.svg" />Download DANFS-e
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dW8wSTAzUW93Z2I2ZWRBRnNOQnBoV2h4MFpFVGpNZUZzPQ2" data-situacao="P100_GERADA" data-valor="7607,48">
+                <td class="td-data">
+                    21/12/2023
+                    
+                </td>
+                <td class="td-texto-grande">
+                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                <span class="cnpj">27690895000190</span>
+                                -
+RECITIRES COMERCIO E RECICLAGEM DE PRODUTOS DE BORRACHA LTDA                    </div>
+                </td>
+                <td class="td-center">
+                    Porto Alegre/RS
+                </td>
+                <td class="td-valor">
+                    7.607,48
+                </td>
+                <td class="td-situacao">
+<img data-toggle="tooltip" src="/EmissorNacional\img/tb-gerada.svg" title="NFS-e Gerada"></img>                </td>
+                <td class="td-impostos">
+                    <img data-toggle="tooltip" title="Pendente" src="/EmissorNacional/img/tb-sitpendente.svg" />
+                </td>
+                <td class="td-opcoes">
+                    <div class="menu-suspenso-tabela">
+                        <a class="icone-trigger" href="javascript:void(0);">
+                            <i class="glyphicon glyphicon-option-vertical"></i>
+                        </a>
+                        <div class="list-group menu-content" style="display: none">
+                            <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000004123120846251320" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-visualizar.svg" />Visualizar
+                            </a>
+                                <a href="/EmissorNacional/DPS/Pessoas?subst=cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dW8wSTAzUW93Z2I2ZWRBRnNOQnBoV2h4MFpFVGpNZUZzPQ2"
+                                   class="list-group-item btnSubstituir">
+                                    <img src="/EmissorNacional/img/op-substituir.svg" />Substituir
+                                </a>
+                                <a href="javascript:void(0);" class="list-group-item btnCancelar">
+                                    <img src="/EmissorNacional/img/op-cancelar.svg" />Cancelar NFS-e
+                                </a>
+                            <a href="/EmissorNacional/Notas/Download/NFSe/43149022245916257000126000000000004123120846251320" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-xml.svg" />Download XML
+                            </a>
+                            <a href="/EmissorNacional/Notas/Download/DANFSe/43149022245916257000126000000000004123120846251320" class="list-group-item" download>
+                                <img src="/EmissorNacional/img/op-pdf.svg" />Download DANFS-e
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dFdvWUhyeWs0YWRCM2I3Q2M4c2dCTUMzNFhrVXk1NmNjPQ2" data-situacao="P100_GERADA" data-valor="294,58">
+                <td class="td-data">
+                    21/12/2023
+                    
+                </td>
+                <td class="td-texto-grande">
+                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                <span class="cnpj">41036539000188</span>
+                                -
+R2 COMERCIO DE PNEUS LTDA                    </div>
+                </td>
+                <td class="td-center">
+                    Porto Alegre/RS
+                </td>
+                <td class="td-valor">
+                    294,58
+                </td>
+                <td class="td-situacao">
+<img data-toggle="tooltip" src="/EmissorNacional\img/tb-gerada.svg" title="NFS-e Gerada"></img>                </td>
+                <td class="td-impostos">
+                    <img data-toggle="tooltip" title="Pendente" src="/EmissorNacional/img/tb-sitpendente.svg" />
+                </td>
+                <td class="td-opcoes">
+                    <div class="menu-suspenso-tabela">
+                        <a class="icone-trigger" href="javascript:void(0);">
+                            <i class="glyphicon glyphicon-option-vertical"></i>
+                        </a>
+                        <div class="list-group menu-content" style="display: none">
+                            <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000004023120357587942" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-visualizar.svg" />Visualizar
+                            </a>
+                                <a href="/EmissorNacional/DPS/Pessoas?subst=cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dFdvWUhyeWs0YWRCM2I3Q2M4c2dCTUMzNFhrVXk1NmNjPQ2"
+                                   class="list-group-item btnSubstituir">
+                                    <img src="/EmissorNacional/img/op-substituir.svg" />Substituir
+                                </a>
+                                <a href="javascript:void(0);" class="list-group-item btnCancelar">
+                                    <img src="/EmissorNacional/img/op-cancelar.svg" />Cancelar NFS-e
+                                </a>
+                            <a href="/EmissorNacional/Notas/Download/NFSe/43149022245916257000126000000000004023120357587942" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-xml.svg" />Download XML
+                            </a>
+                            <a href="/EmissorNacional/Notas/Download/DANFSe/43149022245916257000126000000000004023120357587942" class="list-group-item" download>
+                                <img src="/EmissorNacional/img/op-pdf.svg" />Download DANFS-e
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dDNJcVdOY3ZMUEluNWgyekFqYU9IWW1UUmdkamFpQnpVPQ2" data-situacao="P100_GERADA" data-valor="709,82">
+                <td class="td-data">
+                    21/12/2023
+                    
+                </td>
+                <td class="td-texto-grande">
+                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                <span class="cnpj">15605973000121</span>
+                                -
+PNEUVALE DISTRIBUIDORA DE PNEUS LTDA                    </div>
+                </td>
+                <td class="td-center">
+                    Porto Alegre/RS
+                </td>
+                <td class="td-valor">
+                    709,82
+                </td>
+                <td class="td-situacao">
+<img data-toggle="tooltip" src="/EmissorNacional\img/tb-gerada.svg" title="NFS-e Gerada"></img>                </td>
+                <td class="td-impostos">
+                    <img data-toggle="tooltip" title="Pendente" src="/EmissorNacional/img/tb-sitpendente.svg" />
+                </td>
+                <td class="td-opcoes">
+                    <div class="menu-suspenso-tabela">
+                        <a class="icone-trigger" href="javascript:void(0);">
+                            <i class="glyphicon glyphicon-option-vertical"></i>
+                        </a>
+                        <div class="list-group menu-content" style="display: none">
+                            <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000003923126169682630" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-visualizar.svg" />Visualizar
+                            </a>
+                                <a href="/EmissorNacional/DPS/Pessoas?subst=cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dDNJcVdOY3ZMUEluNWgyekFqYU9IWW1UUmdkamFpQnpVPQ2"
+                                   class="list-group-item btnSubstituir">
+                                    <img src="/EmissorNacional/img/op-substituir.svg" />Substituir
+                                </a>
+                                <a href="javascript:void(0);" class="list-group-item btnCancelar">
+                                    <img src="/EmissorNacional/img/op-cancelar.svg" />Cancelar NFS-e
+                                </a>
+                            <a href="/EmissorNacional/Notas/Download/NFSe/43149022245916257000126000000000003923126169682630" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-xml.svg" />Download XML
+                            </a>
+                            <a href="/EmissorNacional/Notas/Download/DANFSe/43149022245916257000126000000000003923126169682630" class="list-group-item" download>
+                                <img src="/EmissorNacional/img/op-pdf.svg" />Download DANFS-e
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dEdzQ3N0bE9lWXJBeG9lQ0J5cWd3c0J0dFBGNW9rUDBBPQ2" data-situacao="P100_GERADA" data-valor="203,94">
+                <td class="td-data">
+                    21/12/2023
+                    
+                </td>
+                <td class="td-texto-grande">
+                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                <span class="cnpj">07980029000126</span>
+                                -
+PINHAIS COMERCIO AUTOPECAS LTDA                    </div>
+                </td>
+                <td class="td-center">
+                    Porto Alegre/RS
+                </td>
+                <td class="td-valor">
+                    203,94
+                </td>
+                <td class="td-situacao">
+<img data-toggle="tooltip" src="/EmissorNacional\img/tb-gerada.svg" title="NFS-e Gerada"></img>                </td>
+                <td class="td-impostos">
+                    <img data-toggle="tooltip" title="Pendente" src="/EmissorNacional/img/tb-sitpendente.svg" />
+                </td>
+                <td class="td-opcoes">
+                    <div class="menu-suspenso-tabela">
+                        <a class="icone-trigger" href="javascript:void(0);">
+                            <i class="glyphicon glyphicon-option-vertical"></i>
+                        </a>
+                        <div class="list-group menu-content" style="display: none">
+                            <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000003823126500010955" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-visualizar.svg" />Visualizar
+                            </a>
+                                <a href="/EmissorNacional/DPS/Pessoas?subst=cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dEdzQ3N0bE9lWXJBeG9lQ0J5cWd3c0J0dFBGNW9rUDBBPQ2"
+                                   class="list-group-item btnSubstituir">
+                                    <img src="/EmissorNacional/img/op-substituir.svg" />Substituir
+                                </a>
+                                <a href="javascript:void(0);" class="list-group-item btnCancelar">
+                                    <img src="/EmissorNacional/img/op-cancelar.svg" />Cancelar NFS-e
+                                </a>
+                            <a href="/EmissorNacional/Notas/Download/NFSe/43149022245916257000126000000000003823126500010955" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-xml.svg" />Download XML
+                            </a>
+                            <a href="/EmissorNacional/Notas/Download/DANFSe/43149022245916257000126000000000003823126500010955" class="list-group-item" download>
+                                <img src="/EmissorNacional/img/op-pdf.svg" />Download DANFS-e
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dDdzY3VvaHcrRDVkMzVrWGxyZE9VQnlIUllZUkJucThZPQ2" data-situacao="P100_GERADA" data-valor="253,31">
+                <td class="td-data">
+                    21/12/2023
+                    
+                </td>
+                <td class="td-texto-grande">
+                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                <span class="cnpj">44744939000136</span>
+                                -
+PARAIBA AUTO PECAS LTDA                    </div>
+                </td>
+                <td class="td-center">
+                    Porto Alegre/RS
+                </td>
+                <td class="td-valor">
+                    253,31
+                </td>
+                <td class="td-situacao">
+<img data-toggle="tooltip" src="/EmissorNacional\img/tb-gerada.svg" title="NFS-e Gerada"></img>                </td>
+                <td class="td-impostos">
+                    <img data-toggle="tooltip" title="Pendente" src="/EmissorNacional/img/tb-sitpendente.svg" />
+                </td>
+                <td class="td-opcoes">
+                    <div class="menu-suspenso-tabela">
+                        <a class="icone-trigger" href="javascript:void(0);">
+                            <i class="glyphicon glyphicon-option-vertical"></i>
+                        </a>
+                        <div class="list-group menu-content" style="display: none">
+                            <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000003723125702982930" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-visualizar.svg" />Visualizar
+                            </a>
+                                <a href="/EmissorNacional/DPS/Pessoas?subst=cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dDdzY3VvaHcrRDVkMzVrWGxyZE9VQnlIUllZUkJucThZPQ2"
+                                   class="list-group-item btnSubstituir">
+                                    <img src="/EmissorNacional/img/op-substituir.svg" />Substituir
+                                </a>
+                                <a href="javascript:void(0);" class="list-group-item btnCancelar">
+                                    <img src="/EmissorNacional/img/op-cancelar.svg" />Cancelar NFS-e
+                                </a>
+                            <a href="/EmissorNacional/Notas/Download/NFSe/43149022245916257000126000000000003723125702982930" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-xml.svg" />Download XML
+                            </a>
+                            <a href="/EmissorNacional/Notas/Download/DANFSe/43149022245916257000126000000000003723125702982930" class="list-group-item" download>
+                                <img src="/EmissorNacional/img/op-pdf.svg" />Download DANFS-e
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0c2luL2tKZVJBanVKVmxWSVpoYzBQL0wwWUhTR3Y2REJVPQ2" data-situacao="P100_GERADA" data-valor="384,58">
+                <td class="td-data">
+                    21/12/2023
+                    
+                </td>
+                <td class="td-texto-grande">
+                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                <span class="cnpj">07986882000155</span>
+                                -
+NOVA PORTAL COMERCIO DE PECAS LTDA                    </div>
+                </td>
+                <td class="td-center">
+                    Porto Alegre/RS
+                </td>
+                <td class="td-valor">
+                    384,58
+                </td>
+                <td class="td-situacao">
+<img data-toggle="tooltip" src="/EmissorNacional\img/tb-gerada.svg" title="NFS-e Gerada"></img>                </td>
+                <td class="td-impostos">
+                    <img data-toggle="tooltip" title="Pendente" src="/EmissorNacional/img/tb-sitpendente.svg" />
+                </td>
+                <td class="td-opcoes">
+                    <div class="menu-suspenso-tabela">
+                        <a class="icone-trigger" href="javascript:void(0);">
+                            <i class="glyphicon glyphicon-option-vertical"></i>
+                        </a>
+                        <div class="list-group menu-content" style="display: none">
+                            <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000003623120676341672" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-visualizar.svg" />Visualizar
+                            </a>
+                                <a href="/EmissorNacional/DPS/Pessoas?subst=cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0c2luL2tKZVJBanVKVmxWSVpoYzBQL0wwWUhTR3Y2REJVPQ2"
+                                   class="list-group-item btnSubstituir">
+                                    <img src="/EmissorNacional/img/op-substituir.svg" />Substituir
+                                </a>
+                                <a href="javascript:void(0);" class="list-group-item btnCancelar">
+                                    <img src="/EmissorNacional/img/op-cancelar.svg" />Cancelar NFS-e
+                                </a>
+                            <a href="/EmissorNacional/Notas/Download/NFSe/43149022245916257000126000000000003623120676341672" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-xml.svg" />Download XML
+                            </a>
+                            <a href="/EmissorNacional/Notas/Download/DANFSe/43149022245916257000126000000000003623120676341672" class="list-group-item" download>
+                                <img src="/EmissorNacional/img/op-pdf.svg" />Download DANFS-e
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dEovRlhrQ0V6SHVMcjVrUWJ6VzYwN20wN2F6SUxTUmJZPQ2" data-situacao="P100_GERADA" data-valor="271,92">
+                <td class="td-data">
+                    21/12/2023
+                    
+                </td>
+                <td class="td-texto-grande">
+                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                <span class="cnpj">44234207000104</span>
+                                -
+NK AUTO CENTER LTDA                    </div>
+                </td>
+                <td class="td-center">
+                    Porto Alegre/RS
+                </td>
+                <td class="td-valor">
+                    271,92
+                </td>
+                <td class="td-situacao">
+<img data-toggle="tooltip" src="/EmissorNacional\img/tb-gerada.svg" title="NFS-e Gerada"></img>                </td>
+                <td class="td-impostos">
+                    <img data-toggle="tooltip" title="Pendente" src="/EmissorNacional/img/tb-sitpendente.svg" />
+                </td>
+                <td class="td-opcoes">
+                    <div class="menu-suspenso-tabela">
+                        <a class="icone-trigger" href="javascript:void(0);">
+                            <i class="glyphicon glyphicon-option-vertical"></i>
+                        </a>
+                        <div class="list-group menu-content" style="display: none">
+                            <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000003523123301497557" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-visualizar.svg" />Visualizar
+                            </a>
+                                <a href="/EmissorNacional/DPS/Pessoas?subst=cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dEovRlhrQ0V6SHVMcjVrUWJ6VzYwN20wN2F6SUxTUmJZPQ2"
+                                   class="list-group-item btnSubstituir">
+                                    <img src="/EmissorNacional/img/op-substituir.svg" />Substituir
+                                </a>
+                                <a href="javascript:void(0);" class="list-group-item btnCancelar">
+                                    <img src="/EmissorNacional/img/op-cancelar.svg" />Cancelar NFS-e
+                                </a>
+                            <a href="/EmissorNacional/Notas/Download/NFSe/43149022245916257000126000000000003523123301497557" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-xml.svg" />Download XML
+                            </a>
+                            <a href="/EmissorNacional/Notas/Download/DANFSe/43149022245916257000126000000000003523123301497557" class="list-group-item" download>
+                                <img src="/EmissorNacional/img/op-pdf.svg" />Download DANFS-e
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0c2FZc0FESk1wc0s5NjZrbzYyMlBQdWpqR0xUaGxBZDNFPQ2" data-situacao="P100_GERADA" data-valor="90,64">
+                <td class="td-data">
+                    21/12/2023
+                    
+                </td>
+                <td class="td-texto-grande">
+                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                <span class="cnpj">41598662000192</span>
+                                -
+MAO NA RODA AUTO CENTER LTDA                    </div>
+                </td>
+                <td class="td-center">
+                    Porto Alegre/RS
+                </td>
+                <td class="td-valor">
+                    90,64
+                </td>
+                <td class="td-situacao">
+<img data-toggle="tooltip" src="/EmissorNacional\img/tb-gerada.svg" title="NFS-e Gerada"></img>                </td>
+                <td class="td-impostos">
+                    <img data-toggle="tooltip" title="Pendente" src="/EmissorNacional/img/tb-sitpendente.svg" />
+                </td>
+                <td class="td-opcoes">
+                    <div class="menu-suspenso-tabela">
+                        <a class="icone-trigger" href="javascript:void(0);">
+                            <i class="glyphicon glyphicon-option-vertical"></i>
+                        </a>
+                        <div class="list-group menu-content" style="display: none">
+                            <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000003423122308461858" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-visualizar.svg" />Visualizar
+                            </a>
+                                <a href="/EmissorNacional/DPS/Pessoas?subst=cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0c2FZc0FESk1wc0s5NjZrbzYyMlBQdWpqR0xUaGxBZDNFPQ2"
+                                   class="list-group-item btnSubstituir">
+                                    <img src="/EmissorNacional/img/op-substituir.svg" />Substituir
+                                </a>
+                                <a href="javascript:void(0);" class="list-group-item btnCancelar">
+                                    <img src="/EmissorNacional/img/op-cancelar.svg" />Cancelar NFS-e
+                                </a>
+                            <a href="/EmissorNacional/Notas/Download/NFSe/43149022245916257000126000000000003423122308461858" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-xml.svg" />Download XML
+                            </a>
+                            <a href="/EmissorNacional/Notas/Download/DANFSe/43149022245916257000126000000000003423122308461858" class="list-group-item" download>
+                                <img src="/EmissorNacional/img/op-pdf.svg" />Download DANFS-e
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0czFiOW56WVBjUWlSUXM2bVU0Y1ROM2tjYjF3c25LYWtVPQ2" data-situacao="P100_GERADA" data-valor="249,26">
+                <td class="td-data">
+                    21/12/2023
+                    
+                </td>
+                <td class="td-texto-grande">
+                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                <span class="cnpj">37085502000172</span>
+                                -
+GP SERTORIO COMERCIO DE PNEUS LTDA                    </div>
+                </td>
+                <td class="td-center">
+                    Porto Alegre/RS
+                </td>
+                <td class="td-valor">
+                    249,26
+                </td>
+                <td class="td-situacao">
+<img data-toggle="tooltip" src="/EmissorNacional\img/tb-gerada.svg" title="NFS-e Gerada"></img>                </td>
+                <td class="td-impostos">
+                    <img data-toggle="tooltip" title="Pendente" src="/EmissorNacional/img/tb-sitpendente.svg" />
+                </td>
+                <td class="td-opcoes">
+                    <div class="menu-suspenso-tabela">
+                        <a class="icone-trigger" href="javascript:void(0);">
+                            <i class="glyphicon glyphicon-option-vertical"></i>
+                        </a>
+                        <div class="list-group menu-content" style="display: none">
+                            <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000003323121619427196" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-visualizar.svg" />Visualizar
+                            </a>
+                                <a href="/EmissorNacional/DPS/Pessoas?subst=cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0czFiOW56WVBjUWlSUXM2bVU0Y1ROM2tjYjF3c25LYWtVPQ2"
+                                   class="list-group-item btnSubstituir">
+                                    <img src="/EmissorNacional/img/op-substituir.svg" />Substituir
+                                </a>
+                                <a href="javascript:void(0);" class="list-group-item btnCancelar">
+                                    <img src="/EmissorNacional/img/op-cancelar.svg" />Cancelar NFS-e
+                                </a>
+                            <a href="/EmissorNacional/Notas/Download/NFSe/43149022245916257000126000000000003323121619427196" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-xml.svg" />Download XML
+                            </a>
+                            <a href="/EmissorNacional/Notas/Download/DANFSe/43149022245916257000126000000000003323121619427196" class="list-group-item" download>
+                                <img src="/EmissorNacional/img/op-pdf.svg" />Download DANFS-e
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dlU3T3FWWkJyVUd0YUJnU1lvaWxYVTVPVjVqQmdTS0NzPQ2" data-situacao="P100_GERADA" data-valor="24314,72">
+                <td class="td-data">
+                    21/12/2023
+                    
+                </td>
+                <td class="td-texto-grande">
+                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                <span class="cnpj">46378127000140</span>
+                                -
+GP PNEUS LTDA                    </div>
+                </td>
+                <td class="td-center">
+                    Porto Alegre/RS
+                </td>
+                <td class="td-valor">
+                    24.314,72
+                </td>
+                <td class="td-situacao">
+<img data-toggle="tooltip" src="/EmissorNacional\img/tb-gerada.svg" title="NFS-e Gerada"></img>                </td>
+                <td class="td-impostos">
+                    <img data-toggle="tooltip" title="Pendente" src="/EmissorNacional/img/tb-sitpendente.svg" />
+                </td>
+                <td class="td-opcoes">
+                    <div class="menu-suspenso-tabela">
+                        <a class="icone-trigger" href="javascript:void(0);">
+                            <i class="glyphicon glyphicon-option-vertical"></i>
+                        </a>
+                        <div class="list-group menu-content" style="display: none">
+                            <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000003223126281810208" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-visualizar.svg" />Visualizar
+                            </a>
+                                <a href="/EmissorNacional/DPS/Pessoas?subst=cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dlU3T3FWWkJyVUd0YUJnU1lvaWxYVTVPVjVqQmdTS0NzPQ2"
+                                   class="list-group-item btnSubstituir">
+                                    <img src="/EmissorNacional/img/op-substituir.svg" />Substituir
+                                </a>
+                                <a href="javascript:void(0);" class="list-group-item btnCancelar">
+                                    <img src="/EmissorNacional/img/op-cancelar.svg" />Cancelar NFS-e
+                                </a>
+                            <a href="/EmissorNacional/Notas/Download/NFSe/43149022245916257000126000000000003223126281810208" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-xml.svg" />Download XML
+                            </a>
+                            <a href="/EmissorNacional/Notas/Download/DANFSe/43149022245916257000126000000000003223126281810208" class="list-group-item" download>
+                                <img src="/EmissorNacional/img/op-pdf.svg" />Download DANFS-e
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-chave="cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dkEvMEVRY0Q2cWR0dlFkU0pKdE1KbE9NTThqb2FEeWpBPQ2" data-situacao="P100_GERADA" data-valor="339,90">
+                <td class="td-data">
+                    21/12/2023
+                    
+                </td>
+                <td class="td-texto-grande">
+                    <div>
+<img data-toggle="tooltip" title="Tomador" src="/EmissorNacional/img/tb-tomador.svg" />
+                                <span class="cnpj">05291418000119</span>
+                                -
+GP PNEUS E MOTOS LTDA                    </div>
+                </td>
+                <td class="td-center">
+                    Porto Alegre/RS
+                </td>
+                <td class="td-valor">
+                    339,90
+                </td>
+                <td class="td-situacao">
+<img data-toggle="tooltip" src="/EmissorNacional\img/tb-gerada.svg" title="NFS-e Gerada"></img>                </td>
+                <td class="td-impostos">
+                    <img data-toggle="tooltip" title="Pendente" src="/EmissorNacional/img/tb-sitpendente.svg" />
+                </td>
+                <td class="td-opcoes">
+                    <div class="menu-suspenso-tabela">
+                        <a class="icone-trigger" href="javascript:void(0);">
+                            <i class="glyphicon glyphicon-option-vertical"></i>
+                        </a>
+                        <div class="list-group menu-content" style="display: none">
+                            <a href="/EmissorNacional/Notas/Visualizar/Index/43149022245916257000126000000000003123127496353264" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-visualizar.svg" />Visualizar
+                            </a>
+                                <a href="/EmissorNacional/DPS/Pessoas?subst=cE5PUUJpZnoyT0dUVXhkVCsybndSc0xVc0RiTWN2MVM5NWh3c0RSdWY0dkEvMEVRY0Q2cWR0dlFkU0pKdE1KbE9NTThqb2FEeWpBPQ2"
+                                   class="list-group-item btnSubstituir">
+                                    <img src="/EmissorNacional/img/op-substituir.svg" />Substituir
+                                </a>
+                                <a href="javascript:void(0);" class="list-group-item btnCancelar">
+                                    <img src="/EmissorNacional/img/op-cancelar.svg" />Cancelar NFS-e
+                                </a>
+                            <a href="/EmissorNacional/Notas/Download/NFSe/43149022245916257000126000000000003123127496353264" class="list-group-item">
+                                <img src="/EmissorNacional/img/op-xml.svg" />Download XML
+                            </a>
+                            <a href="/EmissorNacional/Notas/Download/DANFSe/43149022245916257000126000000000003123127496353264" class="list-group-item" download>
+                                <img src="/EmissorNacional/img/op-pdf.svg" />Download DANFS-e
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+<div class="row paginacao"><div class="col-sm-12 col-md-6 indice"><ul class="pagination"><li><a data-placement="top" data-toggle="tooltip" href="/EmissorNacional/Notas/Emitidas?pg=1" title="Primeira"><i class="fa fa-angle-double-left"></i></a></li><li><a data-placement="top" data-toggle="tooltip" href="/EmissorNacional/Notas/Emitidas?pg=6" title="Anterior"><i class="fa fa-angle-left"></i></a></li><li><a data-placement="top" data-toggle="tooltip" href="/EmissorNacional/Notas/Emitidas?pg=6" title="Página 6">6</a></li><li class="active"><a data-placement="top" data-toggle="tooltip" href="javascript:" title="Página 7">7</a></li><li><a data-placement="top" data-toggle="tooltip" href="/EmissorNacional/Notas/Emitidas?pg=8" title="Página 8">8</a></li><li><a data-placement="top" data-toggle="tooltip" href="/EmissorNacional/Notas/Emitidas?pg=9" title="Página 9">9</a></li><li><a data-placement="top" data-toggle="tooltip" href="/EmissorNacional/Notas/Emitidas?pg=8" title="Próxima"><i class="fa fa-angle-right"></i></a></li><li><a data-placement="top" data-toggle="tooltip" href="/EmissorNacional/Notas/Emitidas?pg=9" title="Última"><i class="fa fa-angle-double-right"></i></a></li></ul></div><div class="col-sm-12 col-md-6 descricao">Total de 135 registros</div></div>
+<div id="modalCancelamento" class="modal fade" tabindex="-1" role="dialog"></div>
+
+<div id="modalSubstituicao" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+                <h4 class="modal-title">Substituição de NFS-e</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="txtDataAutorizacao">Data da autorização:</label>
+                            <input id="txtDataAutorizacao" type="text" class="form-control" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="txtValor">Valor do Serviço:</label>
+                            <input id="txtValor" type="text" class="form-control" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="txtTomador">Tomador do Serviço:</label>
+                            <input id="txtTomador" type="text" class="form-control" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="txtServico">Serviço prestado:</label>
+                            <input id="txtServico" type="text" class="form-control" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnConfirmar" type="button" class="btn btn-primary has-spin"><img src="/EmissorNacional/img/btn-confirmar.svg" /><span>Confirmar</span></button>
+                <button id="btnFechar" type="button" class="btn btn-info" data-dismiss="modal"><img src="/EmissorNacional/img/btn-fechar.svg" /><span>Fechar</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    </div>
+
+    <footer>
+        <div class="parceiros">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-offset-1 col-md-2">
+                        <a href="http://idg.receita.fazenda.gov.br/" target="_blank">
+                            <img src="/EmissorNacional/img/logo-rfb.png" class="logo" alt="Receita Federal do Brasil">
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="http://www.sebrae.com.br/" target="_blank">
+                            <img src="/EmissorNacional/img/logo-sebrae.png" class="logo" alt="Sebrae">
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="http://www.cnm.org.br/" target="_blank">
+                            <img src="/EmissorNacional/img/logo-cnm.png" class="logo" alt="Confederação Nacional dos Municípios">
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="http://www.abrasf.org.br/" target="_blank">
+                            <img src="/EmissorNacional/img/logo-abrasf.png" class="logo" alt="Associação Brasileira das Secretarias de Finanças das Capitais">
+                        </a>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="http://portal.siscomex.gov.br/legislacao/orgaos/secretaria-de-comercio-exterior-secex" target="_blank">
+                            <img src="/EmissorNacional/img/logo-secex.png" class="logo" alt="Secretaria de Comércio Exterior" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="info">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 logo">
+                        <img src="/EmissorNacional/img/logo-nfse-branca-sm.svg" class="logo-branca" alt="NFS-e" />
+                    </div>
+                    <div class="col-md-8 versao">
+                        Portal de Gestão NFS-e - Contribuinte | Versão 1.1.0.4
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="modalLoading" class="modalBgLoading" style="display:none;">
+        <div class="loading">
+            <div class="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+            <div class="texto">Por favor, aguarde...</div>
+        </div>
+    </div>
+
+    <div id="modalPessoa" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
