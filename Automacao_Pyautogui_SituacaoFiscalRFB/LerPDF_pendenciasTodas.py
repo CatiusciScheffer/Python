@@ -2,7 +2,7 @@ import os
 import PyPDF2
 
 # Diretório onde os arquivos PDF estão localizados
-diretorio = r'C:\Users\cpcsc\Downloads\SITUACAO_FISCAL'
+diretorio = r'C:\Users\cpcsc\Downloads\23022024_SITUACAO_FISCAL'
 
 # Caminho para o arquivo de saída
 arquivo_saida = 'SituaçãoFiscal_PendenciasGeral.txt'

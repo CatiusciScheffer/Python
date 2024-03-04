@@ -231,8 +231,10 @@ escrever_no_arquivo(f'SENHA: {senha}')
 escrever_no_arquivo('')
 # Contar e imprimir o número de elementos <li> para saber quantas páginas tenho que percorrer
 # fiz fora do loop pois qdo deixei no loop diminuia o total a cada 5 pginas
-numero_paginas = len(driver.find_elements(By.CSS_SELECTOR, 'ul.pagination li'))
-escrever_no_arquivo(f'Total de páginas: {numero_paginas}')
+def contar_paginas():
+    numero_paginas = len(driver.find_elements(By.CSS_SELECTOR, 'ul.pagination li'))
+    escrever_no_arquivo(f'Total de páginas: {numero_paginas}')
+    return numero_paginas
 
 
 # @@@---- PERCORRER A LISTA DE NOTAS MITIDAS ----@@@ #
@@ -243,32 +245,41 @@ while True:
     # Localizar todas as linhas da tabela
     linhas = driver.find_elements(By.CSS_SELECTOR, 'table.table-striped tbody tr')
 
-    # Obter a página atual
-    pagina_atual = int(driver.find_element(By.CSS_SELECTOR, 'ul.pagination li.active a').text)
-    escrever_no_arquivo('')
-    escrever_no_arquivo(f'----------------------- Página atual: {pagina_atual} -----------------------')
+    try:
+        # Obter a página atual
+        pagina_atual = int(driver.find_element(By.CSS_SELECTOR, 'ul.pagination li.active a').text)
+        escrever_no_arquivo('')
+        escrever_no_arquivo(f'----------------------- Página atual: {pagina_atual} -----------------------')
 
-    # Se a página atual for menor que o número total de páginas, clicar no botão "Próxima"
-    if pagina_atual < numero_paginas:
-                        
-        iterar_linhas()
-        
-        time.sleep(tempo_variavel)
-        
-        #clica na próxima página
-        next_page_button = driver.find_element(By.XPATH, '//ul[@class="pagination"]/li/a[@data-original-title="Próxima"]')
-        next_page_button.click()
-        escrever_no_arquivo('----------------------- FIM PÁGINA -----------------------')
-        time.sleep(tempo_variavel)
+        # Se a página atual for menor que o número total de páginas, clicar no botão "Próxima"
+        if pagina_atual < contar_paginas():
+                            
+            iterar_linhas()
+            
+            time.sleep(tempo_variavel)
+            
+            #clica na próxima página
+            next_page_button = driver.find_element(By.XPATH, '//ul[@class="pagination"]/li/a[@data-original-title="Próxima"]')
+            next_page_button.click()
+            escrever_no_arquivo('----------------------- FIM PÁGINA -----------------------')
+            time.sleep(tempo_variavel)
 
-    # iterar as linhas quando o número de páginas for igual ao total de página e com break para quebrar o loop
-    elif pagina_atual == numero_paginas:
-        
-        iterar_linhas()
-        
+        # iterar as linhas quando o número de páginas for igual ao total de página e com break para quebrar o loop
+        elif pagina_atual == contar_paginas():
+            
+            iterar_linhas()
+            
+            time.sleep(tempo_variavel)
+            escrever_no_arquivo('----------------------- FIM PÁGINA -----------------------')
+            break  
+
+    except:
+        escrever_no_arquivo(f'Apenas uma página!')
+        time.sleep(tempo_variavel)
+        iterar_linhas()       
         time.sleep(tempo_variavel)
         escrever_no_arquivo('----------------------- FIM PÁGINA -----------------------')
-        break              
+        break      
 
 # Movendo os arquivos baixados para a pasta definida pelo usuário
 salvar_downloas_pasta_selecionada()

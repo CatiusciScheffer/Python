@@ -25,9 +25,9 @@ class LerSituacaoFiscal:
             # Configura uma pausa de 4 segundos entre as ações
             # e ativa a função FAILSAFE.
         """
-        pyautogui.PAUSE = 4
+        pyautogui.PAUSE = 4.5
         pyautogui.FAILSAFE = True
-        self.tempo_esperar_carregar = 1
+        self.tempo_esperar_carregar = 1.5
       
     def esperarImagemCarregar(self, imagem, id_empresa=None, empresa=None, cnpj=None, max_attempts=50):
         """
@@ -528,7 +528,7 @@ class LerSituacaoFiscal:
                     time.sleep(self.tempo_esperar_carregar)                
                                     
                     if process == True:
-                        gerar_relatorio = pyautogui.position(x=941, y=382)#gerar relatório da direita
+                        gerar_relatorio = pyautogui.position(x=936, y=397)#gerar relatório da direita
                         time.sleep(0.5)
                         pyautogui.click(gerar_relatorio)
                         time.sleep(self.tempo_esperar_carregar)

@@ -25,8 +25,8 @@ Dependências:
 """
 
 # Caminho para o diretório dos arquivos PDF
-diretorio_pdf = r'C:/Users/cpcsc/Downloads/SITUACAO_FISCAL'
-diretorio_pdf_novo = r'C:/Users/cpcsc/Downloads/SITUACAO_FISCAL_C'
+diretorio_pdf = r'C:/Users/cpcsc/Downloads/23022024_SITUACAO_FISCAL'
+# diretorio_pdf_novo = r'C:/Users/cpcsc/Downloads/SITUACAO_FISCAL_C'
 # Caminho para o arquivo CSV
 caminho_csv = r'C:/Users/cpcsc/Downloads/LISTA_EMPRESAS/LISTA_EMPRESA_CNPJ_COMPL.csv'
 
@@ -36,10 +36,10 @@ df = pd.read_csv(caminho_csv, delimiter=';', encoding='utf-8')
 for indice, linha in df.iterrows():
     try:
         # ---> VERIFICAR A DATA DO NOME DOARQUIVO --->
-        novo_nome = f"{linha['ID']}-{unidecode(linha['EMPRESA'])}-20240108.pdf"
+        novo_nome = f"{linha['ID']}-{unidecode(linha['EMPRESA'])}-20240223.pdf"
         cnpj_formatado = str(linha['CNPJ']).zfill(14)
         # ---> VERIFICAR A DATA DO NOME DOARQUIVO --->
-        caminho_antigo = os.path.join(diretorio_pdf, f"RelatorioSituacaoFiscal-{cnpj_formatado}-20240108.pdf")
+        caminho_antigo = os.path.join(diretorio_pdf, f"RelatorioSituacaoFiscal-{cnpj_formatado}-20240223.pdf")
         caminho_novo = os.path.join(diretorio_pdf, novo_nome)
         
         if os.path.exists(caminho_antigo):
