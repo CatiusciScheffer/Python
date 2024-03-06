@@ -8,9 +8,10 @@ import time
 import os
 import time
 import random
+import pandas as pd
 
 # Gere um valor aleatório entre 5 e 6 segundos
-tempo_variavel = random.uniform(7, 12)
+tempo_variavel = random.uniform(5, 8)
 
 servico = Service(ChromeDriverManager().install())
 options = webdriver.ChromeOptions()
@@ -27,7 +28,8 @@ while len(driver.find_elements(By.ID, 'side')) < 1:
     time.sleep(3)
 time.sleep(tempo_variavel)
 
-lista_contatos = pd.read_excel(r"lista-13-salario.xlsx")
+# lista onde será extraídos os contados, a mensagem e o arquivo para anexar
+lista_contatos = pd.read_excel(r"AVISO_FGTS_DIGITAL.xlsx")
 
 for linha in lista_contatos.index:
     # enviar uma mensagem para a pessoa
@@ -76,7 +78,7 @@ for linha in lista_contatos.index:
             time.sleep(tempo_variavel)
             #após anexar o caminho da imagem aqui clica na seta de envio
             enviar_anexo = driver.find_element(By.XPATH, 
-                                   '//*[@id="app"]/div/div/div[3]/div[2]/span/div/span/div/div/div[2]/div/div[2]/div[2]/div/div/span')
+                                   '//*[@id="app"]/div/div[2]/div[2]/div[2]/span/div/span/div/div/div[2]/div/div[2]/div[2]/div/div/span')
             time.sleep(tempo_variavel)
             enviar_anexo.click()
             time.sleep(tempo_variavel)
