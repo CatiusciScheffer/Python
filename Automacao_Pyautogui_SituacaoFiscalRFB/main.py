@@ -1,7 +1,7 @@
 
 import tkinter as tk
 from tkinter import filedialog
-from functions_SituacaoFiscal import LerSituacaoFiscal
+from functions_SituacaoFiscal_ref import LerSituacaoFiscal
 import pyautogui
 
 def obter_arquivo_csv():

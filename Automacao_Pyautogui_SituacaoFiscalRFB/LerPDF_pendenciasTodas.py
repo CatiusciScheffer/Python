@@ -1,11 +1,12 @@
 import os
 import PyPDF2
 
-# Diretório onde os arquivos PDF estão localizados
-diretorio = r'C:\Users\cpcsc\Downloads\23022024_SITUACAO_FISCAL'
+# Diretório onde deseja que o arquivo seja criado
+diretorio_saida = R"C:/Users/cpcsc/Downloads/SITUACAO_FISCAL"
+diretorio = R"C:/Users/cpcsc/Downloads/SITUACAO_FISCAL"
+# Nome do arquivo de saída
+arquivo_saida = os.path.join(diretorio_saida, 'SituaçãoFiscal_PendenciasGeral.txt')
 
-# Caminho para o arquivo de saída
-arquivo_saida = 'SituaçãoFiscal_PendenciasGeral.txt'
 
 def verificarTipoPendencias(ocorrencia, linha):
     if ocorrencia in linha:
@@ -14,6 +15,14 @@ def verificarTipoPendencias(ocorrencia, linha):
         with open(arquivo_saida, 'a', encoding='utf-8') as output_file:
             output_file.write(f'    ----> {linha.replace("_", "")}\n')
     
+
+# Verifica se o diretório de saída existe, se não existir, cria-o
+if not os.path.exists(diretorio_saida):
+    os.makedirs(diretorio_saida)
+
+# Verifica se o arquivo de saída existe, se não existir, cria-o
+if not os.path.exists(arquivo_saida):
+    open(arquivo_saida, 'w', encoding='utf-8').close()
 
 # Função para encontrar e extrair informações
 def extrair_informacoes(pdf_file):
@@ -63,7 +72,7 @@ def extrair_informacoes(pdf_file):
             # Verifica se a linha contém 'CNPJ:' e ainda não foi escrita
             if 'CNPJ:' in linha and not cnpj_gravado:
                 cnpj = linha.strip()
-                with open(arquivo_saida, 'a', encoding='utf-8') as output_file:
+                with open(arquivo_saida, 'a') as output_file:#, encoding='latin1'
                     output_file.write('\n')
                     output_file.write('\n' + '-' * 80 + '\n')
                     output_file.write(cnpj)
@@ -82,7 +91,7 @@ def extrair_informacoes(pdf_file):
 
         # Escreve a mensagem 'sem pendeeeeeeeencias' se nenhum tipo de ocorrência foi encontrado
         if tipo_nao_encontrado:
-            with open(arquivo_saida, 'a', encoding='utf-8') as output_file:
+            with open(arquivo_saida, 'a') as output_file:#, encoding='latin1'
                 output_file.write('    !!!! SEM PENDÊNCIAS !!!!' + '\n')
 
 # Itera pelos arquivos PDF no diretório

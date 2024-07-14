@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Livro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Relato de Leitura</h1>
+        <form method="POST">
+            <div>
+                <label for="nome">Título:</label>
+                <input class="container_inputs_usu"  type="text" id="nome" name="nome" value="{{ book.nome if book else '' }}" required><br><br>
+            </div>    
+            
+            <label for="autor">Autor:</label>
+            <input class="container_inputs_usu" type="text" id="autor" name="autor" value="{{ book.autor if book else '' }}" required><br><br>
+
+            <label for="genero">Gênero:</label>
+            <select id="genero" name="genero">
+                <option value="Romance" {% if book and book.genero == 'Romance' %} selected {% endif %}>Romance</option>
+                <option value="Mistério" {% if book and book.genero == 'Mistério' %} selected {% endif %}>Mistério</option>
+                <option value="Fantasia e Ficção Científica" {% if book and book.genero == 'Fantasia e Ficção Científica' %} selected {% endif %}>Fantasia e Ficção Científica</option>
+                <option value="Suspense e Terror" {% if book and book.genero == 'Suspense e Terror' %} selected {% endif %}>Suspense e Terror</option>
+                <option value="Jovem Adulto" {% if book and book.genero == 'Jovem Adulto' %} selected {% endif %}>Jovem Adulto</option>
+            </select><br><br>
+
+            <div>
+                <label for="classificacao">Nota:</label>
+                <div class="star-rating">
+                    <input type="radio" id="estrela5" name="classificacao" value="5" {% if book and book.classificacao == 5 %} checked {% endif %}>
+                    <label for="estrela5">&#9829;</label>
+                    <input type="radio" id="estrela4" name="classificacao" value="4" {% if book and book.classificacao == 4 %} checked {% endif %}>
+                    <label for="estrela4">&#9829;</label>
+                    <input type="radio" id="estrela3" name="classificacao" value="3" {% if book and book.classificacao == 3 %} checked {% endif %}>
+                    <label for="estrela3">&#9829;</label>
+                    <input type="radio" id="estrela2" name="classificacao" value="2" {% if book and book.classificacao == 2 %} checked {% endif %}>
+                    <label for="estrela2">&#9829;</label>
+                    <input type="radio" id="estrela1" name="classificacao" value="1" {% if book and book.classificacao == 1 %} checked {% endif %}>
+                    <label for="estrela1">&#9829;</label>
+                </div>
+            </div>   
+
+            <label for="ebook">E-book:</label>
+            <input type="radio" id="ebook" name="formato" value="ebook" {% if book and book.ebook == 'S' %} checked {% endif %}><br><br>
+
+            <label for="fisico">Físico:</label>
+            <input type="radio" id="fisico" name="formato" value="fisico" {% if book and book.fisico == 'S' %} checked {% endif %}><br><br>
+
+            <label for="inicio">Data de Início:</label>
+            <input type="date" id="inicio" name="inicio" value="{% if book and book.inicio %}{{ book.inicio.strftime('%Y-%m-%d') }}{% endif %}"><br><br>
+
+            <label for="fim">Data de Fim:</label>
+            <input type="date" id="fim" name="fim" value="{% if book and book.fim %}{{ book.fim.strftime('%Y-%m-%d') }}{% endif %}"><br><br>
+
+            <label for="resumo_enredo">Resumo do Enredo:</label>
+            <textarea id="resumo_enredo" name="resumo_enredo" rows="5" required>{{ book.resumo_enredo if book else '' }}</textarea><br><br>
+
+            <label for="cenario">Cenário:</label>
+            <textarea id="cenario" name="cenario" rows="5" required>{{ book.cenario if book else '' }}</textarea><br><br>
+
+            <label for="melhor_citacao">Melhor Citação:</label>
+            <textarea id="melhor_citacao" name="melhor_citacao" rows="5" required>{{ book.melhor_citacao if book else '' }}</textarea><br><br>
+            
+            <label for="temas_principais">Temas Principais:</label>
+            <textarea id="temas_principais" name="temas_principais" rows="5" required>{{ book.temas_principais if book else '' }}</textarea><br><br>
+
+            <label for="melhores_personagens">Melhores Personagens:</label>
+            <textarea id="melhores_personagens" name="melhores_personagens" rows="5" required>{{ book.melhores_personagens if book else '' }}</textarea><br><br>
+
+            <label for="meu_chips">Meu Chips:</label>
+            <textarea id="meu_chips" name="meu_chips" rows="5" required>{{ book.meu_chips if book else '' }}</textarea><br><br>
+
+            <label for="analise">Análise:</label>
+            <textarea id="analise" name="analise" rows="5" required>{{ book.analise if book else '' }}</textarea><br><br>
+
+            <button type="submit">Salvar</button>
+        </form>
+        <a href="{{ url_for('index') }}">Voltar</a>
+    </div>
+</body>
+</html>
+

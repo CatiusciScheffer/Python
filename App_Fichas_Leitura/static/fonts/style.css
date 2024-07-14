@@ -1,0 +1,69 @@
+body{
+    background-color: rgb(37, 142, 150);
+    opacity: 1;
+    background-image:  linear-gradient(#ffffff15 1px, transparent 1px), linear-gradient(to right, #ffffff15 1px, rgb(37, 142, 150) 1px);
+    background-size: 20px 20px;
+}
+
+.container{
+    margin: 20px 20px;
+}
+
+.container_inputs_usu {
+    background-color: #ffffff;
+    border-radius: 20px 20px;
+    padding: 1px 1px;
+    max-width: 300px;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    height: 100%; /* Ajuste conforme necessário */
+}
+.input_borda{
+    border: none; /* Remove a borda */
+    outline: none; /* Remove a borda de foco */
+    /* Outros estilos opcionais */
+    padding: 5px;
+    background-color: #ffffff; /* Define uma cor de fundo */
+    border-radius: 10px; /* Adiciona cantos arredondados (opcional) */
+    width: 290px;
+}
+
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+}
+.star-rating input[type="radio"] {
+    display: none;
+}
+.star-rating label {
+    font-size: 2rem;
+    color: #ddd;
+    cursor: pointer;
+}
+
+.star-rating input[type="radio"]:checked ~ label,
+.star-rating input[type="radio"]:checked ~ label ~ label {
+    color: #f5b301;
+}
+.star-rating input[type="radio"]:hover ~ label,
+.star-rating input[type="radio"]:hover ~ label ~ label {
+    color: #f5b301;
+}
+
+button {
+    background-color: #ffca08;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    align-self: flex-end;
+}
+
+
+a:hover {
+    text-decoration: underline;
+}

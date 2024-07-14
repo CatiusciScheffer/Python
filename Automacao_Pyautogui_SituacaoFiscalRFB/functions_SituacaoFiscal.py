@@ -6,107 +6,40 @@ import pyperclip
 import cv2
 from PIL import ImageGrab
 import csv
+import logging
+
+# Configuração do logging com nível DEBUG
+logging.basicConfig(filename='situacao_fiscal_log.txt', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class LerSituacaoFiscal:
     def __init__(self):
-        """
-        Classe para configurar a automação de tarefas com o PyAutoGUI.
-
-        Esta classe define configurações importantes para automação de tarefas
-        utilizando a biblioteca PyAutoGUI.
-
-        Atributos:
-            PAUSE (float): Tempo de pausa entre a execução de cada ação (em segundos).
-            FAILSAFE (bool): Habilita a verificação de segurança que permite a interrupção
-                da automação movendo o cursor para o canto superior esquerdo da tela.
-
-        Exemplo de uso:
-            automation = AutomationUtils()
-            # Configura uma pausa de 4 segundos entre as ações
-            # e ativa a função FAILSAFE.
-        """
-        pyautogui.PAUSE = 4.5
+        
+        pyautogui.PAUSE = 5
         pyautogui.FAILSAFE = True
-        self.tempo_esperar_carregar = 1.5
+        self.tempo_esperar_carregar = 3
       
     def esperarImagemCarregar(self, imagem, id_empresa=None, empresa=None, cnpj=None, max_attempts=50):
-        """
-        Espera até que uma imagem seja localizada na tela.
-
-        Esta função utiliza a biblioteca PyAutoGUI para procurar repetidamente uma imagem
-        na tela. Ela realiza várias tentativas até encontrar a imagem ou atingir o número
-        máximo de tentativas definido por `max_attempts`.
-
-        Args:
-            imagem (str): O caminho para a imagem que você deseja localizar na tela.
-            id_empresa (str): O ID da empresa.
-            empresa (str): O nome da empresa.
-            cnpj (str): O CNPJ da empresa.
-            max_attempts (int, opcional): O número máximo de tentativas antes de desistir
-                de encontrar a imagem. 
-
-        Returns:
-            tuple or None: Retorna uma tupla contendo as coordenadas (x, y) da posição da
-                imagem encontrada na tela, ou None se a imagem não for encontrada após
-                todas as tentativas.
-        """
+        
         for _ in range(max_attempts):
             time.sleep(self.tempo_esperar_carregar)
             imagem_procurada = pyautogui.locateOnScreen(imagem, grayscale=True, confidence=0.3)
             if imagem_procurada:
                 return imagem_procurada
             else:
-                texto_pag_carreg = 'Erro ao carregar página, situação fiscal não baixada!'
-                dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_pag_carreg}
-                self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
+                logging.exception('Erro na função "esperarImagemCarregar"!')
                 continue
 
-    def procurarTexto(self, texto_colar):
-        """
-        Realiza uma pesquisa de texto em um documento ou aplicativo.
 
-        Esta função utiliza as bibliotecas PyAutoGUI e Pyperclip para automatizar
-        uma pesquisa de texto em um documento ou aplicativo. Ela pressiona as teclas
-        de atalho 'Ctrl + F' para abrir a caixa de pesquisa, cola o texto a ser
-        procurado da área de transferência (clipboard) e inicia a pesquisa.
-
-        Args:
-            texto_colar (str): O texto que será colado na caixa de pesquisa.
-
-        Exemplo de uso:
-            automation = AutomationUtils()
-            texto_a_procurar = "Exemplo de texto a ser procurado"
-            automation.procurarTexto(texto_a_procurar)
-
-        Observações:
-            Certifique-se de que o documento ou aplicativo suporta a funcionalidade de
-            pesquisa e que a janela relevante esteja em foco antes de chamar esta função.
-        """
-        # Pressiona 'Ctrl + F' para abrir a caixa de pesquisa
-        pyautogui.hotkey('ctrl', 'f')
-        # Converte o texto a ser procurado em uma string (caso não seja)
-        texto_procurar = str(texto_colar)
-        # Copia o texto para a área de transferência (clipboard)
-        pyperclip.copy(texto_procurar)
-        # Cole o texto na caixa de pesquisa usando 'Ctrl + V'
-        pyautogui.hotkey('ctrl', 'v')
+    def pesquisar_texto(texto_colar):
+        try:
+            pyautogui.hotkey('ctrl', 'f')  # Abre a caixa de pesquisa
+            texto_procurar = str(texto_colar)
+            pyperclip.copy(texto_procurar)  # Copia o texto para a área de transferência
+            pyautogui.hotkey('ctrl', 'v')  # Cola o texto na caixa de pesquisa
+        except Exception as e:
+            logging.exception(f'Erro na função "pesquisar_texto" {e}')
 
     def voltarHome(self):
-        """
-        Clica no botão 'HOME' para retornar à página inicial.
-
-        Esta função utiliza a biblioteca PyAutoGUI para localizar o centro da imagem
-        representando o botão 'HOME' na tela e, em seguida, clica nesse ponto para
-        retornar à página inicial.
-
-        Exemplo de uso:
-            automation = AutomationUtils()
-            automation.voltarHome()
-
-        Observações:
-            Certifique-se de que a imagem 'home.png' corresponda ao botão 'HOME' desejado
-            e que a janela relevante esteja em foco antes de chamar esta função.
-        """
         # Localiza o centro da imagem 'home.png' na tela
         try:
             volta_home = pyautogui.locateOnScreen(r'.\img\home.png')
@@ -115,32 +48,14 @@ class LerSituacaoFiscal:
                 centro_volta_home = pyautogui.locateCenterOnScreen (r'.\img\home.png')
                 # Clica no centro da imagem para voltar à página inicial
                 pyautogui.click(centro_volta_home)
-            else:
-                print("Imagem 'home.png' não encontrada. Certifique-se de que a imagem corresponde ao botão 'HOME'.")
+            
         except pyautogui.ImageNotFoundException:
             pyautogui.click(x=742, y=893)
-            print('imagem para volar pra home não localizada, cliquei nas coordenadas')
+            logging.exception('Erro na função "voltarHome"!')
 
     def procurarCor(self):
         # tive que criar esta função porque os outros métodos de clicar onde precisava na tela da caixa de entrada da receita federal não funcionaram, não podia ser por coordenadas e salvando as imagens também não funcionou, então quando com ctrl+f para localizar um texo, o mesmo era marcado com a cor aranja o que me permitiu procurar esta cor, pegar o primeiro ponto dela na lista e clicar.
-        """
-        Procura por pixels de cor laranja em uma captura de tela.
-
-        Esta função captura uma região da tela, define a cor laranja que deseja procurar
-        (no formato BGR), e encontra os pixels correspondentes a essa cor na imagem.
-
-        Returns:
-            list of tuples: Uma lista de tuplas contendo as coordenadas (x, y) dos pixels
-                que correspondem à cor laranja na imagem.
-
-        Exemplo de uso:
-            automation = AutomationUtils()
-            coordenadas_laranja = automation.procurarCor()
-            if coordenadas_laranja:
-                print("Coordenadas dos pixels de cor laranja:", coordenadas_laranja)
-            else:
-                print("Nenhum pixel de cor laranja encontrado na captura de tela.")
-        """
+        
         try:    
             # Captura uma região da tela (no exemplo, toda a tela: 1920x1080 pixels)
             screen = np.array(ImageGrab.grab(bbox=(0, 0, 1920, 1080)))
@@ -157,136 +72,55 @@ class LerSituacaoFiscal:
                 coordinates = np.column_stack(np.where(mask1 > 0))
 
             return coordinates
-        except:
+        except Exception as e:
             time.sleep(self.tempo_esperar_carregar)
-            print('erro na função procura cor')
+            logging.exception(f'Erro na função "procuraCor": {e}!')
             return coordinates
         
 
     def clicarSeCorLaranja(self):
-        """
-        Clica na primeira ocorrência de cor laranja na tela, se existir.
-
-        Esta função verifica se há pixels de cor laranja na captura de tela e,
-        se encontrar, clica na primeira ocorrência.
-
-        Returns:
-            bool: True se um pixel de cor laranja foi encontrado e clicado, False caso contrário.
-
-        Exemplo de uso:
-            automation = AutomationUtils()
-            if automation.clicarSeCorLaranja():
-                print("Clicou na primeira ocorrência de cor laranja.")
-            else:
-                print("Nenhuma cor laranja encontrada na tela.")
-        """
-        # Verifica se há coordenadas de pixels de cor laranja
-        if len(listaCoordenadas := self.procurarCor()) > 0:
-            for coord in listaCoordenadas:
-                pyautogui.click(coord[1], coord[0])
-                break
-            return True
-        return False
+        
+        try:
+            # Verifica se há coordenadas de pixels de cor laranja
+            if len(listaCoordenadas := self.procurarCor()) > 0:
+                for coord in listaCoordenadas:
+                    pyautogui.click(coord[1], coord[0])
+                    break
+                return True
+            return False
+        except Exception as e:
+            logging.exception(f'Erro na função "clicarSeCorLaranja": {e}')
+            return False
 
     def abrirNavegador(self, enderecoHTTP):
-        """
-        Abre um navegador da web e navega até um endereço HTTP especificado.
-
-        Esta função utiliza a biblioteca PyAutoGUI para abrir o diálogo "Executar",
-        aguarda até que uma imagem representando o ícone do executável seja carregada,
-        escreve o endereço HTTP no campo de texto do diálogo e pressiona Enter para
-        abrir um navegador da web com o URL especificado.
-
-        Args:
-            enderecoHTTP (str): O endereço HTTP (URL) que deseja abrir no navegador.
-
-        Exemplo de uso:
-            automation = AutomationUtils()
-            endereco = "https://www.example.com"
-            automation.abrirNavegador(endereco)
-
-        Observações:
-            Certifique-se de que a imagem 'tl_win_exec.png' corresponda ao ícone do
-            executável associado ao seu navegador da web e que a janela relevante esteja
-            em foco antes de chamar esta função.
-        """
-        # Abre o diálogo "Executar" pressionando 'Win + R'
-        pyautogui.hotkey('win', 'r')
-        # Aguarda até que a imagem 'tl_win_exec.png' seja carregada
-        self.esperarImagemCarregar(r'.\img\tl_win_exec.png')
-        # Escreve o endereço HTTP no campo de texto do diálogo
-        pyautogui.write(enderecoHTTP)
-        # Pressiona Enter para abrir o navegador com o URL especificado
-        pyautogui.press('enter')
+        try:
+            # Abre o diálogo "Executar" pressionando 'Win + R'
+            pyautogui.hotkey('win', 'r')
+            # Aguarda até que a imagem 'tl_win_exec.png' seja carregada
+            self.esperarImagemCarregar(r'.\img\tl_win_exec.png')
+            # Escreve o endereço HTTP no campo de texto do diálogo
+            pyautogui.write(enderecoHTTP)
+            # Pressiona Enter para abrir o navegador com o URL especificado
+            pyautogui.press('enter')
+        except Exception as e:
+            logging.exception(f'Erro na função "abrirNavegador": {e}')
         
     def fecharNavegador(self):
-        """
-        Fecha apenas a janela do navegador ativa, para permitir que o login com certificado permaneça.
-
-        Esta função utiliza a biblioteca PyAutoGUI para pressionar as teclas de atalho
-        'ctrl + w', o que fecha a janela do navegador que está ativa.
-
-        Exemplo de uso:
-            automation = AutomationUtils()
-            automation.fecharNavegador()
-
-        Observações:
-            Certifique-se de que a janela do navegador que deseja fechar esteja em foco
-            antes de chamar esta função.
-        """
         # Pressiona 'Alt + F4' para fechar a janela do navegador ativa
         pyautogui.hotkey('ctrl', 'w')
 
     def ler_csv(self, arquivo_csv):
-        """
-        Lê os dados de um arquivo CSV e retorna uma lista de dicionários.
-
-        Esta função lê um arquivo CSV especificado, onde cada linha representa um registro
-        de dados e as colunas são separadas por ponto e vírgula (;). Ela retorna os dados
-        em forma de uma lista de dicionários, onde cada dicionário representa um registro
-        e as chaves são os nomes das colunas.
-
-        Args:
-            arquivo_csv (str): O caminho para o arquivo CSV que deseja ler.
-
-        Returns:
-            list of dict: Uma lista de dicionários representando os registros do CSV.
-
-        Exemplo de uso:
-            automation = AutomationUtils()
-            dados = automation.ler_csv('dados.csv')
-            for registro in dados:
-                print(registro['Nome'], registro['Idade'])
-
-        Observações:
-            Certifique-se de que o arquivo CSV esteja no formato correto (colunas separadas por
-            ponto e vírgula) e que o caminho para o arquivo seja especificado corretamente.
-        """
-        dados_csv = []
-        with open(arquivo_csv, mode='r', encoding='utf-8') as file:
-            csv_reader = csv.DictReader(file, delimiter=';')
-            for row in csv_reader:
-                dados_csv.append(row)
-        return dados_csv
+        try:
+            dados_csv = []
+            with open(arquivo_csv, mode='r', encoding='ISO-8859-1') as file:
+                csv_reader = csv.DictReader(file, delimiter=';')
+                for row in csv_reader:
+                    dados_csv.append(row)
+            return dados_csv
+        except Exception as e:
+            logging.exception(f'Erro na função "ler_csv: "{e}')
         
     def alterarPerfildeAcesso(self):
-        """
-        Realiza a ação de alterar o perfil de acesso.
-
-        Esta função automatiza a ação de clicar no botão "Alterar Perfil de Acesso"
-        em um aplicativo ou sistema. Ela aguarda até que a imagem 'espera_troca_perfil.png'
-        seja carregada na tela, espera um breve período de tempo (1.5 segundos) e então
-        localiza e clica no botão 'btn_alt_perfil.png'.
-
-        Exemplo de uso:
-            automation = AutomationUtils()
-            automation.alterarPerfil()
-
-        Observações:
-            Certifique-se de que as imagens 'espera_troca_perfil.png' e 'btn_alt_perfil.png'
-            correspondam aos elementos desejados e que a janela relevante esteja em foco antes
-            de chamar esta função.
-        """
         try:
             alterar_perfil = pyautogui.locateCenterOnScreen(r'.\img\btn_alt_perfil.png')
 
@@ -297,7 +131,7 @@ class LerSituacaoFiscal:
         except pyautogui.ImageNotFoundException:
             time.sleep(self.tempo_esperar_carregar)
             pyautogui.click(x=1167, y= 223)
-            print('imagem para alterar perfil não localizada, cliquei nas coordenadas')
+            logging.exception('Except "alterarPerfildeAcesso"!')
         
     def digitarCNPJ_AlterarPerfil(self, cnpj):
         try:
@@ -312,7 +146,7 @@ class LerSituacaoFiscal:
         except pyautogui.ImageNotFoundException:
             time.sleep(self.tempo_esperar_carregar)
             pyautogui.click(x=582, y= 450)
-            
+            logging.exception('Except "digitarCNPJ_AlterarPerfildeAcesso"!')
 
     def clicar_AlterarPerfil(self):
         try:
@@ -325,7 +159,7 @@ class LerSituacaoFiscal:
 
         except pyautogui.ImageNotFoundException:
             pyautogui.click(x=816, y= 473)
-            
+            logging.exception('Except "clicar_AlterarPerfil"!')
 
     def clicar_CertidaoSituacaoFiscal(self):
         try:
@@ -337,6 +171,7 @@ class LerSituacaoFiscal:
         
         except pyautogui.ImageNotFoundException:
             pyautogui.click(x=505, y= 270)
+            logging.exception('Except "clicar_CertidaoSituacaoFiscal"!')
             
     def clicar_CertidaoSituacaoFiscalList(self):
         try:
@@ -348,13 +183,44 @@ class LerSituacaoFiscal:
 
         except pyautogui.ImageNotFoundException:
             pyautogui.click(x=362, y= 445)
+            logging.exception('Except "clicar_CertidaoSituacaoFiscalList"!')
+
+    def clicar_GerarRelatorio(self):
+        try:
+            self.esperarImagemCarregar(r'.\img\tela_gerar_relatorio.png')
+            teste = pyautogui.locateOnScreen((r'.\img\tela_gerar_relatorio.png'))
+            #print(f'ACHEI IMAGEM TELA RELATÓRIO SITUAÇÃO {teste}')
+            
+            btn_GerarRelatorio = pyautogui.locateOnScreen(r'.\img\#btn_gerarRelatorio.png')
+            #print(f'ahei botão {btn_GerarRelatorio}')
+            btn_GerarRelatorio_amarelo = pyautogui.locateOnScreen(r'.\img\#btn_GerarRelatorio_amarelo.png')
+            #print(f'achei botão amarelo {btn_GerarRelatorio_amarelo}')
+
+            if btn_GerarRelatorio:
+                pyautogui.click(btn_GerarRelatorio)
+                #print('Cliquei no botão de "Gerar Relatório"')
+            
+            elif btn_GerarRelatorio_amarelo:
+                pyautogui.click(btn_GerarRelatorio_amarelo)
+                #print('Cliquei no botão de "Gerar Relatório AMARELO"')
+
+        except pyautogui.ImageNotFoundException:
+            pyautogui.click(x=934, y= 392)
+            logging.exception('Except "clicar_GerarRelatorio"!')
+
                 
     def escrever_dados_no_csv(self, arquivo_csv, dados_relatorio):
-        with open(arquivo_csv, mode='a', newline='', encoding='utf-8') as arquivo_csv:
-            campo_nomes = ['ID', 'EMPRESA', 'CNPJ', 'VERIFICADO']
-            escritor_csv = csv.DictWriter(arquivo_csv, fieldnames=campo_nomes)                      
-            # Escreve os dados no CSV
-            escritor_csv.writerow(dados_relatorio)
+        try:
+            with open(arquivo_csv, mode='a', newline='', encoding='utf-8') as arquivo:
+                campo_nomes = ['ID', 'EMPRESA', 'CNPJ', 'VERIFICADO']
+                escritor_csv = csv.DictWriter(arquivo, fieldnames=campo_nomes)
+                if arquivo.tell() == 0:
+                    escritor_csv.writeheader()
+                escritor_csv.writerow(dados_relatorio)
+        except FileNotFoundError:
+            ???
+            
+
     
     def chegar_download(self):
         time.sleep(self.tempo_esperar_carregar)
@@ -481,14 +347,14 @@ class LerSituacaoFiscal:
             #NÃO ALTEROU O PERFIL_PÁGINA EXPIRADA 
             try:
                 pagina_expirada = pyautogui.locateOnScreen(r'.\img\pagina_expirou.png')
-                print(pagina_expirada)
+                #print(pagina_expirada)
                 if pagina_expirada is not None:
                     texto_msg_erro_pg = '******** Página expirou, operação cancelada *********'
                     dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': texto_msg_erro_pg}
                     self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
                     time.sleep(self.tempo_esperar_carregar)
                     self.voltarHome()
-                    print('página expirada')
+                    #print('página expirada')
                     sys.exit()
 
             except pyautogui.ImageNotFoundException:
@@ -519,8 +385,8 @@ class LerSituacaoFiscal:
                 time.sleep(self.tempo_esperar_carregar)
 
                 if img_tela_download_relatorio:
-                    print('achei a tela de relatório')
-                    print(img_tela_download_relatorio)
+                    #print('achei a tela de relatório')
+                    #print(img_tela_download_relatorio)
                     #clicar na gerar relatório da esquerda
                     self.procurarTexto('Gerar Relatório')
                     time.sleep(self.tempo_esperar_carregar)
@@ -528,16 +394,19 @@ class LerSituacaoFiscal:
                     time.sleep(self.tempo_esperar_carregar)                
                                     
                     if process == True:
-                        gerar_relatorio = pyautogui.position(x=936, y=397)#gerar relatório da direita
-                        time.sleep(0.5)
-                        pyautogui.click(gerar_relatorio)
-                        time.sleep(self.tempo_esperar_carregar)
-                        time.sleep(0.5)
-                        pyautogui.press('esc')
-                        time.sleep(0.1)
-                        pyautogui.press('esc')
-                        time.sleep(0.1)
-                                                                        
+                        # gerar_relatorio = pyautogui.position(x=915, y=393)#gerar relatório da direita
+                        # time.sleep(0.5)
+                        # pyautogui.click(gerar_relatorio)
+                        # time.sleep(self.tempo_esperar_carregar)
+                        # time.sleep(0.5)
+                        # pyautogui.press('esc')
+                        # time.sleep(0.1)
+                        # pyautogui.press('esc')
+                        time.sleep(0.2)
+                        self.clicar_GerarRelatorio()
+                        time.sleep(0.3) 
+                        pyautogui.press('esc')    
+
                         # Escreva as informações no CSV
                         dados_relatorio = {'ID': id_empresa, 'EMPRESA': empresa, 'CNPJ': cnpj, 'VERIFICADO': 'Download OK!!!'}
                             
@@ -553,13 +422,13 @@ class LerSituacaoFiscal:
                                 
                 # Escreva as informações no CSV
                 self.escrever_dados_no_csv('relatorio.csv', dados_relatorio)
-                print('não achei a tela de download')
+                #print('não achei a tela de download')
                 contagem_downloads -= 1
-                print('não achei a tela de download')                
+                #print('não achei a tela de download')                
             
             time.sleep(self.tempo_esperar_carregar)            
                 
-            print(f'LINHA VERIFICADO:{i}')
+            #print(f'LINHA VERIFICADO:{i}')
             i = i + 1
             # Verifica se todos os CNPJs foram processados
             if i <= len(dados):

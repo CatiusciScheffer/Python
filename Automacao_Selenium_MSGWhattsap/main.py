@@ -29,7 +29,7 @@ while len(driver.find_elements(By.ID, 'side')) < 1:
 time.sleep(tempo_variavel)
 
 # lista onde será extraídos os contados, a mensagem e o arquivo para anexar
-lista_contatos = pd.read_excel(r"AVISO_FGTS_DIGITAL.xlsx")
+lista_contatos = pd.read_excel(r"AVISO_FGTS.xlsx")
 
 for linha in lista_contatos.index:
     # enviar uma mensagem para a pessoa

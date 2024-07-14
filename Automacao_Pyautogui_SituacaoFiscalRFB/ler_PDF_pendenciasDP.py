@@ -2,7 +2,7 @@ import os
 import fitz  # PyMuPDF
 
 # Diretório onde os arquivos PDF estão localizados
-diretorio = r'C:\Users\cpcsc\Downloads\23022024_SITUACAO_FISCAL'
+diretorio = r'C:/Users/cpcsc/Downloads/SITUACAO_FISCAL'
 
 # Caminho para o arquivo de saída
 arquivo_saida = 'SituaçãoFiscal_PendenciasDP.txt'
@@ -44,7 +44,7 @@ def extrair_informacoes(pdf_file):
             if omissao_dctfWeb in linha:
                 encontrou_omissao = True
                 omit_found = True  # Define omit_found como True
-                with open(arquivo_saida, 'a', encoding='utf-8') as output_file:
+                with open(arquivo_saida, 'a', encoding='latin1') as output_file:
                     output_file.write('\n' + '-' * 30 + 'INÍCIO' + '-' * 30 + '\n')
                     output_file.write(cnpj + '\n')
                     output_file.write(linha[:31] + '\n')
@@ -54,7 +54,7 @@ def extrair_informacoes(pdf_file):
             if encontrou_omissao:
                 if '_____' in linha:
                     encontrou_omissao = False
-                    with open(arquivo_saida, 'a', encoding='utf-8') as output_file:
+                    with open(arquivo_saida, 'a', encoding='latin1') as output_file:
                         output_file.write('\n' + '-' * 30 + 'FIM' + '-' * 30 + '\n')
                 else:
                     with open(arquivo_saida, 'a', encoding='utf-8') as output_file:
