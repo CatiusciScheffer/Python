@@ -1,0 +1,38 @@
+{
+  "name": "Book Management App",
+  "short_name": "Books",
+  "start_url": "/",
+  "display": "standalone",
+  "display_override": ["fullscreen", "minimal-ui", "browser"],
+  "background_color": "#ffffff",
+  "theme_color": "#5A0EAA",
+  "description": "A simple book management application.",
+  "icons": [
+    {
+      "src": "/static/images/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/images/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+  /*"screenshots": [
+    {
+      "src": "/static/images/screenshot-desktop-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "desktop",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/static/images/screenshot-mobile-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "mobile",
+      "form_factor": "wide"
+    }
+  ]*/
+}

@@ -13,28 +13,38 @@
     src: url('fonts/Venily.otf') format('opentype'),
          url('fonts/Venily.ttf') format('truetype');
 }
-body{
-    background-color: rgb(37, 142, 150);
+/*body{
+    background-color: rgb(175, 151, 192);
     opacity: 1;
-    background-image:  linear-gradient(#ffffff15 1px, transparent 1px), linear-gradient(to right, #ffffff15 1px, rgb(37, 142, 150) 1px);
+    background-image:  linear-gradient(#ffffff1a 1px, transparent 1px), linear-gradient(to right, #ffffff1a 1px, rgb(175, 151, 192) 1px);
+    background-size: 20px 20px;
+}*/
+
+body {
+    background-color: rgba(175, 151, 192);
+    opacity: 1;
+    background-image: radial-gradient(circle, #ffffff11 10%, transparent 20%);
     background-size: 20px 20px;
 }
 
+
 .container{
     margin: 20px 20px;
+    background-color: rgba(82, 42, 110, 0.308);
+    padding: 10px 10px;
 }
 
 .container_inputs_usu {
     border: none; /* Remove a borda */
     outline: none;
     background-color: #ffffff;
-    border-radius: 8px 8px;
+    border-radius: 20px 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100%; /* Ajuste conforme necessário */
-    min-width: 370px;
-    width: 80%;
+    /*min-width: 370px;*/
+    width: 95%;
     padding: 8px;
     font-size: 16px;
 }
