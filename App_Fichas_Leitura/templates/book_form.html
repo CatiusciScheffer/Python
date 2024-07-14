@@ -24,22 +24,24 @@
         <form method="POST">
             <div>
                 <label for="titulo">Título:</label>
-                <input class="container_inputs_usu"  type="text" id="titulo" name="titulo" value="{{ book.titulo if book else '' }}" required><br><br>
+                <input class="container_inputs_usu"  type="text" id="titulo" name="titulo" value="{{ book.titulo if book else '' }}" required>
             </div>    
             
             <label for="autor">Autor:</label>
-            <input class="container_inputs_usu" type="text" id="autor" name="autor" value="{{ book.autor if book else '' }}" required><br><br>
+            <input class="container_inputs_usu" type="text" id="autor" name="autor" value="{{ book.autor if book else '' }}" required>
 
-            <label for="genero">Gênero:</label>
-            <select id="genero" name="genero">
-                <option value="Romance" {% if book and book.genero == 'Romance' %} selected {% endif %}>Romance</option>
-                <option value="Mistério" {% if book and book.genero == 'Mistério' %} selected {% endif %}>Mistério</option>
-                <option value="Fantasia e Ficção Científica" {% if book and book.genero == 'Fantasia e Ficção Científica' %} selected {% endif %}>Fantasia e Ficção Científica</option>
-                <option value="Suspense e Terror" {% if book and book.genero == 'Suspense e Terror' %} selected {% endif %}>Suspense e Terror</option>
-                <option value="Jovem Adulto" {% if book and book.genero == 'Jovem Adulto' %} selected {% endif %}>Jovem Adulto</option>
-            </select><br><br>
+            <div class="container_colum">
+                <label for="genero">Gênero:</label>
+                <select id="genero" name="genero">
+                    <option value="Romance" {% if book and book.genero == 'Romance' %} selected {% endif %}>Romance</option>
+                    <option value="Mistério" {% if book and book.genero == 'Mistério' %} selected {% endif %}>Mistério</option>
+                    <option value="Fantasia e Ficção Científica" {% if book and book.genero == 'Fantasia e Ficção Científica' %} selected {% endif %}>Fantasia e Ficção Científica</option>
+                    <option value="Suspense e Terror" {% if book and book.genero == 'Suspense e Terror' %} selected {% endif %}>Suspense e Terror</option>
+                    <option value="Jovem Adulto" {% if book and book.genero == 'Jovem Adulto' %} selected {% endif %}>Jovem Adulto</option>
+                </select>
+            </div>
 
-            <div>
+            <div class="container_row">
                 <label for="classificacao">Nota:</label>
                 <div class="star-rating">
                     <input type="radio" id="estrela5" name="classificacao" value="5" {% if book and book.classificacao == 5 %} checked {% endif %}>
@@ -55,17 +57,27 @@
                 </div>
             </div>   
 
-            <label for="ebook">E-book:</label>
-            <input type="radio" id="ebook" name="formato" value="ebook" {% if book and book.ebook == 'S' %} checked {% endif %}><br><br>
+            <div class="container_row">
+                <div class="container_column">
+                    <label for="ebook">E-book:</label>
+                    <input type="radio" id="ebook" name="formato" value="ebook" {% if book and book.ebook == 'S' %} checked {% endif %}>
+                </div> 
+                <div class="container_column"></div>       
+                    <label for="fisico">Físico:</label>
+                    <input type="radio" id="fisico" name="formato" value="fisico" {% if book and book.fisico == 'S' %} checked {% endif %}>
+                </div>
+            </div>
 
-            <label for="fisico">Físico:</label>
-            <input type="radio" id="fisico" name="formato" value="fisico" {% if book and book.fisico == 'S' %} checked {% endif %}><br><br>
-
-            <label for="inicio">Data de Início:</label>
-            <input type="date" id="inicio" name="inicio" value="{% if book and book.inicio %}{{ book.inicio.strftime('%Y-%m-%d') }}{% endif %}"><br><br>
-
-            <label for="fim">Data de Fim:</label>
-            <input type="date" id="fim" name="fim" value="{% if book and book.fim %}{{ book.fim.strftime('%Y-%m-%d') }}{% endif %}"><br><br>
+            <div class="container_row">
+                <div class="container_column">
+                    <label for="inicio">Data de Início:</label>
+                    <input type="date" id="inicio" name="inicio" value="{% if book and book.inicio %}{{ book.inicio.strftime('%Y-%m-%d') }}{% endif %}">
+                </div>
+                    <div class="container_column">    
+                    <label for="fim">Data de Fim:</label>
+                    <input type="date" id="fim" name="fim" value="{% if book and book.fim %}{{ book.fim.strftime('%Y-%m-%d') }}{% endif %}">
+                </div>
+            </div>    
 
             <label for="resumo_enredo">Resumo do Enredo:</label>
             <textarea id="resumo_enredo" name="resumo_enredo" rows="5" required>{{ book.resumo_enredo if book else '' }}</textarea><br><br>
