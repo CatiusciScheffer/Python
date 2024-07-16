@@ -1,9 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-import os
+import webview
+
+
 
 app = Flask(__name__)
+
+#window = webview.create_window('List Book', app)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -106,4 +111,5 @@ def delete_book(id):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+        #webview.start()
+    app.run(debug=False)

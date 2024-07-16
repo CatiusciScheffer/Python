@@ -7,7 +7,6 @@
     src: url('fonts/Coffee Spark.otf') format('opentype'),
          url('fonts/Coffee Spark.ttf') format('truetype');
 }
-
 @font-face {
     font-family: 'Venily';
     src: url('fonts/Venily.otf') format('opentype'),
@@ -17,43 +16,42 @@
 body {
     background-color: rgba(175, 151, 192);
     opacity: 1;
-    background-image: radial-gradient(circle, #ffffff11 10%, transparent 20%);
+    background-image: radial-gradient(circle, #ffffff17 10%, transparent 20%);
     background-size: 20px 20px;
     max-width: 480px;
+    margin: 0 auto; /* Centraliza o conteúdo */
+    font-family: Arial, sans-serif; /* Fonte padrão */
+    color: #333; /* Cor do texto padrão */
 }
-
 
 .container{
-    margin: 20px 20px;
+    margin: 20px;
     background-color: rgba(82, 42, 110, 0.308);
-    padding: 10px 10px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.container_inputs_usu {
-    border: none; /* Remove a borda */
-    outline: none;
-    background-color: #ffffff;
-    border-radius: 20px 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%; /* Ajuste conforme necessário */
-    /*min-width: 370px;*/
-    width: 95%;
-    padding: 8px;
-    font-size: 16px;
-}
-
-.container_colum{
+.container_column {
     display: flex;
     flex-direction: column;
     width: 100%;
+    margin-bottom: 15px;
 }
 
-.container_row{
+.container_row {
     display: flex;
     flex-direction: row;
-    justify-content:space-evenly;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.input_g {
+    width: 95%;
+}
+
+.input_p {
+    width: 60%;
 }
 
 .star-rating {
@@ -90,16 +88,32 @@ button {
     align-self: flex-end;
 }
 
-h1{
+h1 {
     font-family: 'Venily';
     color: rgb(255, 255, 255);
     font-size: 48px;
+    text-align: center;
+    margin-bottom: 20px;
 }
+
 a:hover {
     text-decoration: underline;
 }
-label{
+
+label {
     font-family: 'Venily';
     color: rgb(255, 255, 255);
     font-size: 18px;
+    margin-bottom: 5px;
 }
+
+input {
+    border: none;
+    outline: none;
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
