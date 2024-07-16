@@ -43,8 +43,8 @@
                 </select>
             </div>
 
-            <div class="container_row">
-                <label for="classificacao">Nota:</label>
+            <div class="container_column">
+                <label class="align_centro" for="classificacao">Nota:</label>
                 <div class="star-rating">
                     <input type="radio" id="estrela5" name="classificacao" value="5" {% if book and book.classificacao == 5 %} checked {% endif %}>
                     <label for="estrela5">&#9829;</label>
@@ -57,25 +57,27 @@
                     <input type="radio" id="estrela1" name="classificacao" value="1" {% if book and book.classificacao == 1 %} checked {% endif %}>
                     <label for="estrela1">&#9829;</label>
                 </div>
-            </div>   
-
-            <div class="container_row">
-                <div class="container_column">
-                    <label for="ebook">E-book:</label>
-                    <input type="radio" id="ebook" name="formato" value="ebook" {% if book and book.ebook == 'S' %} checked {% endif %}>
-                </div> 
-                <div class="container_column">      
-                    <label for="fisico">Físico:</label>
-                    <input type="radio" id="fisico" name="formato" value="fisico" {% if book and book.fisico == 'S' %} checked {% endif %}>
-                </div>
             </div>
 
+            
             <div class="container_row">
-                <div class="container_column">
+                <div class="container_column align_centro">
+                    <label for="ebook">E-book:</label>
+                    <input class="input_g" type="radio" id="ebook" name="formato" value="ebook" {% if book and book.ebook == 'S' %} checked {% endif %}>
+                </div> 
+                <div class="container_column align_centro">      
+                    <label for="fisico">Físico:</label>
+                    <input class="input_g" type="radio" id="fisico" name="formato" value="fisico" {% if book and book.fisico == 'S' %} checked {% endif %}>
+                </div>
+            </div>
+            
+
+            <div class="container_row">
+                <div class="container_column align_centro">
                     <label for="inicio">Data de Início:</label>
                     <input class="input_p" type="date" id="inicio" name="inicio" value="{% if book and book.inicio %}{{ book.inicio.strftime('%Y-%m-%d') }}{% endif %}">
                 </div>
-                <div class="container_column">    
+                <div class="container_column align_centro">    
                     <label for="fim">Data de Fim:</label>
                     <input class="input_p" type="date" id="fim" name="fim" value="{% if book and book.fim %}{{ book.fim.strftime('%Y-%m-%d') }}{% endif %}">
                 </div>

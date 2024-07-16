@@ -54,6 +54,11 @@ body {
     width: 60%;
 }
 
+.align_centro {
+    align-items: center;
+    text-align: center;
+}
+
 .star-rating {
     display: flex;
     flex-direction: row-reverse;
@@ -63,8 +68,8 @@ body {
     display: none;
 }
 .star-rating label {
-    font-size: 2rem;
-    color: #ddd;
+    font-size: 3rem;
+    color: #fff;
     cursor: pointer;
 }
 
@@ -111,9 +116,34 @@ input {
     border: none;
     outline: none;
     background-color: #ffffff;
-    border-radius: 20px;
+    border-radius: 5px;
+    padding: 8px;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+select {
+    border: none;
+    outline: none;
+    background-color: #ffffff;
+    border-radius: 5px;
+    padding: 8px;
+    font-size: 16px;
+    margin-bottom: 15px; 
+}
+
+textarea {
+    border: none;
+    outline: none;
+    background-color: #ffffff;
+    border-radius: 5px;
     padding: 10px;
     font-size: 16px;
     margin-bottom: 15px;
 }
 
+button {
+    border: #fff;
+    border-width: 2px;
+    color: rgb(252, 108, 98);
+}
