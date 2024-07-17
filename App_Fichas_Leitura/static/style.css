@@ -75,22 +75,11 @@ body {
 
 .star-rating input[type="radio"]:checked ~ label,
 .star-rating input[type="radio"]:checked ~ label ~ label {
-    color: #f5b301;
+    color: #f3d541;
 }
 .star-rating input[type="radio"]:hover ~ label,
 .star-rating input[type="radio"]:hover ~ label ~ label {
-    color: #f5b301;
-}
-
-button {
-    background-color: #ffca08;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    align-self: flex-end;
+    color: #f3d541;
 }
 
 h1 {
@@ -102,7 +91,7 @@ h1 {
 }
 
 a:hover {
-    text-decoration: underline;
+    text-decoration: none; /*underline;*/
 }
 
 label {
@@ -143,7 +132,35 @@ textarea {
 }
 
 button {
-    border: #fff;
-    border-width: 2px;
-    color: rgb(252, 108, 98);
+    width: 100px; /* Largura do botão */
+    height: 50px; /* Altura do botão */
+    background-color: rgba(82, 42, 110, 0.678); /* Cor de fundo */
+    color: #fff; /* Cor do texto */
+    border-radius: 50%; /* Torna o botão redondo */
+    border: none;
+    font-family: 'Venily';
+    font-size: 20px;
+    display: flex; /* Centraliza o texto */
+    justify-content: center; /* Centraliza o texto horizontalmente */
+    align-items: center; /* Centraliza o texto verticalmente */
+    text-align: center; /* Centraliza o texto */
+    cursor: pointer; /* Mostra o cursor de mão ao passar o mouse */
+            
+}
+
+.botao-link {
+    width: 100px; 
+    height: 50px; 
+    background-color: rgb(146,190,27);/*rgba(82, 42, 110, 0.678); */
+    color: #fff;
+    border-radius: 50%;
+    border: none;
+    font-family: 'Venily', sans-serif; /* Fonte personalizada */
+    font-size: 20px;
+    display: flex; /* Flexbox para centralizar */
+    align-items: center; /* Centraliza verticalmente */
+    justify-content: center; /* Centraliza horizontalmente */
+    text-align: center; /* Centraliza o texto */
+    cursor: pointer; /* Mostra o cursor de mão ao passar o mouse */
+    text-decoration: none;
 }

@@ -34,13 +34,7 @@
 
             <div class="container_column">
                 <label for="genero">Gênero:</label>
-                <select id="genero" name="genero">
-                    <option value="Romance" {% if book and book.genero == 'Romance' %} selected {% endif %}>Romance</option>
-                    <option value="Mistério" {% if book and book.genero == 'Mistério' %} selected {% endif %}>Mistério</option>
-                    <option value="Fantasia e Ficção Científica" {% if book and book.genero == 'Fantasia e Ficção Científica' %} selected {% endif %}>Fantasia e Ficção Científica</option>
-                    <option value="Suspense e Terror" {% if book and book.genero == 'Suspense e Terror' %} selected {% endif %}>Suspense e Terror</option>
-                    <option value="Jovem Adulto" {% if book and book.genero == 'Jovem Adulto' %} selected {% endif %}>Jovem Adulto</option>
-                </select>
+                <input class="input_g" type="text" id="genero" name="genero" value="{{ book.genero if book else '' }}" required>
             </div>
 
             <div class="container_column">
@@ -118,8 +112,11 @@
                 <textarea id="analise" name="analise" rows="5" required>{{ book.analise if book else '' }}</textarea>
             </div>
 
-            <button type="submit">Salvar</button>
-            <a href="{{ url_for('index') }}">Voltar</a>
+            <div class="container_row">
+                <button type="submit">Salvar</button>
+                <a href="{{ url_for('index') }}" class="botao-link">Voltar</a>
+            </div>
+
         </form>
     </div> <!-- Fim do container -->
 </body>
