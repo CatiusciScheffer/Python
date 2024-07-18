@@ -114,10 +114,17 @@
 
             <div class="container_row">
                 <button type="submit">Salvar</button>
+
+                <!-- Formulário de exclusão -->
                 <a href="{{ url_for('index') }}" class="botao-link">Voltar</a>
             </div>
 
         </form>
+
+        <form action="{{ url_for('delete_book', id=book.id) }}" method="post" style="display: inline;">
+            <button type="submit">Excluir</button>
+        </form>
+        
     </div> <!-- Fim do container -->
 </body>
 </html>

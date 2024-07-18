@@ -17,21 +17,33 @@
         });
     }
     </script>
-
 </head>
 <body>
     <h1>Minhas Leituras</h1>
-    <ul>
-        {% for book in books %}
-            <li onclick="editBook({{ book.id }})">
-                <strong>{{ book.titulo }}</strong> por {{ book.autor }}
-                <!-- Formulário de exclusão -->
-                <form action="{{ url_for('delete_book', id=book.id) }}" method="post" style="display: inline;">
-                    <button type="submit">Excluir</button>
-                </form>
-            </li>
-        {% endfor %}
-    </ul>
+    <table>
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Classificação</th>
+                <th>Início</th>
+                <th>Fim</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+                <tr>
+                    <td onclick="editBook({{ book.id }})">{{ book.titulo }}</td>
+                    <td class="classificacao">
+                        {% for i in range(book.classificacao) %}
+                            &#9829;
+                        {% endfor %}
+                    </td>
+                    <td class="align_centro">{{ book.inicio.strftime('%d/%m/%Y') if book.inicio else '' }}</td>
+                    <td class="align_centro">{{ book.fim.strftime('%d/%m/%Y') if book.fim else '' }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     <a href="{{ url_for('add_book') }}">Adicionar Livro</a>
 
      <!-- Referência ao arquivo JavaScript -->
@@ -39,3 +51,5 @@
 
 </body>
 </html>
+
+

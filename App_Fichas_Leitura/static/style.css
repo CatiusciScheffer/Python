@@ -13,6 +13,11 @@
          url('fonts/Venily.ttf') format('truetype');
 }
 
+@font-face {
+    font-family: 'Kinder-Child';
+    src: url('fonts/Kinder-Child.ttf') format('truetype');
+}
+
 body {
     background-color: rgba(175, 151, 192);
     opacity: 1;
@@ -20,7 +25,8 @@ body {
     background-size: 20px 20px;
     max-width: 480px;
     margin: 0 auto; /* Centraliza o conteúdo */
-    font-family: Arial, sans-serif; /* Fonte padrão */
+    font-family: 'Kinder-Child';
+    font-weight: lighter;
     color: #333; /* Cor do texto padrão */
 }
 
@@ -69,7 +75,7 @@ body {
 }
 .star-rating label {
     font-size: 3rem;
-    color: #fff;
+    color:  seashell;
     cursor: pointer;
 }
 
@@ -82,9 +88,13 @@ body {
     color: #f3d541;
 }
 
+.classificacao {
+    color: #f3d541;
+    font-size: 23px;
+}
+
 h1 {
-    font-family: 'Venily';
-    color: rgb(255, 255, 255);
+    color:  seashell;;
     font-size: 48px;
     text-align: center;
     margin-bottom: 20px;
@@ -95,8 +105,7 @@ a:hover {
 }
 
 label {
-    font-family: 'Venily';
-    color: rgb(255, 255, 255);
+    color:  seashell;
     font-size: 18px;
     margin-bottom: 5px;
 }
@@ -104,17 +113,18 @@ label {
 input {
     border: none;
     outline: none;
-    background-color: #ffffff;
+    background-color: seashell;
     border-radius: 5px;
     padding: 8px;
-    font-size: 16px;
+    font-size: 14px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     margin-bottom: 15px;
 }
 
 select {
     border: none;
     outline: none;
-    background-color: #ffffff;
+    background-color: seashell;
     border-radius: 5px;
     padding: 8px;
     font-size: 16px;
@@ -124,38 +134,37 @@ select {
 textarea {
     border: none;
     outline: none;
-    background-color: #ffffff;
+    background-color: seashell;
     border-radius: 5px;
     padding: 10px;
     font-size: 16px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     margin-bottom: 15px;
 }
 
 button {
-    width: 100px; /* Largura do botão */
-    height: 50px; /* Altura do botão */
+    width: 90px; /* Largura do botão */
+    height: 45px; /* Altura do botão */
     background-color: rgba(82, 42, 110, 0.678); /* Cor de fundo */
-    color: #fff; /* Cor do texto */
+    color:  seashell;
     border-radius: 50%; /* Torna o botão redondo */
     border: none;
-    font-family: 'Venily';
+    font-family: 'Kinder-Child';
     font-size: 20px;
     display: flex; /* Centraliza o texto */
     justify-content: center; /* Centraliza o texto horizontalmente */
     align-items: center; /* Centraliza o texto verticalmente */
     text-align: center; /* Centraliza o texto */
-    cursor: pointer; /* Mostra o cursor de mão ao passar o mouse */
-            
+    cursor: pointer;             
 }
 
 .botao-link {
-    width: 100px; 
-    height: 50px; 
+    width: 90px; 
+    height: 45px; 
     background-color: rgb(146,190,27);/*rgba(82, 42, 110, 0.678); */
-    color: #fff;
+    color:  seashell;
     border-radius: 50%;
     border: none;
-    font-family: 'Venily', sans-serif; /* Fonte personalizada */
     font-size: 20px;
     display: flex; /* Flexbox para centralizar */
     align-items: center; /* Centraliza verticalmente */
@@ -163,4 +172,26 @@ button {
     text-align: center; /* Centraliza o texto */
     cursor: pointer; /* Mostra o cursor de mão ao passar o mouse */
     text-decoration: none;
+}
+
+
+/*.....................Página Index ............................*/
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 4px solid rgba(175, 151, 192);
+    padding: 8px;
+    text-align: left;
+    background-color: rgba(82, 42, 110, 0.308);
+}
+
+th {
+    background-color: rgba(82, 42, 110, 0.678);    
+    text-align: center;
+    font-size: 18px;
+    color:  seashell;
 }
