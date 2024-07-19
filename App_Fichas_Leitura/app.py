@@ -7,7 +7,7 @@ import webview
 
 app = Flask(__name__)
 
-#window = webview.create_window('List Book', app)
+window = webview.create_window('List Book', app) #converter o app para desktop
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -111,5 +111,5 @@ def delete_book(id):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-        #webview.start()
+        webview.start() #converter o app para desktop
     app.run(debug=False)

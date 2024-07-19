@@ -49,7 +49,7 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .input_g {
@@ -94,14 +94,20 @@ body {
 }
 
 h1 {
-    color:  seashell;;
+    margin: 0px 0px 0px 10px;
+    padding: 0;
+    display: flex; /* Define Flexbox */
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+    margin-top: 10px;
+    color:  seashell;
     font-size: 48px;
-    text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
+    margin-top: 10px;
 }
 
 a:hover {
-    text-decoration: none; /*underline;*/
+    text-decoration: none;
 }
 
 label {
@@ -142,7 +148,12 @@ textarea {
     margin-bottom: 15px;
 }
 
-button {
+a {
+    text-decoration: none;
+    margin-top: 10px;
+}
+
+.botao-salvar {
     width: 90px; /* Largura do botão */
     height: 45px; /* Altura do botão */
     background-color: rgba(82, 42, 110, 0.678); /* Cor de fundo */
@@ -158,10 +169,10 @@ button {
     cursor: pointer;             
 }
 
-.botao-link {
+.botao-voltar {
     width: 90px; 
     height: 45px; 
-    background-color: rgb(146,190,27);/*rgba(82, 42, 110, 0.678); */
+    background-color: rgb(146,190,27);
     color:  seashell;
     border-radius: 50%;
     border: none;
@@ -174,6 +185,36 @@ button {
     text-decoration: none;
 }
 
+.botao-excluir {
+    display: flex; /* Flexbox para centralizar */
+    align-items: left; /* Centraliza verticalmente */
+    justify-content: left; /* Centraliza horizontalmente */
+    text-align: left; /* Centraliza o texto */
+    cursor: pointer; /* Mostra o cursor de mão ao passar o mouse */ 
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.botao-adicionar {
+    margin: 0;
+    padding: 0;
+    display: flex; /* Define Flexbox */
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center;
+    margin-top: 10px;
+}
+
+.tm_img_excluir {
+    width: 30px;
+    height: auto;
+}
+
+.tm_img_adicionar {
+    width: 40px;
+    height: auto;
+}
 
 /*.....................Página Index ............................*/
 
@@ -194,4 +235,10 @@ th {
     text-align: center;
     font-size: 18px;
     color:  seashell;
+}
+
+.td_backgroun_trans {
+    /*background-color: transparent;*/
+    padding: 0; 
+    margin: 0;
 }
