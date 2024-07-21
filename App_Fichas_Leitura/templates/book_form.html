@@ -53,18 +53,19 @@
                 </div>
             </div>
 
-            
-            <div class="container_row">
-                <div class="container_column align_centro">
-                    <label for="ebook">E-book:</label>
-                    <input class="input_g" type="radio" id="ebook" name="formato" value="ebook" {% if book and book.ebook == 'S' %} checked {% endif %}>
-                </div> 
-                <div class="container_column align_centro">      
-                    <label for="fisico">Físico:</label>
-                    <input class="input_g" type="radio" id="fisico" name="formato" value="fisico" {% if book and book.fisico == 'S' %} checked {% endif %}>
+            <fieldset>
+                <legend>Formato do Livro</legend>
+                <div class="container_row">
+                    <div class="container_row align_centro">
+                        <input class="input_g" type="radio" id="ebook" name="formato" value="ebook" {% if book and book.ebook == 'S' %} checked {% endif %}>
+                        <label for="ebook">Ebook</label>
+                    </div> 
+                    <div class="container_row align_centro">      
+                        <input class="input_g" type="radio" id="fisico" name="formato" value="fisico" {% if book and book.fisico == 'S' %} checked {% endif %}>
+                        <label for="fisico">Físico</label>
+                    </div>
                 </div>
-            </div>
-            
+            </fieldset>
 
             <div class="container_row">
                 <div class="container_column align_centro">
@@ -116,11 +117,7 @@
                 <button class="botao-salvar" type="submit">Salvar</button>
                 <a href="{{ url_for('index') }}" class="botao-voltar">Voltar</a>
             </div>
-
         </form>
-
-        
-        
-    </div> <!-- Fim do container -->
+    </div>
 </body>
 </html>
