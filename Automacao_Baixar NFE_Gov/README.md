@@ -1,59 +1,74 @@
-<h1>Automação Download XML NFSE Emissor Nacional</h1>
+# Automatização de Download de Notas Fiscais
 
-- [Repositório no GitHub](https://www.linkedin.com/in/catiuscipagnonceli-cienciasdacomputacao/)
+Este script automatiza o processo de login e download de notas fiscais do site da NFSe. Ele permite que o usuário defina um intervalo de datas para pesquisar as notas, faça o login no site com CNPJ e senha, e faça o download das notas fiscais no formato XML.
 
-<h2>Objetivo do programa:</h2>
+## Funcionalidades
 
-Este programa foi desenvolvido para atender às necessidades dos escritórios de contabilidade, facilitando a importação automatizada de XMLs de notas fiscais emitidas pelos clientes. A automação agiliza o processo de download dos XMLs do portal "Emissor Nacional".
+* Login automático em um site de emissão de notas fiscais.
+* Pesquisa de notas fiscais dentro de um intervalo de datas definido pelo usuário.
+* Download automático de notas fiscais e movimentação dos arquivos para uma pasta escolhida.
+* Geração de um relatório com o status do download.
 
-O programa percorre todas as páginas com a lista de notas, fazendo o download apenas das notas que correspondem ao período especificado pelo usuário. Um relatório em formato txt é gerado, incluindo a lista de todas as notas no portal, indicando quais foram baixadas.
+## Requisitos
 
-Caso esteja vendo isso e precise de ajuda ou queira alguma automação para ganhar tempo no seu dia a dia basta me contactar:
+* Python 3.x
+* Selenium
+* WebDriver Manager
+* Pandas
+* Tkinter (para a interface gráfica)
+* `appdirs` (para gerenciar diretórios de perfil do Chrome)
 
-- [Contato Linkedin](https://www.linkedin.com/in/catiuscipagnonceli-cienciasdacomputacao/)
+## Instalação
 
-<h4>Instruções de Instalação e Uso:</h4>
+1. Clone o repositório:
+   <pre><div class="dark bg-gray-950 rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>bash</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-bash">git clone https://github.com/CatiusciScheffer/Python/tree/main/Automacao_Baixar%20NFE_Gov
+   </code></div></div></pre>
+2. Acesse o diretório do projeto:
+   <pre><div class="dark bg-gray-950 rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>bash</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-bash">cd automacao-notas-fiscais
+   </code></div></div></pre>
+3. Instale os pacotes necessários:
+   <pre><div class="dark bg-gray-950 rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>bash</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-bash">pip install selenium webdriver-manager pandas appdirs
+   </code></div></div></pre>
 
-1. Salve a pasta chamada "Profile Selenium" na pasta do usuário que executará o sistema. O caminho completo seria: AppData\Local\Google\Chrome\User Data.
-   * [Link para baixar a pasta "Profile Selenium"](https://github.com/CatiusciScheffer/Python/tree/19ba4b7dbd10b0c7ec3673f2d9cf61352924489f/Automacao_Baixar%20NFE_Gov/Profile%20Selenium)
-  
-2. Salve o arquivo executável da pasta "exe" em qualquer local desejado e execute-o.
-   * [Link para baixar o arquivo executável](https://github.com/CatiusciScheffer/Python/tree/19ba4b7dbd10b0c7ec3673f2d9cf61352924489f/Automacao_Baixar%20NFE_Gov/exe)
- >`  `  
-   ![escolher "proteção padrão"](./img/tela_sist_download.png)
-   <br>
+## Configuração
 
+1. **Perfil do Chrome** : Certifique-se de que o perfil do Chrome usado para login está configurado corretamente. O caminho padrão para o perfil do Chrome é gerado automaticamente, mas você pode ajustar conforme necessário.
+2. **Planilha de Notas** : O script faz uso de uma planilha Excel (`AVISO_FGTS.xlsx`) para obter informações sobre os contatos e mensagens.
 
-3. Preencha os dados acima com os mesmos dados de acesso ao portal "Emissor Nacional" CNPJ, SENHA e especifique o período desejado para o download dos XMLs (por exemplo, de início a partir de 1/2/2024 até 29/2/2024).
+## Uso
 
-4. Clique no botão **"SALVAR EM"** para definir o local de salvamento dos XMLs das notas de serviço.
+1. Execute o script principal:
+   <pre><div class="dark bg-gray-950 rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>bash</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-bash">python script_principal.py
+   </code></div></div></pre>
+2. Uma interface gráfica será exibida solicitando as seguintes informações:
+   * **CNPJ** : O CNPJ usado para login.
+   * **SENHA** : A senha de login.
+   * **DATA DE INÍCIO (dd/mm/yyyy)** : Data inicial para a pesquisa de notas fiscais.
+   * **DATA FIM (dd/mm/yyyy)** : Data final para a pesquisa de notas fiscais.
+   * **SALVAR EM** : A pasta onde os arquivos baixados serão salvos.
+3. O script abrirá uma janela do navegador, fará login no site, buscará as notas fiscais e fará o download conforme as datas especificadas.
 
-5. Por fim, clique em **"COMEÇAR DOWNLOAD"**.
+## Funcionalidades do Script
 
-<h4>Durante a primeira execução, siga estes passos adicionais:</h4>
+* **Interface Gráfica** : Usando Tkinter, o usuário pode inserir as datas de pesquisa e escolher a pasta de destino.
+* **Login Automatizado** : O script faz login no site de notas fiscais usando o CNPJ e senha fornecidos.
+* **Pesquisa e Download** : As notas fiscais são pesquisadas dentro do intervalo de datas e baixadas automaticamente.
+* **Relatório** : Um arquivo de relatório é gerado para registrar o status do download.
+* **Movimentação dos Arquivos** : Os arquivos baixados são movidos para a pasta selecionada pelo usuário.
 
->Nas demais execuções basta executar o arquivo .exe que foi salvo preenchendo os dados e o programa fará os downloads conforme parametros que o usuário passar. Caso as instruções abaixo não sejam feitas o Download poderá ser bloqueado pelo Chrome ou a cada XML será solicitado local para salvar.
+## Estrutura do Projeto
 
-* Nesta página do Chrome que abriu, enquanto o programa vai rodando será necessário **apenas na primeira execução** clicar em **![imagem de onde clicar](./img/conf.png)** da barra de navegação e configurar a segurança do Chrome da seguinte maneira:
-<br>
->`  `
->![clicar nos três pontinhos"](./img/tela_conf.png)
-<br>
+* `script_principal.py`: Script principal que contém a lógica de automação e interface gráfica.
+* `window_parametros.py`: Módulo com a função para obter parâmetros do usuário através da interface gráfica.
 
->`  `
-![escolher a opção "configurações"](./img/configur.png)
-<br>
+## Exemplo de Relatório
 
->`  `
-![clicar em "privacidade e segurança"](./img/priv.png)
-<br>
+O relatório gerado será salvo na pasta de downloads padrão e conterá informações sobre as notas baixadas e o status do processo.
 
->`  `
-![clicar em "segurança"](./img/seg.png)
-<br>
+## Contribuições
 
->`  `
-![escolher "proteção padrão"](./img/nav_padrao.png)
-<br>
+Contribuições são bem-vindas! Se você tiver sugestões ou encontrar problemas, sinta-se à vontade para abrir uma *issue* ou enviar um  *pull request* .
 
-* Verifique se a pasta padrão para Download definida é a pasta "Downloads", se não for, configure para que seja.
+## Licença
+
+Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE]() para detalhes.
