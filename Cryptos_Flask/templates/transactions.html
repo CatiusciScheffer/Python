@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transações</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Transações</h1>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#addTransactionModal">Adicionar Transação</button>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Cripto</th>
+                    <th>Quantidade</th>
+                    <th>Preço</th>
+                    <th>Taxa</th>
+                    <th>Data</th>
+                    <th>Destino</th>
+                    <th>Origem</th>
+                    <th>Tipo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transacao in transacoes %}
+                <tr>
+                    <td>{{ transacao.cripto_name }}</td>
+                    <td>{{ "{:.10f}".format(transacao.quantidade) }}</td>
+                    <td>{{ "{:.10f}".format(transacao.preco) }}</td>
+                    <td>
+                        {% if transacao.taxa is not none %}
+                            {{ "{:.10f}".format(transacao.taxa) }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>{{ transacao.date }}</td>
+                    <td>
+                        {% for carteira in carteiras %}
+                            {% if carteira.id_carteira == transacao.destino %}
+                                {{ carteira.carteira_nome }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for carteira in carteiras %}
+                            {% if carteira.id_carteira == transacao.origem %}
+                                {{ carteira.carteira_nome }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{{ transacao.tipo_transacao }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addTransactionModalLabel">Adicionar Transação</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('add_transaction') }}" method="POST">
+                        <div class="form-group">
+                            <label for="cripto_name">Cripto</label>
+                            <input type="text" class="form-control" id="cripto_name" name="cripto_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantidade">Quantidade</label>
+                            <input type="number" step="0.01" class="form-control" id="quantidade" name="quantidade" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="preco">Preço</label>
+                            <input type="number" step="0.01" class="form-control" id="preco" name="preco" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="taxa">Taxa</label>
+                            <input type="number" step="0.01" class="form-control" id="taxa" name="taxa">
+                        </div>
+                        <div class="form-group">
+                            <label for="date">Data</label>
+                            <input type="date" class="form-control" id="date" name="date" required>
+                        </div class="form-group">
+                        <div class="form-group">
+                            <label for="origem">Origem</label>
+                            <select class="form-control" id="origem" name="origem">
+                                {% for carteira in carteiras %}
+                                <option value="{{ carteira.id_carteira }}">{{ carteira.carteira_nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="destino">Destino</label>
+                            <select class="form-control" id="destino" name="destino">
+                                {% for carteira in carteiras %}
+                                <option value="{{ carteira.id_carteira }}">{{ carteira.carteira_nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipo_transacao">Tipo de Transação</label>
+                            <select class="form-control" id="tipo_transacao" name="tipo_transacao" required>
+                                <option value="Compra">Compra</option>
+                                <option value="Venda">Venda</option>
+                                <option value="Transferência">Transferência</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Adicionar Transação</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

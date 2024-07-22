@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carteiras</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Carteiras</h1>
+        <form method="GET" action="{{ url_for('carteiras') }}">
+            <div class="form-group">
+                <label for="carteira">Selecionar Carteira</label>
+                <select class="form-control" id="carteira" name="carteira">
+                    {% for carteira in carteiras %}
+                    <option value="{{ carteira.id_carteira }}">{{ carteira.carteira_nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </form>
+        <div class="mt-4">
+            {% if carteira_selecionada %}
+            <h2>{{ carteira_selecionada.carteira_nome }}</h2>
+            <p>Saldo: {{ saldo }}</p>
+            <button class="btn btn-danger">Excluir Carteira</button>
+            {% endif %}
+            <button class="btn btn-primary" data-toggle="modal" data-target="#addWalletModal">Adicionar Carteira</button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="addWalletModal" tabindex="-1" aria-labelledby="addWalletModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addWalletModalLabel">Adicionar Carteira</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('add_wallet') }}" method="POST">
+                        <div class="form-group">
+                            <label for="carteira_nome">Nome da Carteira</label>
+                            <input type="text" class="form-control" id="carteira_nome" name="carteira_nome" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Adicionar Carteira</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
