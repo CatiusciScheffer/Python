@@ -18,10 +18,10 @@
                 </tr>
             </thead>
             <tbody>
-                {% for cripto in moedas %}
+                {% for cryptocurrencies in moedas %}
                 <tr>
-                    <td>{{ cripto.cripto_name }}</td>
-                    <td>{{ cripto.cripto_apelido }}</td>
+                    <td>{{ cryptocurrencies.name }}</td>
+                    <td>{{ cryptocurrencies.symbol }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -42,11 +42,11 @@
                     <form action="{{ url_for('add_crypto') }}" method="POST">
                         <div class="form-group">
                             <label for="cripto_name">Nome</label>
-                            <input type="text" class="form-control" id="cripto_name" name="cripto_name" required>
+                            <input type="text" class="form-control" id="cripto_name" name="name" required>
                         </div>
                         <div class="form-group">
                             <label for="cripto_apelido">Apelido</label>
-                            <input type="text" class="form-control" id="cripto_apelido" name="cripto_apelido" required>
+                            <input type="text" class="form-control" id="cripto_apelido" name="symbol" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Adicionar Moeda</button>
                     </form>

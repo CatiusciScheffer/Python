@@ -1,45 +1,56 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 
 db = SQLAlchemy()
 
-class Transacao(db.Model):
-    id_trans = db.Column(db.Integer, primary_key=True)
-    cripto_name = db.Column(db.String(50), nullable=False)
-    quantidade = db.Column(db.Numeric(precision=20, scale=10), nullable=False)
-    preco = db.Column(db.Numeric(precision=20, scale=10), nullable=False)
-    taxa = db.Column(db.Numeric(precision=20, scale=10))
-    date = db.Column(db.Date, nullable=False)
-    # Definindo as chaves estrangeiras corretamente
-    destino_id = db.Column(db.Integer, db.ForeignKey('carteira.id_carteira'), nullable=False)
-    origem_id = db.Column(db.Integer, db.ForeignKey('carteira.id_carteira'), nullable=False)
-    tipo_transacao = db.Column(db.String(50), nullable=False)
-
-    # Relacionamento com a tabela Carteira
-    destino = db.relationship('Carteira', foreign_keys=[destino_id], backref='transacoes_destino')
-    origem = db.relationship('Carteira', foreign_keys=[origem_id], backref='transacoes_origem')
-
-class Carteira(db.Model):
-    id_carteira = db.Column(db.Integer, primary_key=True)
-    carteira_nome = db.Column(db.String(50), nullable=False)
-    saldos = db.relationship('CarteiraSaldo', back_populates='carteira', lazy=True)
-
-class Cripto(db.Model):
-    id_cripto = db.Column(db.Integer, primary_key=True)
-    cripto_name = db.Column(db.String(80), nullable=False)
-    cripto_apelido = db.Column(db.String(80), nullable=False)
-    saldos = db.relationship('CarteiraSaldo', back_populates='cripto', lazy=True)
-
-class CarteiraSaldo(db.Model):
-    id_saldo = db.Column(db.Integer, primary_key=True)
-    carteira_id = db.Column(db.Integer, db.ForeignKey('carteira.id_carteira'), nullable=False)
-    cripto_id = db.Column(db.Integer, db.ForeignKey('cripto.id_cripto'), nullable=False)
-    saldo = db.Column(db.Float, nullable=False, default=0.0)
-
-    carteira = db.relationship('Carteira', back_populates='saldos')
-    cripto = db.relationship('Cripto', back_populates='saldos')
-
-class CryptoPrice(db.Model):
+class User(db.Model):
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    price = db.Column(db.Numeric(precision=20, scale=10), nullable=False)
+    username = db.Column(db.String, unique=True, nullable=False)
+    email = db.Column(db.String, unique=True, nullable=False)
+    password_hash = db.Column(db.String, nullable=False)
+    wallets = db.relationship('Wallet', backref='user', lazy=True)
+
+class Wallet(db.Model):
+    __tablename__ = 'wallets'  # Corrigido aqui para 'wallets'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    name = db.Column(db.String, nullable=False)
+    network = db.Column(db.String, nullable=False)
+    balances = db.relationship('WalletBalance', backref='wallet', lazy=True)
+
+class Cryptocurrency(db.Model):
+    __tablename__ = 'cryptocurrencies'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True, nullable=False)
+    symbol = db.Column(db.String, unique=True, nullable=False)
+
+class WalletBalance(db.Model):
+    __tablename__ = 'wallet_balances'
+    id = db.Column(db.Integer, primary_key=True)
+    wallet_id = db.Column(db.Integer, db.ForeignKey('wallets.id'), nullable=False)
+    cryptocurrency_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.id'), nullable=False)
+    balance = db.Column(db.Float, nullable=False)
+
+class Transaction(db.Model):
+    __tablename__ = 'transactions'
+    id = db.Column(db.Integer, primary_key=True)
+    wallet_id = db.Column(db.Integer, db.ForeignKey('wallets.id'), nullable=False)
+    wallet = db.relationship('Wallet', backref='transactions')  # Adicionando o relacionamento com Wallet
+    type = db.Column(db.String, nullable=False)
+    cryptocurrency_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.id'), nullable=False)
+    cryptocurrency = db.relationship('Cryptocurrency', foreign_keys=[cryptocurrency_id])
+    amount = db.Column(db.Float, nullable=False)
+    fee_cryptocurrency_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.id'), nullable=False)
+    fee_cryptocurrency = db.relationship('Cryptocurrency', foreign_keys=[fee_cryptocurrency_id])
+    fee_amount = db.Column(db.Float, nullable=False)
+    date = db.Column(db.String, nullable=False)
+
+
+class Price(db.Model):
+    __tablename__ = 'prices'
+    id = db.Column(db.Integer, primary_key=True)
+    cryptocurrency_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.id'), nullable=False)
+    cryptocurrency = db.relationship('Cryptocurrency')  # Adicione isso
+    price = db.Column(db.Float, nullable=False)
+    timestamp = db.Column(db.String, nullable=False)
+
