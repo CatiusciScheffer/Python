@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 4df7fec12f98
+Revision ID: d7607dcfc412
 Revises: 
-Create Date: 2024-07-27 17:43:14.810108
+Create Date: 2024-07-28 18:59:37.566114
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '4df7fec12f98'
+revision = 'd7607dcfc412'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -59,9 +59,11 @@ def upgrade():
     sa.Column('amount', sa.Float(), nullable=False),
     sa.Column('fee_cryptocurrency_id', sa.Integer(), nullable=False),
     sa.Column('fee_amount', sa.Float(), nullable=False),
-    sa.Column('date', sa.String(), nullable=False),
+    sa.Column('date', sa.DateTime(), nullable=False),
+    sa.Column('receiving_wallet_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['cryptocurrency_id'], ['cryptocurrencies.id'], ),
     sa.ForeignKeyConstraint(['fee_cryptocurrency_id'], ['cryptocurrencies.id'], ),
+    sa.ForeignKeyConstraint(['receiving_wallet_id'], ['wallets.id'], ),
     sa.ForeignKeyConstraint(['wallet_id'], ['wallets.id'], ),
     sa.PrimaryKeyConstraint('id')
     )

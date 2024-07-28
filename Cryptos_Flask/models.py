@@ -33,17 +33,28 @@ class WalletBalance(db.Model):
 
 class Transaction(db.Model):
     __tablename__ = 'transactions'
+    
     id = db.Column(db.Integer, primary_key=True)
+    
     wallet_id = db.Column(db.Integer, db.ForeignKey('wallets.id'), nullable=False)
-    wallet = db.relationship('Wallet', backref='transactions')  # Adicionando o relacionamento com Wallet
+    wallet = db.relationship('Wallet', foreign_keys=[wallet_id], backref='transactions')
+    
     type = db.Column(db.String, nullable=False)
+    
     cryptocurrency_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.id'), nullable=False)
     cryptocurrency = db.relationship('Cryptocurrency', foreign_keys=[cryptocurrency_id])
+    
     amount = db.Column(db.Float, nullable=False)
+    
     fee_cryptocurrency_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.id'), nullable=False)
     fee_cryptocurrency = db.relationship('Cryptocurrency', foreign_keys=[fee_cryptocurrency_id])
+    
     fee_amount = db.Column(db.Float, nullable=False)
-    date = db.Column(db.String, nullable=False)
+    
+    date = db.Column(db.DateTime, nullable=False)
+    
+    receiving_wallet_id = db.Column(db.Integer, db.ForeignKey('wallets.id'), nullable=True)
+    receiving_wallet = db.relationship('Wallet', foreign_keys=[receiving_wallet_id], backref='received_transactions')
 
 
 class Price(db.Model):

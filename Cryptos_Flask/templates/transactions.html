@@ -26,10 +26,10 @@
                     <th>ID</th>
                     <th>Nome da Carteira</th>
                     <th>Tipo</th>
-                    <th>Moeda</th>  <!-- Ajustado para 'Moeda' -->
-                    <th>Quantidade</th> <!-- Ajustado para 'Quantidade' -->
-                    <th>Moeda da Taxa</th> <!-- Ajustado para 'Moeda da Taxa' -->
-                    <th>Quantidade da Taxa</th> <!-- Ajustado para 'Quantidade da Taxa' -->
+                    <th>Moeda</th>
+                    <th>Quantidade</th>
+                    <th>Moeda da Taxa</th>
+                    <th>Quantidade da Taxa</th>
                     <th>Data</th>
                 </tr>
             </thead>
@@ -39,9 +39,9 @@
                     <td>{{ transacao.id }}</td>
                     <td>{{ transacao.wallet.name }}</td>
                     <td>{{ transacao.type }}</td>
-                    <td>{{ transacao.cryptocurrency.name }}</td> <!-- Ajustado para acessar 'name' da criptomoeda -->
+                    <td>{{ transacao.cryptocurrency.name }}</td>
                     <td>{{ transacao.amount }}</td>
-                    <td>{{ transacao.fee_cryptocurrency.name }}</td> <!-- Ajustado para acessar 'name' da criptomoeda da taxa -->
+                    <td>{{ transacao.fee_cryptocurrency.name }}</td>
                     <td>{{ transacao.fee_amount }}</td>
                     <td>{{ transacao.date }}</td>
                 </tr>
@@ -108,14 +108,6 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="mb-3" id="receiving_crypto_container" style="display:none;">
-                            <label for="receiving_cryptocurrency_id" class="form-label">Moeda de Recebimento</label>
-                            <select id="receiving_cryptocurrency_id" name="receiving_cryptocurrency_id" class="form-select">
-                                {% for moeda in moedas %}
-                                <option value="{{ moeda.id }}">{{ moeda.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
                         <button type="submit" class="btn btn-primary">Adicionar</button>
                     </form>
                 </div>
@@ -123,11 +115,21 @@
         </div>
     </div>
 
-
-
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('transaction_type').addEventListener('change', function () {
+            var type = this.value;
+            var receivingWalletContainer = document.getElementById('receiving_wallet_container');
+    
+            if (type === 'venda' || type === 'transferencia') {
+                receivingWalletContainer.style.display = 'block';
+            } else {
+                receivingWalletContainer.style.display = 'none';
+            }
+        });
+    </script>
+    
 </body>
 </html>
-
