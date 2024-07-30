@@ -4,6 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from models import db, User, Wallet, Cryptocurrency, WalletBalance, Transaction, Price
 from flask_migrate import Migrate
 from datetime import datetime
+from flask import Flask, request, jsonify
 import logging
 
 app = Flask(__name__)
@@ -28,7 +29,8 @@ def transacoes():
         transacoes = session.query(Transaction).all()
         carteiras = session.query(Wallet).all()
         moedas = session.query(Cryptocurrency).all()
-    return render_template('transactions.html', transacoes=transacoes, carteiras=carteiras, moedas=moedas)
+        total_values = [{'id': t.id, 'total': t.amount * t.amount_paid} for t in transacoes]
+    return render_template('transactions.html', transacoes=transacoes, carteiras=carteiras, moedas=moedas, total_values=total_values)
 
 @app.route('/precos')
 def precos():
@@ -132,24 +134,24 @@ def add_transaction():
         fee_crypto_id = request.form['fee_cryptocurrency_id']
         fee_amount = float(request.form['fee_amount'])
         transaction_type = request.form['transaction_type']
+        amount_paid = float(request.form['amount_paid'])
 
         with app.app_context():
             session = create_session()
             if transaction_type == 'compra':
-                realizar_compra(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_amount)
+                realizar_compra(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_amount, amount_paid)
             elif transaction_type == 'venda':
-                receiving_wallet_id = request.form['receiving_wallet_id']
-                realizar_venda(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_amount, receiving_wallet_id)
+                realizar_venda(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_amount, amount_paid)
             elif transaction_type == 'transferencia':
                 to_wallet_id = request.form['receiving_wallet_id']
-                realizar_transferencia(session, wallet_id, to_wallet_id, crypto_id, amount, fee_crypto_id, fee_amount)
+                realizar_transferencia(session, wallet_id, to_wallet_id, crypto_id, amount, fee_crypto_id, fee_amount, amount_paid)
 
     except Exception as e:
         print(f"Erro ao adicionar transação: {e}")
         session.rollback()
     return redirect(url_for('transacoes'))
 
-def realizar_compra(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_amount):
+def realizar_compra(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_amount, amount_paid):
     # Lógica para realizar uma compra
     wallet = session.query(Wallet).get(wallet_id)
     crypto = session.query(Cryptocurrency).get(crypto_id)
@@ -171,6 +173,7 @@ def realizar_compra(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_am
         fee_cryptocurrency_id=fee_crypto_id,
         fee_amount=fee_amount,
         date=datetime.now(),
+        amount_paid=amount_paid,
         type='compra'
     )
     session.add(transaction)
@@ -185,7 +188,7 @@ def realizar_compra(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_am
     
     session.commit()
 
-def realizar_venda(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_amount, receiving_wallet_id):
+def realizar_venda(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_amount, receiving_wallet_id,amount_paid):
     # Lógica para realizar uma venda
     wallet = session.query(Wallet).get(wallet_id)
     crypto = session.query(Cryptocurrency).get(crypto_id)
@@ -217,6 +220,7 @@ def realizar_venda(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_amo
         fee_amount=fee_amount,
         receiving_wallet_id=receiving_wallet_id,
         date=datetime.now(),
+        amount_paid=amount_paid,
         type='venda'
     )
     session.add(transaction)
@@ -231,7 +235,7 @@ def realizar_venda(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_amo
     
     session.commit()
 
-def realizar_transferencia(session, from_wallet_id, to_wallet_id, crypto_id, amount, fee_crypto_id, fee_amount):
+def realizar_transferencia(session, from_wallet_id, to_wallet_id, crypto_id, amount, fee_crypto_id, fee_amount, amount_paid):
     # Lógica para realizar uma transferência
     from_wallet_balance = session.query(WalletBalance).filter_by(wallet_id=from_wallet_id, cryptocurrency_id=crypto_id).first()
     if from_wallet_balance:
@@ -256,6 +260,7 @@ def realizar_transferencia(session, from_wallet_id, to_wallet_id, crypto_id, amo
         fee_amount=fee_amount,
         receiving_wallet_id=to_wallet_id,
         date=datetime.now(),
+        amount_paid=amount_paid,
         type='transferencia'
     )
     session.add(transaction)
@@ -270,6 +275,34 @@ def realizar_transferencia(session, from_wallet_id, to_wallet_id, crypto_id, amo
 
     session.commit()
 
+@app.route('/get_price', methods=['GET'])
+def get_price():
+    currency_id = request.args.get('currency_id')
+    if currency_id:
+        # Obtendo o nome da moeda usando o ID
+        currency_name = get_currency_name_by_id(currency_id)
+        if currency_name:
+            price = get_price_for_currency(currency_name)
+            if price is not None:
+                return jsonify({'price': price})
+    return jsonify({'error': 'Currency not found'}), 404
+
+def get_currency_name_by_id(currency_id):
+    cryptocurrency = Cryptocurrency.query.filter_by(id=currency_id).first()
+    if cryptocurrency:
+        return cryptocurrency.name
+    return None
+
+def get_price_for_currency(currency_name):
+    # Obtém o ID da criptomoeda pelo nome
+    cryptocurrency = Cryptocurrency.query.filter_by(name=currency_name).first()
+    if cryptocurrency:
+        # Obtém o preço mais recente da criptomoeda
+        latest_price = db.session.query(Price).filter_by(cryptocurrency_id=cryptocurrency.id)\
+            .order_by(Price.timestamp.desc()).first()
+        if latest_price:
+            return latest_price.price
+    return None
 
 if __name__ == '__main__':
     with app.app_context():

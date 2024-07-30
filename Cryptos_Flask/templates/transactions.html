@@ -28,8 +28,10 @@
                     <th>Tipo</th>
                     <th>Moeda</th>
                     <th>Quantidade</th>
+                    <th>Moeda U$</th>
+                    <th>Total U$</th>
                     <th>Moeda da Taxa</th>
-                    <th>Quantidade da Taxa</th>
+                    <th>R$ Taxa</th>
                     <th>Data</th>
                 </tr>
             </thead>
@@ -41,6 +43,8 @@
                     <td>{{ transacao.type }}</td>
                     <td>{{ transacao.cryptocurrency.name }}</td>
                     <td>{{ transacao.amount }}</td>
+                    <td>{{ transacao.amount_paid }}</td>
+                    <td>{{ total_values[loop.index0].total }}</td> 
                     <td>{{ transacao.fee_cryptocurrency.name }}</td>
                     <td>{{ transacao.fee_amount }}</td>
                     <td>{{ transacao.date }}</td>
@@ -71,17 +75,22 @@
                         <div class="mb-3">
                             <label for="cryptocurrency_id" class="form-label">Moeda</label>
                             <select id="cryptocurrency_id" name="cryptocurrency_id" class="form-select" required>
+                                <option value="" disabled selected>Selecione</option>
                                 {% for moeda in moedas %}
                                 <option value="{{ moeda.id }}">{{ moeda.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="mb-3">
+                            <label for="amount_paid" class="form-label">Preço Compra</label>
+                            <input type="number" id="amount_paid" name="amount_paid" class="form-control" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
                             <label for="amount" class="form-label">Quantidade</label>
                             <input type="number" id="amount" name="amount" class="form-control" step="0.01" required>
                         </div>
                         <div class="mb-3">
-                            <label for="fee_cryptocurrency_id" class="form-label">Moeda da Taxa</label>
+                            <label for="fee_cryptocurrency_id" class="form-label">Pagar Taxa com</label>
                             <select id="fee_cryptocurrency_id" name="fee_cryptocurrency_id" class="form-select" required>
                                 {% for moeda in moedas %}
                                 <option value="{{ moeda.id }}">{{ moeda.name }}</option>
@@ -89,7 +98,7 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="fee_amount" class="form-label">Quantidade da Taxa</label>
+                            <label for="fee_amount" class="form-label">Valor da Taxa</label>
                             <input type="number" id="fee_amount" name="fee_amount" class="form-control" step="0.01" required>
                         </div>
                         <div class="mb-3">
@@ -123,11 +132,46 @@
             var type = this.value;
             var receivingWalletContainer = document.getElementById('receiving_wallet_container');
     
-            if (type === 'venda' || type === 'transferencia') {
+            if (type === 'transferencia') {
                 receivingWalletContainer.style.display = 'block';
             } else {
                 receivingWalletContainer.style.display = 'none';
             }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+        var cryptocurrencySelect = document.getElementById('cryptocurrency_id');
+        var feeCryptocurrencySelect = document.getElementById('fee_cryptocurrency_id');
+        var amountPaidInput = document.getElementById('amount_paid');
+        var feeAmountInput = document.getElementById('fee_amount');
+
+        function updatePrice(selectElement, inputElement) {
+            var currencyId = selectElement.value;
+            if (currencyId) {
+                fetch(`/get_price?currency_id=${currencyId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.price) {
+                            inputElement.value = data.price;
+                        } else {
+                            inputElement.value = '';
+                        }
+                    })
+                    .catch(() => {
+                        inputElement.value = '';
+                    });
+            } else {
+                inputElement.value = '';
+            }
+        }
+
+        cryptocurrencySelect.addEventListener('change', function() {
+            updatePrice(cryptocurrencySelect, amountPaidInput);
+        });
+
+        feeCryptocurrencySelect.addEventListener('change', function() {
+            updatePrice(feeCryptocurrencySelect, feeAmountInput);
+        });
         });
     </script>
     

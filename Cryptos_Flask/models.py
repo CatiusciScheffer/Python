@@ -45,6 +45,8 @@ class Transaction(db.Model):
     cryptocurrency = db.relationship('Cryptocurrency', foreign_keys=[cryptocurrency_id])
     
     amount = db.Column(db.Float, nullable=False)
+
+    amount_paid = db.Column(db.Float, nullable=True)
     
     fee_cryptocurrency_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.id'), nullable=False)
     fee_cryptocurrency = db.relationship('Cryptocurrency', foreign_keys=[fee_cryptocurrency_id])
