@@ -5,10 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Preços Atuais</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Preços Atuais</h1>
+        <div class="header">
+            <h1>Preços Atuais</h1>
+            <button id="update-prices" class="btn btn-primary">Atualizar Preços</button>
+        </div>
         <table class="table">
             <thead>
                 <tr>
@@ -31,5 +41,23 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('update-prices').addEventListener('click', function() {
+            fetch('/update_prices', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Preços atualizados com sucesso!');
+                    location.reload();
+                } else {
+                    alert('Erro ao atualizar preços.');
+                }
+            })
+            .catch(error => console.error('Erro:', error));
+        });
+    </script>
 </body>
 </html>
+
