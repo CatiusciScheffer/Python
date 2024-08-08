@@ -49,7 +49,10 @@
             </tbody>
         </table>
     </div>
-
+    <div>
+        <h1>test form python</h1>
+        {{ formTransacoes }}
+    </div>
     <!-- Modal para Adicionar Transação -->
     <div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -61,59 +64,88 @@
                 <div class="modal-body">
                     <form action="{{ url_for('add_transaction') }}" method="POST">
                         <div class="mb-3">
-                            <label for="transaction_type" class="form-label">Tipo</label>
+                            <h6 class="modal-title mt-2" id="transactionModalLabel">Tipo de Transação</h6>
                             <select id="transaction_type" name="transaction_type" class="form-select" required>
                                 <option value="compra">Compra</option>
                                 <option value="venda">Venda</option>
                                 <option value="transferencia">Transferência</option>
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label for="cryptocurrency_id" class="form-label">Moeda</label>
-                            <select id="cryptocurrency_id" name="cryptocurrency_id" class="form-select" required>
-                                <option value="" disabled selected>Selecione</option>
-                                {% for moeda in moedas %}
-                                <option value="{{ moeda.id }}">{{ moeda.name }}</option>
-                                {% endfor %}
-                            </select>
+                        <h6 class="modal-title mt-3" id="transactionModalLabel">Dados Transação</h6>
+                        <div class="card container text-center">
+                            <div class="row">
+                                <div class="col mb-3">
+                                    <label for="cryptocurrency_id" class="form-label">Moeda</label>
+                                    <select id="cryptocurrency_id" name="cryptocurrency_id" class="form-select" required>
+                                        <option value="" disabled selected>Selecione</option>
+                                        {% for moeda in moedas %}
+                                        <option value="{{ moeda.id }}">{{ moeda.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col mb-3">
+                                    <label for="amount_paid" class="form-label">Preço Atual</label>
+                                    <input type="number" id="amount_paid" name="amount_paid" class="form-control" step="0.01" required>
+                                </div>
+                                <div class="col mb-3">
+                                    <label for="amount" class="form-label">Quantidade</label>
+                                    <input type="number" id="amount" name="amount" class="form-control" step="0.01" required>
+                                </div>
+                                <div class="col mb-3">
+                                    <label for="#" class="form-label">Total Transação</label>
+                                    <input type="number" id="#" name="#" class="form-control" step="0.01" required>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="amount_paid" class="form-label">Preço Transação</label>
-                            <input type="number" id="amount_paid" name="amount_paid" class="form-control" step="0.01" required>
+                        <h6 class="modal-title mt-3" id="transactionModalLabel">Sobre a Taxa</h6>
+                        <div class="card container text-center">
+                            <div class="row">
+                                <div class="col mb-3">
+                                    <label for="fee_cryptocurrency_id" class="form-label">Moeda</label>
+                                    <select id="fee_cryptocurrency_id" name="fee_cryptocurrency_id" class="form-select" required>
+                                        {% for moeda in moedas %}
+                                        <option value="{{ moeda.id }}">{{ moeda.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col mb-3">
+                                    <label for="#" class="#">Preço Atual</label>
+                                    <input type="number" id="#" name="#" class="form-control" step="0.01" required>
+                                </div>
+                                <div class="col mb-3">
+                                    <label for="fee_amount" class="form-label">Quantidade</label>
+                                    <input type="number" id="fee_amount" name="fee_amount" class="form-control" step="0.01" required>
+                                </div>
+                                <div class="col mb-3">
+                                    <label for="#" class="#">Total de Taxa</label>
+                                    <input type="number" id="#" name="#" class="form-control" step="0.01" required>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="amount" class="form-label">Quantidade</label>
-                            <input type="number" id="amount" name="amount" class="form-control" step="0.01" required>
+                        <h6 class="modal-title mt-3" id="transactionModalLabel">Locais da Transação</h6>
+                        <div class="card container text-center">
+                            <div class="row">
+                                <div class="col mb-3">
+                                    <label for="wallet_id" class="form-label">Carteira</label>
+                                    <select id="wallet_id" name="wallet_id" class="form-select" required>
+                                        {% for carteira in carteiras %}
+                                        <option value="{{ carteira.id }}">{{ carteira.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col mb-3" id="receiving_wallet_container" style="display:none;">
+                                    <label for="receiving_wallet_id" class="form-label">Carteira de Recebimento</label>
+                                    <select id="receiving_wallet_id" name="receiving_wallet_id" class="form-select">
+                                        {% for carteira in carteiras %}
+                                        <option value="{{ carteira.id }}">{{ carteira.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="fee_cryptocurrency_id" class="form-label">Pagar Taxa com</label>
-                            <select id="fee_cryptocurrency_id" name="fee_cryptocurrency_id" class="form-select" required>
-                                {% for moeda in moedas %}
-                                <option value="{{ moeda.id }}">{{ moeda.name }}</option>
-                                {% endfor %}
-                            </select>
+                        <div class="d-grid gap-3 mt-3">
+                            <button type="submit" class="btn btn-primary">Adicionar</button>
                         </div>
-                        <div class="mb-3">
-                            <label for="fee_amount" class="form-label">Valor da Taxa</label>
-                            <input type="number" id="fee_amount" name="fee_amount" class="form-control" step="0.01" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="wallet_id" class="form-label">Carteira</label>
-                            <select id="wallet_id" name="wallet_id" class="form-select" required>
-                                {% for carteira in carteiras %}
-                                <option value="{{ carteira.id }}">{{ carteira.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="mb-3" id="receiving_wallet_container" style="display:none;">
-                            <label for="receiving_wallet_id" class="form-label">Carteira de Recebimento</label>
-                            <select id="receiving_wallet_id" name="receiving_wallet_id" class="form-select">
-                                {% for carteira in carteiras %}
-                                <option value="{{ carteira.id }}">{{ carteira.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Adicionar</button>
                     </form>
                 </div>
             </div>
@@ -142,7 +174,7 @@
         function updatePrice(selectElement, inputElement) {
             var currencyId = selectElement.value;
             if (currencyId) {
-                fetch(`/get_price?currency_id=${currencyId}`)
+                fetch(`/update_price?currency_id=${currencyId}`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.price) {

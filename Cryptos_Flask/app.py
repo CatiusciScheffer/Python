@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from sqlalchemy.orm import sessionmaker
 from models import db, User, Wallet, Cryptocurrency, WalletBalance, Transaction, Price
-from api import get_crypto_price
+from forms import TransacaoForm
 from api import get_crypto_price
 from flask_migrate import Migrate
 from datetime import datetime
@@ -10,6 +10,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///crypto_data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True  # debug banco
+app.config['SECRET_KEY'] = 'e264a5c0acf609e7f3ac1100562cf084' #CHAVE SECRETA PARA SEGURANÇA
 
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -26,13 +27,14 @@ def index():
 
 @app.route('/transacoes')
 def transacoes():
+    formTransacoes = TransacaoForm()
     with app.app_context():
         session = create_session()
         transacoes = session.query(Transaction).all()
         carteiras = session.query(Wallet).all()
         moedas = session.query(Cryptocurrency).all()
         total_values = [{'id': t.id, 'total': t.amount * t.amount_paid} for t in transacoes]
-    return render_template('transactions.html', transacoes=transacoes, carteiras=carteiras, moedas=moedas, total_values=total_values)
+    return render_template('transactions.html', transacoes=transacoes, carteiras=carteiras, moedas=moedas, total_values=total_values, formTransacoes=formTransacoes)
 
 @app.route('/precos')
 def precos():
@@ -138,6 +140,7 @@ def add_transaction():
         fee_amount = float(request.form['fee_amount'])
         transaction_type = request.form['transaction_type']
         amount_paid = float(request.form['amount_paid'])
+        receiving_wallet_id = request.form['receiving_wallet_id']
 
         with app.app_context():
             session = create_session()
@@ -208,30 +211,38 @@ def realizar_compra(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_am
     
     session.commit()
 
-def realizar_venda(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_amount, receiving_wallet_id,amount_paid):
+def realizar_venda(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_amount, amount_paid):
+    print("Iniciando a função realizar_venda")
     try:
         # Lógica para realizar uma venda
         wallet = session.query(Wallet).get(wallet_id)
         crypto = session.query(Cryptocurrency).get(crypto_id)
-        receiving_wallet = session.query(Wallet).get(receiving_wallet_id)
         fee_crypto = session.query(Cryptocurrency).get(fee_crypto_id)
+        
+        if not wallet:
+            print(f"Carteira {wallet_id} não encontrada.")
+            return
+        if not crypto:
+            print(f"Criptomoeda {crypto_id} não encontrada.")
+            return
+        if not fee_crypto:
+            print(f"Criptomoeda da taxa {fee_crypto_id} não encontrada.")
+            return
 
-        # Atualizar o saldo da carteira de origem
+        # Atualizar o saldo da carteira
         wallet_balance = session.query(WalletBalance).filter_by(wallet_id=wallet_id, cryptocurrency_id=crypto_id).first()
         if wallet_balance:
             wallet_balance.balance -= amount
+            if wallet_balance.balance < 0:
+                print("Saldo insuficiente para realizar a venda.")
+                return
+            else:
+                print(f"Saldo não encontrado para a carteira {wallet_id} e criptomoeda {crypto_id}.")
+                return
         else:
-            wallet_balance = WalletBalance(wallet_id=wallet_id, cryptocurrency_id=crypto_id, balance=-amount)
+            wallet_balance = WalletBalance(wallet_id=wallet_id, cryptocurrency_id=crypto_id, balance=amount)
             session.add(wallet_balance)
-        
-        # Atualizar o saldo da carteira de destino
-        receiving_wallet_balance = session.query(WalletBalance).filter_by(wallet_id=receiving_wallet_id, cryptocurrency_id=crypto_id).first()
-        if receiving_wallet_balance:
-            receiving_wallet_balance.balance += amount
-        else:
-            receiving_wallet_balance = WalletBalance(wallet_id=receiving_wallet_id, cryptocurrency_id=crypto_id, balance=amount)
-            session.add(receiving_wallet_balance)
-
+             
         # Registrar a transação
         transaction = Transaction(
             wallet_id=wallet_id,
@@ -239,7 +250,6 @@ def realizar_venda(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_amo
             amount=amount,
             fee_cryptocurrency_id=fee_crypto_id,
             fee_amount=fee_amount,
-            receiving_wallet_id=receiving_wallet_id,
             date=datetime.now(),
             amount_paid=amount_paid,
             type='venda'
@@ -250,6 +260,9 @@ def realizar_venda(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_amo
         wallet_balance_fee = session.query(WalletBalance).filter_by(wallet_id=wallet_id, cryptocurrency_id=fee_crypto_id).first()
         if wallet_balance_fee:
             wallet_balance_fee.balance -= fee_amount
+            if wallet_balance_fee.balance < 0:
+                print("Saldo insuficiente para deduzir a taxa.")
+                return
         else:
             wallet_balance_fee = WalletBalance(wallet_id=wallet_id, cryptocurrency_id=fee_crypto_id, balance=-fee_amount)
             session.add(wallet_balance_fee)
