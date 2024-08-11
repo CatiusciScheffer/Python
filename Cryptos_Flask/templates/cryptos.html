@@ -2,51 +2,36 @@
 
 {% block body %}
 
-    <div class="container">
-        <h1>Moedas</h1>
-        <button class="btn btn-primary" data-toggle="modal" data-target="#addCryptoModal">Adicionar Moeda</button>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>Apelido</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for cryptocurrencies in moedas %}
-                <tr>
-                    <td>{{ cryptocurrencies.name }}</td>
-                    <td>{{ cryptocurrencies.symbol }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="addCryptoModal" tabindex="-1" aria-labelledby="addCryptoModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addCryptoModalLabel">Adicionar Moeda</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ url_for('add_crypto') }}" method="POST">
-                        <div class="form-group">
-                            <label for="cripto_name">Nome</label>
-                            <input type="text" class="form-control" id="cripto_name" name="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="cripto_apelido">Apelido</label>
-                            <input type="text" class="form-control" id="cripto_apelido" name="symbol" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Adicionar Moeda</button>
+<div class="container">
+    <h1>Moedas Cadastradas</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Apelido</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cryptocurrency in moedas %}
+            <tr>
+                <td>{{ cryptocurrency.name }}</td>
+                <td>{{ cryptocurrency.symbol }}</td>
+                <td>
+                    <!-- Formulário para atualizar o status da moeda -->
+                    <form method="POST" action="{{ url_for('delete_crypto') }}" style="display:inline;">
+                        <!-- Campo oculto para passar o ID da moeda -->
+                        <input type="hidden" name="crypto_id" value="{{ cryptocurrency.id }}">
+                        <!-- Botão de atualizar status -->
+                        <button type="submit" class="btn btn-danger btn-sm">Inativar</button>
                     </form>
-                </div>
-            </div>
-        </div>
-    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 {% endblock %}
+
+

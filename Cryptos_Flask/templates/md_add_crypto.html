@@ -1,0 +1,35 @@
+<!-- Modal para Adicionar Transação -->
+<div
+  class="modal fade"
+  id="moedasModal"
+  tabindex="-1"
+  aria-labelledby="moedasModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="text-center pt-4">
+        <h5 class="modal-title text-center" id="moedasModalLabel">
+          Adicionar Moedas
+        </h5>
+      </div>
+      <div class="modal-body p-4">
+        <form method="POST" action="{{ url_for('add_crypto') }}">
+          {{ formAddMoedas.hidden_tag() }}
+          <fieldset>
+            <div class="card container text-center p-4">
+              {{ formAddMoedas.nomeMoeda.label }} 
+              {{ formAddMoedas.nomeMoeda(class="form-select") }} 
+              {{ formAddMoedas.symbolMoeda.label }} 
+              {{ formAddMoedas.symbolMoeda(class="form-select") }}
+            </div>
+          </fieldset>
+          <div class="d-grid gap-3 mt-3">
+            <button type="submit" class="btn btn-primary">Adicionar Moedas</button>
+          </div>
+        </form>
+        
+      </div>
+    </div>
+  </div>
+</div>

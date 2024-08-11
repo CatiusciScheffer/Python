@@ -23,6 +23,7 @@ class Cryptocurrency(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
     symbol = db.Column(db.String, unique=True, nullable=False)
+    status = db.Column(db.String, default='N') 
 
 class WalletBalance(db.Model):
     __tablename__ = 'wallet_balances'

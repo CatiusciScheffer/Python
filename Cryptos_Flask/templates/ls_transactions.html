@@ -1,0 +1,54 @@
+{% extends 'index.html' %}
+
+{% block head %}
+    <style>
+        .modal-dialog {
+            max-width: 800px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <!-- Tabela de Transações -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome da Carteira</th>
+                    <th>Tipo</th>
+                    <th>Moeda</th>
+                    <th>Quantidade</th>
+                    <th>Moeda U$</th>
+                    <th>Total U$</th>
+                    <th>Moeda da Taxa</th>
+                    <th>R$ Taxa</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transacao in transacoes %}
+                <tr>
+                    <td>{{ transacao.id }}</td>
+                    <td>{{ transacao.wallet.name }}</td>
+                    <td>{{ transacao.type }}</td>
+                    <td>{{ transacao.cryptocurrency.name }}</td>
+                    <td>{{ transacao.amount }}</td>
+                    <td>{{ transacao.amount_paid }}</td>
+                    <td>{{ total_values[loop.index0].total }}</td> 
+                    <td>{{ transacao.fee_cryptocurrency.name }}</td>
+                    <td>{{ transacao.fee_amount }}</td>
+                    <td>{{ transacao.date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <h1>test form python</h1>
+        {{ formTransacoes }}
+    </div>
+      
+{% endblock %}
+
+

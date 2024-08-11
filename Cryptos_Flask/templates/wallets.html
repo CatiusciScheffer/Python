@@ -1,39 +1,29 @@
-{% extends 'index.html' %}
+{% extends 'index.html' %} {% block body %}
 
-{% block body %}
-
-    <div class="container mt-4">
-        <h1>Carteiras</h1>
-
-        <!-- Lista de Carteiras -->
-        <ul class="list-group mb-4">
-            {% for wallet in carteiras %}
-                <li class="list-group-item">
-                    <h5>{{ wallet.name }}</h5>
-                    <ul class="list-group">
-                        {% if wallet.id in wallet_balances %}
-                            {% for balance in wallet_balances[wallet.id] %}
-                                <li class="list-group-item">{{ balance.cryptocurrency }}: {{ balance.balance }}</li>
-                            {% endfor %}
-                        {% else %}
-                            <li class="list-group-item">Sem saldo disponível</li>
-                        {% endif %}
-                    </ul>
-                    <form action="{{ url_for('delete_wallet') }}" method="post" class="mt-2">
-                        <input type="hidden" name="wallet_id" value="{{ wallet.id }}">
-                        <button type="submit" class="btn btn-danger">Excluir Carteira</button>
-                    </form>
-                </li>
-            {% endfor %}
-        </ul>
-
-        <!-- Formulário para Adicionar Carteira -->
-        <form action="{{ url_for('add_wallet') }}" method="post">
-            <div class="mb-3">
-                <input type="text" name="name" placeholder="Nome da Carteira" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Adicionar Carteira</button>
-        </form>
-    </div>
+<div class="container mt-4">
+  <h1>Carteiras</h1>
+  <!-- Lista de Carteiras -->
+  <ul class="list-group mb-4">
+    {% for wallet in carteiras %}
+    <li class="list-group-item">
+      <h5>{{ wallet.name }}</h5>
+      <ul class="list-group">
+        {% if wallet.id in wallet_balances %} {% for balance in
+        wallet_balances[wallet.id] %}
+        <li class="list-group-item">
+          {{ balance.cryptocurrency }}: {{ balance.balance }}
+        </li>
+        {% endfor %} {% else %}
+        <li class="list-group-item">Sem saldo disponível</li>
+        {% endif %}
+      </ul>
+      <form action="{{ url_for('delete_wallet') }}" method="post" class="mt-2">
+        <input type="hidden" name="wallet_id" value="{{ wallet.id }}" />
+        <button type="submit" class="btn btn-danger">Excluir Carteira</button>
+      </form>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
 
 {% endblock %}

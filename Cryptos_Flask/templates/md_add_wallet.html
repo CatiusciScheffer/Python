@@ -1,0 +1,34 @@
+<!-- Modal para Adicionar Transação -->
+<div
+  class="modal fade"
+  id="carteiraModal"
+  tabindex="-1"
+  aria-labelledby="carteiraModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="text-center pt-4">
+        <h5 class="modal-title text-center" id="carteiraModalLabel">
+          Adicionar Carteira
+        </h5>
+      </div>
+      <div class="modal-body p-4">
+        <form method="POST" action="{{ url_for('add_wallet') }}">
+          {{ formAddCarteiras.hidden_tag() }}
+          <fieldset>
+            <div class="card container text-center p-4">
+              {{ formAddCarteiras.nomeCarteira.label }} {{
+              formAddCarteiras.nomeCarteira(class="form-select") }} {{
+              formAddCarteiras.redeCarteira.label }} {{
+              formAddCarteiras.redeCarteira(class="form-select") }}
+            </div>
+          </fieldset>
+          <div class="d-grid gap-3 mt-3">
+            <button type="submit" class="btn btn-primary">Adicionar Carteira</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

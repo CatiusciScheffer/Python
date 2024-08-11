@@ -12,12 +12,15 @@
     {% endblock %}
 
 </head>
-<body>
+<body>  
     
     {% include 'navibar.html' %}
 
     {% block body %}
-        
+        {% include 'naviVert.html' %}
+        {% include 'md_add_transactions.html' %}
+        {% include 'md_add_wallet.html' %}
+        {% include 'md_add_crypto.html' %}
     {% endblock %}
 
     <!-- Bootstrap JS and dependencies -->
