@@ -15,12 +15,15 @@
 <body>  
     
     {% include 'navibar.html' %}
-
+    
     {% block body %}
-        {% include 'naviVert.html' %}
-        {% include 'md_add_transactions.html' %}
-        {% include 'md_add_wallet.html' %}
-        {% include 'md_add_crypto.html' %}
+        <div class="container">
+            {% include 'naviVert.html' %}
+            {% include 'md_add_crypto.html' %}
+            {% include 'md_add_transactions.html' %}
+            {% include 'md_add_wallet.html' %}
+            {% include 'md_add_crypto.html' %}
+        </div>
     {% endblock %}
 
     <!-- Bootstrap JS and dependencies -->

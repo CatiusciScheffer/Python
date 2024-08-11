@@ -1,30 +1,68 @@
-<nav class="nav flex-column">
-  <a
-    class="nav-link active"
-    aria-current="page"
-    href="#"
-    data-bs-toggle="modal"
-    data-bs-target="#transactionModal"
-    >Adicionar Transação</a
-  >
-  
-  <a
-  class="nav-link active"
-  aria-current="page"
-  href="#"
-  data-bs-toggle="modal"
-  data-bs-target="#carteiraModal"
-  >Adicionar Carteira</a
-  >
-  
-  <a
-  class="nav-link active"
-  aria-current="page"
-  href="#"
-  data-bs-toggle="modal"
-  data-bs-target="#moedasModal"
-  >Adicionar Moeda</a
-  >
-  
-  <a class="nav-link" href="#">Atualizar Preços</a>
-</nav>
+<body>
+  <div class="row">
+    <div class="container col">
+      <nav class="nav flex-column">
+        <a
+          class="nav-link active"
+          aria-current="page"
+          href="#"
+          data-bs-toggle="modal"
+          data-bs-target="#transactionModal"
+          >Adicionar Transação</a
+        >
+
+        <a
+          class="nav-link active"
+          aria-current="page"
+          href="#"
+          data-bs-toggle="modal"
+          data-bs-target="#carteiraModal"
+          >Adicionar Carteira</a
+        >
+
+        <a
+          class="nav-link active"
+          aria-current="page"
+          href="#"
+          data-bs-toggle="modal"
+          data-bs-target="#moedasModal"
+          >Adicionar Moeda</a
+        >
+
+        <!--link que atualiza preço com API via formulário-->
+        <form
+          id="atualizar-precos-form"
+          action="{{ url_for('update_prices') }}"
+          method="POST"
+          style="display: none"
+        ></form>
+        <a
+          class="nav-link"
+          href="#"
+          onclick="document.getElementById('atualizar-precos-form').submit();"
+          >Atualizar Preços</a
+        >
+      </nav>
+    </div>
+
+    <!--PARTE DOS DASHBOARDS-->
+    <div class="container col">
+      <div class="row">
+        <div class="col card">
+          <p>dashboard</p>
+        </div>
+        <div class="col card">
+          <p>dashboard</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col card">
+          <p>dashboard</p>
+        </div>
+        <div class="col card">
+          <p>dashboard</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

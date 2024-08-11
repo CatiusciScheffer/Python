@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import func
 from models import db, User, Wallet, Cryptocurrency, WalletBalance, Transaction, Price
 from forms import TransacaoForm, AddWalletForm, AddCryptoForm
 from api import get_crypto_price
@@ -23,6 +24,7 @@ def create_session():
 
 
 #----------------------  INICIO ROTAS -------------------------
+#***** ROTA INDEX *****
 @app.route('/')
 def index():
     formTransacoes = TransacaoForm()
@@ -32,10 +34,8 @@ def index():
 
     #busca as informações no banco
     transacoes = session.query(Transaction).all()
-    carteiras = session.query(Wallet).all()
-    moedas = session.query(Cryptocurrency).all()
-        
-    
+    carteiras = session.query(Wallet).filter(Wallet.status=='N').all()
+    moedas = session.query(Cryptocurrency).filter(Cryptocurrency.status=='N').all()
 
     #Popular as informações do banco no html
     formTransacoes.moedaTransacao.choices = [(moeda.id, f"{moeda.name} ({moeda.symbol})") for moeda in moedas]
@@ -45,6 +45,8 @@ def index():
     
     return render_template('index.html', transacoes=transacoes, carteiras=carteiras, moedas=moedas, formTransacoes=formTransacoes, formAddCarteiras=formAddCarteiras, formAddMoedas=formAddMoedas)
 
+
+#***** ROTA TRANSAÇÕES *****
 @app.route('/transacoes')
 def transacoes():
     
@@ -55,41 +57,52 @@ def transacoes():
 
     return render_template('transactions.html', total_values=total_values)
 
+
+#***** ROTA PREÇOS *****
 @app.route('/precos')
 def precos():
     with app.app_context():
         session = create_session()
-        precos = session.query(Price).all()
+        
+        # Subconsulta para obter o preço mais recente de cada criptomoeda
+        subquery = (
+            session.query(Price.cryptocurrency_id, func.max(Price.timestamp).label('latest_timestamp'))
+            .group_by(Price.cryptocurrency_id)
+            .subquery()
+        )
+        
+        # Consulta principal para obter os preços mais recentes
+        precos = (
+            session.query(Price)
+            .join(subquery, (Price.cryptocurrency_id == subquery.c.cryptocurrency_id) &
+                                (Price.timestamp == subquery.c.latest_timestamp))
+            .join(Cryptocurrency, Price.cryptocurrency_id == Cryptocurrency.id)
+            .filter(Cryptocurrency.status == 'N')
+            .all()
+        )
+    
     return render_template('prices.html', precos=precos)
 
+
+
+#***** ROTA CARTEIRAS *****
 @app.route('/carteiras')
 def carteiras():
     with app.app_context():
-        session = create_session()
-        carteiras = session.query(Wallet).all()
-        wallet_balances = session.query(WalletBalance).all()
-        cryptocurrencies = session.query(Cryptocurrency).all()
+        carteiras = Wallet.query.filter(Wallet.status != 'S').order_by(Wallet.name).all()
+    return render_template('wallets.html', carteiras=carteiras)
 
-        wallet_balances_dict = {}
-        for balance in wallet_balances:
-            if balance.wallet_id not in wallet_balances_dict:
-                wallet_balances_dict[balance.wallet_id] = []
-            wallet_balances_dict[balance.wallet_id].append({
-                'cryptocurrency': session.query(Cryptocurrency).get(balance.cryptocurrency_id).name,
-                'balance': balance.balance
-            })
 
-    return render_template('wallets.html', carteiras=carteiras, wallet_balances=wallet_balances_dict)
-
+#***** ROTA MOEDAS *****
 @app.route('/moedas')
 def moedas():
     with app.app_context():
-        session = create_session()
         moedas = Cryptocurrency.query.filter(Cryptocurrency.status != 'S').order_by(Cryptocurrency.name).all()
     return render_template('cryptos.html', moedas=moedas)
 
 #----------------------  FIM ROTAS-------------------------
-#----------------------  ATIVIDADE ROTA TRANSAÇÃO-------------------------
+#****************************************************************
+#----------------------  ATIVIDADE ROTA ADICIONAR TRANSAÇÃO-------------------------
 #Pega preço atual da morda para preencher campos tela transsação
 @app.route('/get_price/<int:cryptocurrency_id>', methods=['GET'])
 def get_price(cryptocurrency_id):
@@ -102,56 +115,67 @@ def get_price(cryptocurrency_id):
     else:
         return jsonify({'price': 0})
 
-#--------------------  FIM ATIVIDADE ROTA TRANSAÇÃO-----------------------
-
-
-@app.route('/add_wallet', methods=['POST'])
+#---------------- Adicionar Carteira ------------------------
+@app.route('/add_wallet', methods=['GET', 'POST'])
 def add_wallet():
+    session = create_session()
     try:
-        carteira_nome = request.form['name']
-        network = request.form['network']
-        with app.app_context():
-            session = create_session()
-            carteira = Wallet(name=carteira_nome, network=network, user_id=1)  # Adicionando user_id temporariamente
-            session.add(carteira)
-            session.commit()
+        formAddCarteiras = AddWalletForm()
+        if formAddCarteiras.validate_on_submit():
+            wallet_name = formAddCarteiras.nomeCarteira.data.upper()
+            wallet_network = formAddCarteiras.redeCarteira.data.upper()
+            with app.app_context():
+                carteira = Wallet(user_id=1, name=wallet_name, network=wallet_network) #???remover user_id
+                session.add(carteira)
+                session.commit()
+        else:
+            print("Form validation failed")
     except Exception as e:
         print(f"Erro ao adicionar carteira: {e}")
         session.rollback()
+    finally:
+        session.close()
     return redirect(url_for('carteiras'))
 
+#---------------- Remover Carteira ------------------------
 @app.route('/delete_wallet', methods=['POST'])
 def delete_wallet():
+    session = create_session()
     try:
-        wallet_id = request.form['wallet_id']
-        with app.app_context():
-            session = create_session()
-            wallet = session.query(Wallet).get(wallet_id)
-            if wallet:
-                session.delete(wallet)
-                session.commit()
+        # Obtém o ID da carteira a partir do formulário
+        carteira_id = request.form.get('wallet_id')
+        if carteira_id:
+            with app.app_context():
+                # Busca a carteira pelo ID
+                carteira = session.query(Wallet).filter_by(id=carteira_id).first()
+                if carteira:
+                    # Atualiza o campo de status para 'S'
+                    carteira.status = 'S'
+                    session.commit()
+                else:
+                    print("Carteira não encontrada")
+        else:
+            print("ID da carteira não fornecido")
     except Exception as e:
-        print(f"Erro ao excluir carteira: {e}")
+        print(f"Erro ao atualizar status da carteira: {e}")
         session.rollback()
+    finally:
+        session.close()
     return redirect(url_for('carteiras'))
 
 #---------------- Adicionar Moeda ------------------------
 @app.route('/add_crypto', methods=['GET','POST'])
 def add_crypto():
-    print('1')
     session = create_session()
     try:
         formAddMoedas = AddCryptoForm()
-        print('2')
         if formAddMoedas.validate_on_submit():
-            print('3')
-            cripto_name = formAddMoedas.nomeMoeda.data
-            cripto_symbol = formAddMoedas.symbolMoeda.data
+            cripto_name = formAddMoedas.nomeMoeda.data.upper()
+            cripto_symbol = formAddMoedas.symbolMoeda.data.upper()
             with app.app_context():
                 moeda = Cryptocurrency(name=cripto_name, symbol=cripto_symbol)
                 session.add(moeda)
                 session.commit()
-                print('4')
         else:
             print("Form validation failed")
     except Exception as e:
@@ -164,13 +188,11 @@ def add_crypto():
 #---------------- Remover Moeda ------------------------
 @app.route('/delete_crypto', methods=['POST'])
 def delete_crypto():
-    print('1')
     session = create_session()
     try:
         # Obtém o ID da criptomoeda a partir do formulário
         crypto_id = request.form.get('crypto_id')
         if crypto_id:
-            print('2')
             with app.app_context():
                 # Busca a criptomoeda pelo ID
                 moeda = session.query(Cryptocurrency).filter_by(id=crypto_id).first()
@@ -178,7 +200,6 @@ def delete_crypto():
                     # Atualiza o campo de status para 'S'
                     moeda.status = 'S'
                     session.commit()
-                    print('3')
                 else:
                     print("Moeda não encontrada")
         else:
@@ -190,11 +211,7 @@ def delete_crypto():
         session.close()
     return redirect(url_for('moedas'))
 
-
-
-
-
-
+# VER PARA ADICIONAR PREÇO MANUALMENTE!!!!!!!!!!!???????????????????????
 @app.route('/add_price', methods=['POST'])
 def add_price():
     try:
@@ -210,6 +227,27 @@ def add_price():
         print(f"Erro ao adicionar preço: {e}")
         session.rollback()
     return redirect(url_for('precos'))
+
+
+#Atualiza os preços das moedas cadastradas pela API
+@app.route('/update_prices', methods=['POST'])
+def update_prices():
+    try:
+        with app.app_context():
+            session = create_session()
+            cryptocurrencies = session.query(Cryptocurrency).filter_by(status='N').all()
+            for crypto in cryptocurrencies:
+                price = get_crypto_price(COINMARKETCAP_API_KEY, crypto.symbol)
+                timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                crypto_price = Price(cryptocurrency_id=crypto.id, price=price, timestamp=timestamp)
+                session.add(crypto_price)
+            session.commit()
+    except Exception as e:
+        print(f"Erro ao atualizar preços: {e}")
+        session.rollback()
+    return redirect(url_for('precos'))
+
+
 
 @app.route('/add_transaction', methods=['POST'])
 def add_transaction():
@@ -238,22 +276,6 @@ def add_transaction():
         session.rollback()
     return redirect(url_for('transacoes'))
 
-@app.route('/update_prices', methods=['POST'])
-def update_prices():
-    try:
-        with app.app_context():
-            session = create_session()
-            cryptocurrencies = session.query(Cryptocurrency).all()
-            for crypto in cryptocurrencies:
-                price = get_crypto_price(COINMARKETCAP_API_KEY, crypto.symbol)
-                timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                crypto_price = Price(cryptocurrency_id=crypto.id, price=price, timestamp=timestamp)
-                session.add(crypto_price)
-            session.commit()
-    except Exception as e:
-        print(f"Erro ao atualizar preços: {e}")
-        session.rollback()
-    return redirect(url_for('index'))
 
 def realizar_compra(session, wallet_id, crypto_id, amount, fee_crypto_id, fee_amount, amount_paid):
     # Lógica para realizar uma compra

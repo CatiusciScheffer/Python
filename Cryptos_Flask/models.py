@@ -13,9 +13,10 @@ class User(db.Model):
 class Wallet(db.Model):
     __tablename__ = 'wallets'  # Corrigido aqui para 'wallets'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) 
     name = db.Column(db.String, nullable=False)
     network = db.Column(db.String, nullable=False)
+    status = db.Column(db.String(1), nullable=False, default='N' )
     balances = db.relationship('WalletBalance', backref='wallet', lazy=True)
 
 class Cryptocurrency(db.Model):
@@ -23,7 +24,7 @@ class Cryptocurrency(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
     symbol = db.Column(db.String, unique=True, nullable=False)
-    status = db.Column(db.String, default='N') 
+    status = db.Column(db.String(1), nullable=False, default='N') 
 
 class WalletBalance(db.Model):
     __tablename__ = 'wallet_balances'
