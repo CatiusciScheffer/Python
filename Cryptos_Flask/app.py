@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import func
 from models import db, User, Wallet, Cryptocurrency, WalletBalance, Transaction, Price
@@ -128,10 +128,9 @@ def add_wallet():
                 carteira = Wallet(user_id=1, name=wallet_name, network=wallet_network) #???remover user_id
                 session.add(carteira)
                 session.commit()
-        else:
-            print("Form validation failed")
+                flash(f'A carteira {(formAddCarteiras.nomeCarteira.data).upper()} foi adicionada com sucesso', 'alert-success')
     except Exception as e:
-        print(f"Erro ao adicionar carteira: {e}")
+        flash(f'Erro ao tentar adicionar a carteira:\n{e}', 'alert-danger')
         session.rollback()
     finally:
         session.close()
@@ -152,12 +151,9 @@ def delete_wallet():
                     # Atualiza o campo de status para 'S'
                     carteira.status = 'S'
                     session.commit()
-                else:
-                    print("Carteira não encontrada")
-        else:
-            print("ID da carteira não fornecido")
+                    flash(f'Carteira desativada com sucesso', 'alert-success')
     except Exception as e:
-        print(f"Erro ao atualizar status da carteira: {e}")
+        flash(f'Erro ao tentar desativar a carteira:\n{e}', 'alert-danger')
         session.rollback()
     finally:
         session.close()
@@ -176,10 +172,9 @@ def add_crypto():
                 moeda = Cryptocurrency(name=cripto_name, symbol=cripto_symbol)
                 session.add(moeda)
                 session.commit()
-        else:
-            print("Form validation failed")
+                flash(f'A moeda {(formAddMoedas.nomeMoeda.data).upper()} foi adicionada com sucesso', 'alert-success')
     except Exception as e:
-        print(f"Erro ao adicionar moeda: {e}")
+        flash(f'Erro ao tentar adicionar moeda:\n{e}', 'alert-danger')
         session.rollback()
     finally:
         session.close()
@@ -200,12 +195,11 @@ def delete_crypto():
                     # Atualiza o campo de status para 'S'
                     moeda.status = 'S'
                     session.commit()
-                else:
-                    print("Moeda não encontrada")
+                    flash(f'Moeda desativada com sucesso', 'alert-success')
         else:
             print("ID da criptomoeda não fornecido")
     except Exception as e:
-        print(f"Erro ao atualizar status da moeda: {e}")
+        flash(f'Erro ao tentar desativar moeda:\n{e}', 'alert-danger')
         session.rollback()
     finally:
         session.close()
@@ -238,14 +232,17 @@ def update_prices():
             cryptocurrencies = session.query(Cryptocurrency).filter_by(status='N').all()
             for crypto in cryptocurrencies:
                 price = get_crypto_price(COINMARKETCAP_API_KEY, crypto.symbol)
-                timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                crypto_price = Price(cryptocurrency_id=crypto.id, price=price, timestamp=timestamp)
-                session.add(crypto_price)
+                if price is not None:
+                    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    crypto_price = Price(cryptocurrency_id=crypto.id, price=price, timestamp=timestamp)
+                    session.add(crypto_price)
+                    flash(f'Preços das moedas cadastradas atualizado com sucesso', 'alert-success')
             session.commit()
     except Exception as e:
-        print(f"Erro ao atualizar preços: {e}")
+        flash(f'Erro ao tentar atualizar os preços: {e}', 'alert-danger')
         session.rollback()
     return redirect(url_for('precos'))
+
 
 
 

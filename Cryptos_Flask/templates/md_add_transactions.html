@@ -15,6 +15,7 @@
       </div>
       <div class="modal-body p-4">
         <form method="POST" action="????????????????????????">
+          {{ formTransacoes.csrf_token }}
           {{ formTransacoes.hidden_tag() }}
           <h6 class="modal-title mt-3" id="transactionModalLabel">
             Tipo de Transação

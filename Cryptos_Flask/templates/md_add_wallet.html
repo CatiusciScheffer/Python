@@ -15,6 +15,7 @@
       </div>
       <div class="modal-body p-4">
         <form method="POST" action="{{ url_for('add_wallet') }}">
+          {{ formAddCarteiras.csrf_token }}
           {{ formAddCarteiras.hidden_tag() }}
           <fieldset>
             <div class="card container text-center p-4">

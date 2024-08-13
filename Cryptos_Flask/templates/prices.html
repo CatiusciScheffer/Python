@@ -12,7 +12,15 @@
 {% endblock %}
 
 {% block body %}
-
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
     <div class="container">
         <h4 class="mt-4">Tabela de Preços Atuais das Moedas</h4>
         <table class="table">
