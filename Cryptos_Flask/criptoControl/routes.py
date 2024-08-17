@@ -1,27 +1,16 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
-from sqlalchemy.orm import sessionmaker
+from flask import render_template, url_for, flash, request, redirect,jsonify
 from sqlalchemy import func
-from models import db, User, Wallet, Cryptocurrency, WalletBalance, Transaction, Price
-from forms import TransacaoForm, AddWalletForm, AddCryptoForm
-from api import get_crypto_price
-from flask_migrate import Migrate
+from criptoControl.forms import TransacaoForm, AddWalletForm, AddCryptoForm
+from criptoControl.models import db, User, Wallet, Cryptocurrency, WalletBalance, Transaction, Price
+from criptoControl.api import get_crypto_price
+from criptoControl import app
 from datetime import datetime
+from sqlalchemy.orm import sessionmaker
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///crypto_data.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ECHO'] = True  # debug banco
-app.config['SECRET_KEY'] = 'e264a5c0acf609e7f3ac1100562cf084' #CHAVE SECRETA PARA SEGURANÇA
 
-db.init_app(app)
-migrate = Migrate(app, db)
-
-# Substitua com sua chave de API da CoinMarketCap
-COINMARKETCAP_API_KEY = '122d6732-65df-475c-8f1d-d7a95ab45bc5'
 
 def create_session():
     return sessionmaker(bind=db.engine)()
-
 
 #----------------------  INICIO ROTAS -------------------------
 #***** ROTA INDEX *****
@@ -227,6 +216,7 @@ def add_price():
 @app.route('/update_prices', methods=['POST'])
 def update_prices():
     try:
+        COINMARKETCAP_API_KEY = '122d6732-65df-475c-8f1d-d7a95ab45bc5'#ver uma forma de salvar isso depois no banco
         with app.app_context():
             session = create_session()
             cryptocurrencies = session.query(Cryptocurrency).filter_by(status='N').all()
@@ -412,9 +402,3 @@ def realizar_transferencia(session, from_wallet_id, to_wallet_id, crypto_id, amo
         session.add(fee_wallet_balance)
 
     session.commit()
-
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True)
-

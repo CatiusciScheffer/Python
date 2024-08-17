@@ -17,13 +17,19 @@
         <form method="POST" action="????????????????????????">
           {{ formTransacoes.csrf_token }}
           {{ formTransacoes.hidden_tag() }}
-          <h6 class="modal-title mt-3" id="transactionModalLabel">
-            Tipo de Transação
-          </h6>
-          <div class="mb-3">
-            {{ formTransacoes.tipoTransacao(class="form-select") }}
+          <div class="card container mb-3">
+            <div class="row justify-content-center">
+              <div class="col mb-3">
+                {{ formTransacoes.tipoTransacao.label }}
+                {{ formTransacoes.tipoTransacao(class="form-select") }}
+              </div>
+              <div class="col mb-3">
+                {{ formTransacoes.dataTransacao.label }}
+                {{ formTransacoes.dataTransacao(class="form-control") }}
+              </div>
+            </div>
           </div>
-          <div class="card container p-4">
+          <div class="card container">
             <h6 class="modal-title mt-3" id="transactionModalLabel">
               Dados Transação
             </h6>
@@ -51,7 +57,7 @@
             <h6 class="modal-title mt-3" id="transactionModalLabel">
               Sobre a Taxa
             </h6>
-            <div class="card container text-center">
+            <div class="card container text-center mb-3">
               <div class="row">
                 <div class="col mb-3">
                   {{ formTransacoes.moedaTaxa.label }} {{

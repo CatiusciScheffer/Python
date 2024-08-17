@@ -1,6 +1,7 @@
-from flask_sqlalchemy import SQLAlchemy
+from criptoControl import db
+from datetime import datetime
 
-db = SQLAlchemy()
+
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -55,7 +56,7 @@ class Transaction(db.Model):
     
     fee_amount = db.Column(db.Float, nullable=False)
     
-    date = db.Column(db.DateTime, nullable=False)
+    date = db.Column(db.DateTime, nullable=False, default=datetime.now)
     
     receiving_wallet_id = db.Column(db.Integer, db.ForeignKey('wallets.id'), nullable=True)
     receiving_wallet = db.relationship('Wallet', foreign_keys=[receiving_wallet_id], backref='received_transactions')

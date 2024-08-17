@@ -1,9 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, FloatField
-from wtforms.validators import DataRequired, ValidationError
+from wtforms import StringField, SubmitField, SelectField, FloatField, DateField
+from wtforms.validators import DataRequired, Optional, ValidationError
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired, ValidationError
 
 
 class TransacaoForm(FlaskForm):
@@ -18,6 +17,7 @@ class TransacaoForm(FlaskForm):
     totalTaxa = FloatField('Total Taxa', validators=[DataRequired()])
     carteriaSaidaTransacao = SelectField('Carteira Saída', choices=[], validators=[DataRequired()])
     carteriaRecebimentoTransacao = SelectField('Carteira Recebimento', choices=[],)
+    dataTransacao = DateField('Data da Transação', format='%Y-%m-%d', validators=[Optional()])
     adicionarTransacao = SubmitField('Adicionar')
 
 class AddWalletForm(FlaskForm):
