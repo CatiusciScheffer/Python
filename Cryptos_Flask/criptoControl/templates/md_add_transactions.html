@@ -14,7 +14,7 @@
         </h5>
       </div>
       <div class="modal-body p-4">
-        <form method="POST" action="????????????????????????">
+        <form method="POST" action="{{ url_for('add_transaction') }}" id="transactionForm">
           {{ formTransacoes.csrf_token }}
           {{ formTransacoes.hidden_tag() }}
           <div class="card container mb-3">
@@ -38,6 +38,8 @@
                 <div class="col mb-3">
                   {{ formTransacoes.moedaTransacao.label }} {{
                   formTransacoes.moedaTransacao(class="form-select") }}
+                  <!-- Campo oculto para armazenar o ID da moeda de transação -->
+                  <input type="hidden" name="moedaTransacaoId" id="moedaTransacaoId" value="{{ formTransacoes.moedaTransacao.data }}">
                 </div>
                 <div class="col mb-3">
                   {{ formTransacoes.precoTransacao.label }} {{
@@ -49,8 +51,7 @@
                 </div>
                 <div class="col mb-3">
                   {{ formTransacoes.totalTransacao.label }} {{
-                  formTransacoes.totalTransacao(class_="form-control bg-light
-                  border border-secondary", readonly=True) }}
+                  formTransacoes.totalTransacao(class_="form-control bg-light border border-secondary", readonly=True) }}
                 </div>
               </div>
             </div>
@@ -62,6 +63,9 @@
                 <div class="col mb-3">
                   {{ formTransacoes.moedaTaxa.label }} {{
                   formTransacoes.moedaTaxa(class="form-select") }}
+                  <!-- Campos ocultos para IDs -->
+                  <input type="hidden" name="carteriaSaidaTransacao_id" id="carteriaSaidaTransacao_id" value="{{ formTransacoes.carteriaSaidaTransacao.data }}">
+                  <input type="hidden" name="carteriaRecebimentoTransacao_id" id="carteriaRecebimentoTransacao_id" value="{{ formTransacoes.carteriaRecebimentoTransacao.data }}">
                 </div>
                 <div class="col mb-3">
                   {{ formTransacoes.precoTaxa.label }} {{
@@ -73,8 +77,7 @@
                 </div>
                 <div class="col mb-3">
                   {{ formTransacoes.totalTaxa.label }} {{
-                  formTransacoes.totalTaxa(class="form-control bg-light border
-                  border-secondary", readonly=True) }}
+                  formTransacoes.totalTaxa(class="form-control bg-light border border-secondary", readonly=True) }}
                 </div>
               </div>
             </div>
@@ -87,11 +90,14 @@
               <div class="col mb-3" id="saida_wallet_container">
                 {{ formTransacoes.carteriaSaidaTransacao.label }} {{
                 formTransacoes.carteriaSaidaTransacao(class="form-select") }}
+                <!-- Campo oculto para armazenar o ID da carteira de saída -->
+                <input type="hidden" name="carteriaSaidaTransacaoId" id="carteriaSaidaTransacaoId" value="{{ formTransacoes.carteriaSaidaTransacao.data }}">
               </div>
               <div class="col mb-3" id="receiving_wallet_container">
                 {{ formTransacoes.carteriaRecebimentoTransacao.label }} {{
-                formTransacoes.carteriaRecebimentoTransacao(class="form-select")
-                }}
+                formTransacoes.carteriaRecebimentoTransacao(class="form-select") }}
+                <!-- Campo oculto para armazenar o ID da carteira de recebimento -->
+                <input type="hidden" name="carteriaRecebimentoTransacaoId" id="carteriaRecebimentoTransacaoId" value="{{ formTransacoes.carteriaRecebimentoTransacao.data }}">
               </div>
             </div>
           </div>

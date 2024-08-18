@@ -1,8 +1,5 @@
-from criptoControl import app, db
+from criptoControl import app
 
-def create_database():
-    with app.app_context():
-        db.create_all()
 
 if __name__ == '__main__':
     app.run(debug=True)

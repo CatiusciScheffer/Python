@@ -34,6 +34,7 @@ class WalletBalance(db.Model):
     cryptocurrency_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.id'), nullable=False)
     balance = db.Column(db.Float, nullable=False)
 
+
 class Transaction(db.Model):
     __tablename__ = 'transactions'
     
@@ -44,20 +45,20 @@ class Transaction(db.Model):
     
     type = db.Column(db.String, nullable=False)
     
-    cryptocurrency_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.id'), nullable=False)
-    cryptocurrency = db.relationship('Cryptocurrency', foreign_keys=[cryptocurrency_id])
-    
-    amount = db.Column(db.Float, nullable=False)
-
-    amount_paid = db.Column(db.Float, nullable=True)
-    
-    fee_cryptocurrency_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.id'), nullable=False)
-    fee_cryptocurrency = db.relationship('Cryptocurrency', foreign_keys=[fee_cryptocurrency_id])
-    
-    fee_amount = db.Column(db.Float, nullable=False)
+    crypto_Trans_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.id'), nullable=False)
+    crypto_Trans = db.relationship('Cryptocurrency', foreign_keys=[crypto_Trans_id])
+    crypto_price = db.Column(db.Float, nullable=False)
+    crypto_quantity = db.Column(db.Float, nullable=False)
+    transaction_total = db.Column(db.Float, nullable=False)
     
     date = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    
+        
+    fee_crypto_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.id'), nullable=False)
+    fee_crypto = db.relationship('Cryptocurrency', foreign_keys=[fee_crypto_id])
+    fee_price = db.Column(db.Float, nullable=False)
+    fee_quantity = db.Column(db.Float, nullable=False)
+    fee_total = db.Column(db.Float, nullable=False)
+
     receiving_wallet_id = db.Column(db.Integer, db.ForeignKey('wallets.id'), nullable=True)
     receiving_wallet = db.relationship('Wallet', foreign_keys=[receiving_wallet_id], backref='received_transactions')
 

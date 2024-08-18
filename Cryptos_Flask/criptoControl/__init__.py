@@ -12,6 +12,12 @@ app.config['COINMARKETCAP_API_KEY'] = '122d6732-65df-475c-8f1d-d7a95ab45bc5'
 
 db = SQLAlchemy(app)
 
+
+def create_database():
+    with app.app_context():
+        db.create_all()
+
+        
 migrate = Migrate(app, db)
 
 

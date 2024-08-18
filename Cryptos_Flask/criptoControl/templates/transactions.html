@@ -1,0 +1,49 @@
+{% extends 'index.html' %}
+
+{% block head %}
+    <style>
+        .modal-dialog {
+            max-width: 800px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <!-- Tabela de Transações -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome da Carteira</th>
+                    <th>Tipo</th>
+                    <th>Moeda</th>
+                    <th>Quantidade</th>
+                    <th>Preço U$</th>
+                    <th>Total U$</th>
+                    <th>Moeda da Taxa</th>
+                    <th>Quantidade da Taxa</th>
+                    <th>Total da Taxa U$</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transacao in transacoes %}
+                <tr>
+                    <td>{{ transacao.id }}</td>
+                    <td>{{ transacao.wallet.name }}</td> <!-- Nome da carteira -->
+                    <td>{{ transacao.type }}</td> <!-- Tipo da transação -->
+                    <td>{{ transacao.crypto_Trans.name }}</td> <!-- Nome da criptomoeda -->
+                    <td>{{ transacao.crypto_quantity }}</td> <!-- Quantidade de criptomoeda -->
+                    <td>{{ transacao.crypto_price }}</td> <!-- Preço da criptomoeda em U$ -->
+                    <td>{{ transacao.transaction_total }}</td> <!-- Total da transação em U$ -->
+                    <td>{{ transacao.fee_crypto.name }}</td> <!-- Nome da criptomoeda da taxa -->
+                    <td>{{ transacao.fee_quantity }}</td> <!-- Quantidade da taxa -->
+                    <td>{{ transacao.fee_total }}</td> <!-- Total da taxa em U$ -->
+                    <td>{{ transacao.date }}</td> <!-- Data da transação -->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

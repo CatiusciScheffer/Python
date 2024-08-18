@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 2edc435cb20d
+Revision ID: 9e083801d23a
 Revises: 
-Create Date: 2024-08-17 19:18:03.558903
+Create Date: 2024-08-18 11:08:21.482453
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2edc435cb20d'
+revision = '9e083801d23a'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -57,15 +57,18 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('wallet_id', sa.Integer(), nullable=False),
     sa.Column('type', sa.String(), nullable=False),
-    sa.Column('cryptocurrency_id', sa.Integer(), nullable=False),
-    sa.Column('amount', sa.Float(), nullable=False),
-    sa.Column('amount_paid', sa.Float(), nullable=True),
-    sa.Column('fee_cryptocurrency_id', sa.Integer(), nullable=False),
-    sa.Column('fee_amount', sa.Float(), nullable=False),
+    sa.Column('crypto_Trans_id', sa.Integer(), nullable=False),
+    sa.Column('crypto_price', sa.Float(), nullable=False),
+    sa.Column('crypto_quantity', sa.Float(), nullable=False),
+    sa.Column('transaction_total', sa.Float(), nullable=False),
     sa.Column('date', sa.DateTime(), nullable=False),
+    sa.Column('fee_crypto_id', sa.Integer(), nullable=False),
+    sa.Column('fee_price', sa.Float(), nullable=False),
+    sa.Column('fee_quantity', sa.Float(), nullable=False),
+    sa.Column('fee_total', sa.Float(), nullable=False),
     sa.Column('receiving_wallet_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['cryptocurrency_id'], ['cryptocurrencies.id'], ),
-    sa.ForeignKeyConstraint(['fee_cryptocurrency_id'], ['cryptocurrencies.id'], ),
+    sa.ForeignKeyConstraint(['crypto_Trans_id'], ['cryptocurrencies.id'], ),
+    sa.ForeignKeyConstraint(['fee_crypto_id'], ['cryptocurrencies.id'], ),
     sa.ForeignKeyConstraint(['receiving_wallet_id'], ['wallets.id'], ),
     sa.ForeignKeyConstraint(['wallet_id'], ['wallets.id'], ),
     sa.PrimaryKeyConstraint('id')
