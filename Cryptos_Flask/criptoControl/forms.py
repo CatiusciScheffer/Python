@@ -6,7 +6,7 @@ from wtforms import StringField, SubmitField
 
 
 class TransacaoForm(FlaskForm):
-    tipoTransacao = SelectField('Tipo Transação', choices=[('','Selecione o Tipo'), ('Compra','Compra'), ('Venda','Venda'), ('Transferência','Transferência')], validators=[DataRequired()])
+    tipoTransacao = SelectField('Tipo Transação', choices=[('','Selecione o Tipo'), ('Compra','Compra'), ('Venda','Venda'), ('Transferência','Transferência'), ('Saldo','Saldo')], validators=[DataRequired()])
     moedaTransacao = SelectField('Moeda', choices=[],validators=[DataRequired()])
     precoTransacao = FloatField('Preço Atual', validators=[DataRequired()])
     quantidadeTransacao = FloatField('Quantidade', validators=[DataRequired()])

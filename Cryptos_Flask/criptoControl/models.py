@@ -18,7 +18,7 @@ class Wallet(db.Model):
     name = db.Column(db.String, nullable=False)
     network = db.Column(db.String, nullable=False)
     status = db.Column(db.String(1), nullable=False, default='N' )
-    balances = db.relationship('WalletBalance', backref='wallet', lazy=True)
+    #balances = db.relationship('WalletBalance', backref='wallet', lazy=True)
 
 class Cryptocurrency(db.Model):
     __tablename__ = 'cryptocurrencies'
@@ -30,7 +30,7 @@ class Cryptocurrency(db.Model):
 class WalletBalance(db.Model):
     __tablename__ = 'wallet_balances'
     id = db.Column(db.Integer, primary_key=True)
-    wallet_id = db.Column(db.Integer, db.ForeignKey('wallets.id'), nullable=False)
+    wallet_id = db.Column(db.Integer, nullable=False)
     cryptocurrency_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.id'), nullable=False)
     balance = db.Column(db.Float, nullable=False)
 
