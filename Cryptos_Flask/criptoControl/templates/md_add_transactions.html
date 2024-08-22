@@ -17,6 +17,20 @@
         <form method="POST" action="{{ url_for('add_transaction') }}" id="transactionForm">
           {{ formTransacoes.csrf_token }}
           {{ formTransacoes.hidden_tag() }}
+
+          <!-- Bloco para exibir mensagens flash -->
+          {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+              <div class="alert alert-danger alert-dismissible fade show" role="alert" id="modalErrorAlert">
+                {% for category, message in messages %}
+                  {{ message }}
+                {% endfor %}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endif %}
+          {% endwith %}
+          <!-- Fim do bloco para mensagens flash -->  
+
           <div class="card container mb-3">
             <div class="row justify-content-center">
               <div class="col mb-3">
@@ -33,7 +47,7 @@
             <h6 class="modal-title mt-3" id="transactionModalLabel">
               Dados Transação
             </h6>
-            <div class="card container text-center">
+            <div class="card container text-center mb-3">
               <div class="row">
                 <div class="col mb-3">
                   {{ formTransacoes.moedaTransacao.label }} {{
@@ -55,29 +69,31 @@
                 </div>
               </div>
             </div>
-            <h6 class="modal-title mt-3" id="transactionModalLabel">
-              Sobre a Taxa
-            </h6>
-            <div class="card container text-center mb-3">
-              <div class="row">
-                <div class="col mb-3">
-                  {{ formTransacoes.moedaTaxa.label }} {{
-                  formTransacoes.moedaTaxa(class="form-select") }}
-                  <!-- Campos ocultos para IDs -->
-                  <input type="hidden" name="carteriaSaidaTransacao_id" id="carteriaSaidaTransacao_id" value="{{ formTransacoes.carteriaSaidaTransacao.data }}">
-                  <input type="hidden" name="carteriaRecebimentoTransacao_id" id="carteriaRecebimentoTransacao_id" value="{{ formTransacoes.carteriaRecebimentoTransacao.data }}">
-                </div>
-                <div class="col mb-3">
-                  {{ formTransacoes.precoTaxa.label }} {{
-                  formTransacoes.precoTaxa(class="form-control") }}
-                </div>
-                <div class="col mb-3">
-                  {{ formTransacoes.quantidadeTaxa.label }} {{
-                  formTransacoes.quantidadeTaxa(class="form-control") }}
-                </div>
-                <div class="col mb-3">
-                  {{ formTransacoes.totalTaxa.label }} {{
-                  formTransacoes.totalTaxa(class="form-control bg-light border border-secondary", readonly=True) }}
+            <div id="taxaSection">
+              <h6 class="modal-title" id="transactionModalLabel">
+                  Sobre a Taxa
+              </h6>
+              <div class="card container text-center mb-3">
+                <div class="row">
+                  <div class="col mb-3">
+                    {{ formTransacoes.moedaTaxa.label }} {{
+                    formTransacoes.moedaTaxa(class="form-select") }}
+                    <!-- Campos ocultos para IDs -->
+                    <input type="hidden" name="carteriaSaidaTransacao_id" id="carteriaSaidaTransacao_id" value="{{ formTransacoes.carteriaSaidaTransacao.data }}">
+                    <input type="hidden" name="carteriaRecebimentoTransacao_id" id="carteriaRecebimentoTransacao_id" value="{{ formTransacoes.carteriaRecebimentoTransacao.data }}">
+                  </div>
+                  <div class="col mb-3">
+                    {{ formTransacoes.precoTaxa.label }} {{
+                    formTransacoes.precoTaxa(class="form-control") }}
+                  </div>
+                  <div class="col mb-3">
+                    {{ formTransacoes.quantidadeTaxa.label }} {{
+                    formTransacoes.quantidadeTaxa(class="form-control") }}
+                  </div>
+                  <div class="col mb-3">
+                    {{ formTransacoes.totalTaxa.label }} {{
+                    formTransacoes.totalTaxa(class="form-control bg-light border border-secondary", readonly=True) }}
+                  </div>
                 </div>
               </div>
             </div>

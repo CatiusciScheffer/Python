@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const quantidadeTaxaInput = document.querySelector('input[name="quantidadeTaxa"]');
     const totalTaxaInput = document.querySelector('input[name="totalTaxa"]');
     const moedaTaxaSelect = document.querySelector('select[name="moedaTaxa"]');
+
+    // Seleciona o elemento que contém a seção "Sobre a Taxa"
+    const taxaSection = document.getElementById('taxaSection');
     
     // Seleciona os campos ocultos para IDs
     const carteriaSaidaIdInput = document.getElementById('carteriaSaidaTransacao_id');
@@ -82,13 +85,21 @@ document.addEventListener('DOMContentLoaded', function() {
         if (selectedValue === 'Venda') {
             receivingWalletContainer.style.display = 'none';
             saidaWalletContainer.style.display = 'block';
-        } else if (selectedValue === 'Compra') {
+            taxaSection.style.display = 'block'; // Mostra a seção "Sobre a Taxa"
+        } else if (selectedValue === 'Compra' || selectedValue === 'Saldo') {
             receivingWalletContainer.style.display = 'block';
             saidaWalletContainer.style.display = 'none';
+    
+            if (selectedValue === 'Saldo') {
+                taxaSection.style.display = 'none'; // Oculta a seção "Sobre a Taxa" se for "Saldo"
+            } else {
+                taxaSection.style.display = 'block'; // Mostra a seção "Sobre a Taxa" se for "Compra"
+            }
         } else {
             receivingWalletContainer.style.display = 'block';
             saidaWalletContainer.style.display = 'block';
-        }
+            taxaSection.style.display = 'block'; // Mostra a seção "Sobre a Taxa"
+        } 
     }
 
     // Inicializa a visibilidade com base no valor selecionado ao carregar a página
@@ -107,4 +118,12 @@ document.addEventListener('DOMContentLoaded', function() {
     carteriaRecebimentoSelect.addEventListener('change', function() {
         carteriaRecebimentoIdInput.value = this.value; // Atualiza o valor do campo oculto
     });
+
+    // Verifica se há um alerta de erro no modal
+    const errorAlert = document.getElementById('modalErrorAlert');
+    if (errorAlert) {
+        // Reabre o modal se o alerta de erro estiver presente
+        const transactionModal = new bootstrap.Modal(document.getElementById('transactionModal'));
+        transactionModal.show();
+    }
 });
