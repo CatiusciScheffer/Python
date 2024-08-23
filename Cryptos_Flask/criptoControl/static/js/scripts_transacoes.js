@@ -108,16 +108,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Adiciona evento de mudança ao dropdown
     tipoTransacao.addEventListener('change', toggleWalletContainers);
 
-    // Atualiza os campos ocultos com base na seleção das carteiras
+   // Atualiza os campos ocultos com base na seleção das carteiras
     const carteriaSaidaSelect = document.getElementById('carteriaSaidaTransacao');
     carteriaSaidaSelect.addEventListener('change', function() {
+        const carteriaSaidaIdInput = document.getElementById('carteriaSaidaTransacaoId');
         carteriaSaidaIdInput.value = this.value; // Atualiza o valor do campo oculto
     });
 
     const carteriaRecebimentoSelect = document.getElementById('carteriaRecebimentoTransacao');
     carteriaRecebimentoSelect.addEventListener('change', function() {
+        const carteriaRecebimentoIdInput = document.getElementById('carteriaRecebimentoTransacaoId');
         carteriaRecebimentoIdInput.value = this.value; // Atualiza o valor do campo oculto
     });
+
 
     // Verifica se há um alerta de erro no modal
     const errorAlert = document.getElementById('modalErrorAlert');

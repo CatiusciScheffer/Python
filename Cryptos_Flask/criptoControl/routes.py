@@ -239,6 +239,7 @@ def add_transaction():
         
         #wallet_id = formTransacao.carteriaSaidaTransacao.data#com isso não funciona saldo e compra
         wallet_id = request.form.get('carteriaRecebimentoTransacao')
+        wallet_id_saida = request.form.get('carteriaSaidaTransacaoId')
         crypto_trans_id = request.form.get('moedaTransacao')
         crypto_price = float(request.form.get('precoTransacao', 0))
         crypto_quantity = float(request.form.get('quantidadeTransacao', 0))
@@ -262,9 +263,9 @@ def add_transaction():
             elif transaction_type == 'Saldo':
                 inserir_saldo(session, wallet_id, crypto_trans_id, crypto_price, crypto_quantity, transaction_total)
             elif transaction_type == 'Venda':
-                realizar_venda(session, wallet_id, crypto_trans_id, crypto_price, crypto_quantity, transaction_total)
+                realizar_venda(session, crypto_trans_id, crypto_price, crypto_quantity, transaction_total)
             elif transaction_type == 'Transferência':
-                realizar_transferencia(session, wallet_id, receiving_wallet_id, crypto_trans_id, crypto_quantity)#, fee_crypto_id, fee_quantity, fee_total)
+                realizar_transferencia(session, wallet_id, receiving_wallet_id, crypto_trans_id, crypto_quantity)
         
             session.commit()
             
@@ -390,7 +391,9 @@ def inserir_saldo(session, wallet_id, crypto_trans_id, crypto_price, crypto_quan
         raise
 
 #************************************************************************************************
-def realizar_venda(session, wallet_id, crypto_trans_id, crypto_price, crypto_quantity, transaction_total):
+def realizar_venda(session, crypto_trans_id, crypto_price, crypto_quantity, transaction_total):
+    
+    wallet_id_saida = request.form.get('carteriaSaidaTransacaoId')
     fee_crypto_id = request.form.get('moedaTaxa')
     fee_price = float(request.form.get('precoTaxa', 0))
     fee_quantity = float(request.form.get('quantidadeTaxa', 0))
@@ -399,12 +402,12 @@ def realizar_venda(session, wallet_id, crypto_trans_id, crypto_price, crypto_qua
         print(f'Realizando venda de {crypto_quantity} unidades da moeda id {crypto_trans_id} a um preço de {crypto_price} cada.')
 
         # consulta se tem saldo para moeda vendida
-        wallet_balance = session.query(WalletBalance).filter_by(wallet_id=wallet_id, cryptocurrency_id=crypto_trans_id).filter(WalletBalance.balance > crypto_quantity).first()
+        wallet_balance = session.query(WalletBalance).filter_by(wallet_id=wallet_id_saida, cryptocurrency_id=crypto_trans_id).filter(WalletBalance.balance > crypto_quantity).first()
         
         # consulta se tem saldo suficiente para a taxa 
-        fee_wallet_balance = session.query(WalletBalance).filter_by(wallet_id=wallet_id, cryptocurrency_id=fee_crypto_id).filter(WalletBalance.balance > fee_quantity).first()
+        fee_wallet_balance = session.query(WalletBalance).filter_by(wallet_id=wallet_id_saida, cryptocurrency_id=fee_crypto_id).filter(WalletBalance.balance > fee_quantity).first()
 
-        print(f'wallet_id: {wallet_id}')
+        print(f'wallet_id: {wallet_id_saida}')
         print(f'crypto_trans_id: {crypto_trans_id}')
         print(f'fee_crypto_id: {fee_crypto_id}')
 
@@ -421,7 +424,7 @@ def realizar_venda(session, wallet_id, crypto_trans_id, crypto_price, crypto_qua
 
             # Criar a transação
             transaction = Transaction(
-                wallet_id=wallet_id,
+                wallet_id=wallet_id_saida,
                 crypto_Trans_id=crypto_trans_id,
                 crypto_price=crypto_price,
                 crypto_quantity=crypto_quantity,
@@ -431,7 +434,6 @@ def realizar_venda(session, wallet_id, crypto_trans_id, crypto_price, crypto_qua
                 fee_price=fee_price,
                 fee_quantity=fee_quantity,
                 fee_total=fee_total,
-                receiving_wallet_id=wallet_id,
                 date=datetime.now()
             )
 
