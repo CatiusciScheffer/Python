@@ -1,5 +1,5 @@
 from flask import render_template, url_for, flash, request, redirect,jsonify
-from sqlalchemy import func
+from sqlalchemy import func, desc
 from criptoControl.forms import TransacaoForm, AddWalletForm, AddCryptoForm
 from criptoControl.models import db, User, Wallet, Cryptocurrency, WalletBalance, Transaction, Price
 from criptoControl.api import get_crypto_price
@@ -21,18 +21,22 @@ def index():
     formAddMoedas = AddCryptoForm()
     session = create_session()
 
-    #busca as informações no banco
-    transacoes = session.query(Transaction).all()
-    carteiras = session.query(Wallet).filter(Wallet.status=='N').all()
-    moedas = session.query(Cryptocurrency).filter(Cryptocurrency.status=='N').all()
+    try:
+        # Busca as informações no banco
+        transacoes = session.query(Transaction).order_by(Transaction.id.desc()).all()
+        carteiras = session.query(Wallet).filter(Wallet.status=='N').all()
+        moedas = session.query(Cryptocurrency).filter(Cryptocurrency.status=='N').all()
 
-    #Popular as informações do banco no html
-    formTransacoes.moedaTransacao.choices =[('', '')] + [(moeda.id, f"{moeda.name}({moeda.symbol})") for moeda in moedas]
-    formTransacoes.moedaTaxa.choices = [('', '')] + [(moeda.id, f"{moeda.name}({moeda.symbol})") for moeda in moedas]
-    formTransacoes.carteriaSaidaTransacao.choices = [('', '')] + [(carteira.id, carteira.name) for carteira in carteiras]
-    formTransacoes.carteriaRecebimentoTransacao.choices = [('', '')] + [(carteira.id, carteira.name) for carteira in carteiras]
+        # Popular as informações do banco no HTML
+        formTransacoes.moedaTransacao.choices = [('', '')] + [(moeda.id, f"{moeda.name}({moeda.symbol})") for moeda in moedas]
+        formTransacoes.moedaTaxa.choices = [('', '')] + [(moeda.id, f"{moeda.name}({moeda.symbol})") for moeda in moedas]
+        formTransacoes.carteriaSaidaTransacao.choices = [('', '')] + [(carteira.id, carteira.name) for carteira in carteiras]
+        formTransacoes.carteriaRecebimentoTransacao.choices = [('', '')] + [(carteira.id, carteira.name) for carteira in carteiras]
+    finally:
+        session.close()
     
     return render_template('index.html', transacoes=transacoes, carteiras=carteiras, moedas=moedas, formTransacoes=formTransacoes, formAddCarteiras=formAddCarteiras, formAddMoedas=formAddMoedas)
+
 
 
 #***** ROTA TRANSAÇÕES *****
@@ -241,26 +245,26 @@ def add_transaction():
         crypto_trans_id = request.form.get('moedaTransacao')
         crypto_price = float(request.form.get('precoTransacao', 0))
         crypto_quantity = float(request.form.get('quantidadeTransacao', 0))
-        transaction_total = float(request.form.get('totalTransacao', 0))
-        
-        fee_crypto_id = request.form.get('moedaTaxa')
-        fee_price = float(request.form.get('precoTaxa', 0))
-        fee_quantity = float(request.form.get('quantidadeTaxa', 0))
-        fee_total = float(request.form.get('totalTaxa', 0))
-        
+        transaction_total = float(request.form.get('totalTransacao', 0))                        
         transaction_type = request.form.get('tipoTransacao')
         
         # Cria a sessão
         with app.app_context():
             session = create_session()
 
+            if transaction_type != 'Saldo':
+                fee_crypto_id = request.form.get('moedaTaxa')
+                fee_price = float(request.form.get('precoTaxa', 0))
+                fee_quantity = float(request.form.get('quantidadeTaxa', 0))
+                fee_total = float(request.form.get('totalTaxa', 0))
+
             # Supondo que você tenha uma função de transação definida para realizar as operações
             if transaction_type == 'Compra':
-                realizar_compra(session, wallet_id_recebimento, crypto_trans_id, crypto_price, crypto_quantity, transaction_total)
+                realizar_compra(session, wallet_id_recebimento, crypto_trans_id, crypto_price, crypto_quantity, fee_crypto_id, fee_price, fee_quantity, fee_total, transaction_total)
             elif transaction_type == 'Saldo':
                 inserir_saldo(session, wallet_id_recebimento, crypto_trans_id, crypto_price, crypto_quantity, transaction_total)
             elif transaction_type == 'Venda':
-                realizar_venda(session,  wallet_id_saida, crypto_trans_id, crypto_price, crypto_quantity, transaction_total)
+                realizar_venda(session,  wallet_id_saida, crypto_trans_id, crypto_price, crypto_quantity, fee_crypto_id, fee_price, fee_quantity, fee_total, transaction_total)
             elif transaction_type == 'Transferência':
                 realizar_transferencia(session, wallet_id_recebimento, wallet_id_saida,crypto_trans_id, crypto_quantity, crypto_price, fee_crypto_id, fee_price, fee_quantity, fee_total, transaction_total)
         
@@ -277,11 +281,8 @@ def add_transaction():
 
 # ***************** TRANSAÇÃO DE COMPRA  ******************#
 
-def realizar_compra(session, wallet_id_recebimento, crypto_trans_id, crypto_price, crypto_quantity, transaction_total):
-    fee_crypto_id = request.form.get('moedaTaxa')
-    fee_price = float(request.form.get('precoTaxa', 0))
-    fee_quantity = float(request.form.get('quantidadeTaxa', 0))
-    fee_total = float(request.form.get('totalTaxa', 0))
+def realizar_compra(session, wallet_id_recebimento, crypto_trans_id, crypto_price, crypto_quantity, fee_crypto_id, fee_price, fee_quantity, fee_total, transaction_total):
+    
     try:
         print(f'Realizando compra de {crypto_quantity} unidades de {crypto_trans_id} a {crypto_price} cada.')
 
@@ -342,6 +343,11 @@ def realizar_compra(session, wallet_id_recebimento, crypto_trans_id, crypto_pric
 
 def inserir_saldo(session, wallet_id_recebimento, crypto_trans_id, crypto_price, crypto_quantity, transaction_total):
     try:
+        sfee_price = 0.0
+        sfee_quantity = 0.0
+        sfee_total = 0.0
+        sfee_crypto_id = ''
+
         print(f'Inserindo Saldo {crypto_quantity} unidades de {crypto_trans_id} a {crypto_price} cada.')
 
         # Obter o saldo atual da carteira para a criptomoeda específica
@@ -369,10 +375,10 @@ def inserir_saldo(session, wallet_id_recebimento, crypto_trans_id, crypto_price,
             crypto_quantity=crypto_quantity,
             transaction_total=transaction_total,
             type='Saldo',
-            fee_crypto_id='',
-            fee_price=0.0,
-            fee_quantity=0.0,
-            fee_total=0.0,
+            fee_crypto_id=sfee_crypto_id,
+            fee_price=sfee_price,
+            fee_quantity=sfee_quantity,
+            fee_total=sfee_total,
             receiving_wallet_id=wallet_id_recebimento,
             date=datetime.now()
         )
@@ -388,7 +394,7 @@ def inserir_saldo(session, wallet_id_recebimento, crypto_trans_id, crypto_price,
         raise
 
 #************************************************************************************************
-def realizar_venda(session,  wallet_id_saida, crypto_trans_id, crypto_price, crypto_quantity, transaction_total):
+def realizar_venda(session,  wallet_id_saida, crypto_trans_id, crypto_price, crypto_quantity, fee_crypto_id, fee_price, fee_quantity, fee_total, transaction_total):
     
     #wallet_id_saida = request.form.get('carteriaSaidaTransacaoId')
     fee_crypto_id = request.form.get('moedaTaxa')
@@ -452,8 +458,7 @@ def realizar_venda(session,  wallet_id_saida, crypto_trans_id, crypto_price, cry
 
 
 def realizar_transferencia(session, wallet_id_recebimento, wallet_id_saida,crypto_trans_id, crypto_quantity, crypto_price, fee_crypto_id, fee_price, fee_quantity, fee_total, transaction_total):
-    
-    
+        
     try:
         print(f'Realizando venda de {crypto_quantity} unidades da moeda id {crypto_trans_id} a um preço de {crypto_price} cada.')
 
@@ -527,3 +532,29 @@ def realizar_transferencia(session, wallet_id_recebimento, wallet_id_saida,crypt
         flash(f'Erro na Transação de Venda: {e}', 'alert-danger')
         print(f'Erro na Transação de Venda: {e}')
         raise
+
+
+@app.route('/delete_transacao', methods=['POST'])
+def delete_transacao():
+    session = create_session()
+    print('deletar passo 1')
+    try:
+        # Obtém o ID da transacao a partir do formulário
+        transacao_id = request.form.get('transacao_id')
+        if transacao_id:
+            with app.app_context():
+                # Busca a carteira pelo ID
+                transacao = session.query(Transaction).filter_by(id=transacao_id).first()
+                print('deletar passo 2')
+                if transacao:
+                    # deleta transação pelo id
+                    session.delete(transacao)
+                    session.commit()
+                    flash(f'Transação deletada com sucesso', 'alert-success')
+    except Exception as e:
+        flash(f'Erro ao tentar deletar Transação:\n{e}', 'alert-danger')
+        session.rollback()
+    finally:
+        session.close()
+    return redirect(url_for('transacoes'))
+

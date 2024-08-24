@@ -17,7 +17,7 @@ class TransacaoForm(FlaskForm):
     totalTaxa = FloatField('Total Taxa', validators=[Optional()])
     carteriaSaidaTransacao = SelectField('Carteira Saída', choices=[], validators=[Optional()])
     carteriaRecebimentoTransacao = SelectField('Carteira Recebimento', choices=[], validators=[Optional()])
-    dataTransacao = DateField('Data da Transação', format='%Y-%m-%d', validators=[Optional()])
+    dataTransacao = DateField('Data da Transação', format='%d-%m-%Y', validators=[Optional()])
     adicionarTransacao = SubmitField('Adicionar')
 
     def validate(self):

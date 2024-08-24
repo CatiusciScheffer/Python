@@ -15,16 +15,18 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Nome da Carteira</th>
+                    <th>Carteira</th>
                     <th>Tipo</th>
                     <th>Moeda</th>
-                    <th>Quantidade</th>
-                    <th>Preço U$</th>
-                    <th>Total U$</th>
-                    <th>Moeda da Taxa</th>
-                    <th>Quantidade da Taxa</th>
-                    <th>Total da Taxa U$</th>
+                    <th>Qtd.</th>
+                    <th>Preço</th>
+                    <th>Total Moeda</th>
+                    <th>Moeda(Tx)</th>
+                    <th>Qtd.(Tx)</th>
+                    <th>Total(Tx)</th>
+                    <th>Total</th>
                     <th>Data</th>
+                    <th></t
                 </tr>
             </thead>
             <tbody>
@@ -34,16 +36,28 @@
                     <td>{{ transacao.wallet.name }}</td> <!-- Nome da carteira -->
                     <td>{{ transacao.type }}</td> <!-- Tipo da transação -->
                     <td>{{ transacao.crypto_Trans.name }}</td> <!-- Nome da criptomoeda -->
-                    <td>{{ transacao.crypto_quantity }}</td> <!-- Quantidade de criptomoeda -->
-                    <td>{{ transacao.crypto_price }}</td> <!-- Preço da criptomoeda em U$ -->
-                    <td>{{ transacao.transaction_total }}</td> <!-- Total da transação em U$ -->
+                    <td class="quantidade">{{ transacao.crypto_quantity }}</td> <!-- Quantidade de criptomoeda -->
+                    <td class="preco">{{ transacao.crypto_price }}</td> <!-- Preço da criptomoeda em U$ -->
+                    <td class="total-moeda">{{ transacao.transaction_total }}</td> <!-- Total da transação em U$ -->
                     <td>{{ transacao.fee_crypto.name }}</td> <!-- Nome da criptomoeda da taxa -->
-                    <td>{{ transacao.fee_quantity }}</td> <!-- Quantidade da taxa -->
-                    <td>{{ transacao.fee_total }}</td> <!-- Total da taxa em U$ -->
+                    <td class="quantidade-taxa">{{ transacao.fee_quantity }}</td> <!-- Quantidade da taxa -->
+                    <td class="total-taxa">{{ transacao.fee_total }}</td> <!-- Total da taxa em U$ -->
+                    <td class="total-transacao">{{ transacao.totalTransacao }}</td> <!-- Total da transação -->
                     <td>{{ transacao.date }}</td> <!-- Data da transação -->
+                    <td>
+                        <!-- Formulário para atualizar o status da transação -->
+                        <form method="POST" action="{{ url_for('delete_transacao') }}" style="display:inline;">
+                            <!-- Campo oculto para passar o ID da transação -->
+                            <input type="hidden" name="transacao_id" value="{{ transacao.id }}">
+                            <!-- Botão de atualizar status -->
+                            <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
+            
         </table>
     </div>
+    <script src="static/js/scripts_consulltaTransacoes.js" defer></script>
 {% endblock %}

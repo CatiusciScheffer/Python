@@ -129,4 +129,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const transactionModal = new bootstrap.Modal(document.getElementById('transactionModal'));
         transactionModal.show();
     }
+
+    
 });
