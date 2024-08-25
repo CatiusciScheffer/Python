@@ -174,3 +174,132 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+<!-- Modal para Adicionar Transação -->
+<div
+  class="modal fade"
+  id="transactionModal"
+  tabindex="-1"
+  aria-labelledby="transactionModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="text-center pt-4">
+        <h5 class="modal-title text-center" id="transactionModalLabel">
+          Adicionar Transação
+        </h5>
+      </div>
+      <div class="modal-body p-4">
+        <form method="POST" action="{{ url_for('add_transaction') }}" id="transactionForm">
+          {{ formTransacoes.csrf_token }}
+          {{ formTransacoes.hidden_tag() }}
+
+          <!-- Bloco para exibir mensagens flash -->
+          {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+              <div class="alert alert-danger alert-dismissible fade show" role="alert" id="modalErrorAlert">
+                {% for category, message in messages %}
+                  {{ message }}
+                {% endfor %}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endif %}
+          {% endwith %}
+          <!-- Fim do bloco para mensagens flash -->  
+
+          <div class="card container mb-3">
+            <div class="row justify-content-center">
+              <div class="col mb-3">
+                {{ formTransacoes.tipoTransacao.label }}
+                {{ formTransacoes.tipoTransacao(class="form-select") }}
+              </div>
+              <div class="col mb-3">
+                {{ formTransacoes.dataTransacao.label }}
+                {{ formTransacoes.dataTransacao(class="form-control") }}
+              </div>
+            </div>
+          </div>
+          <div class="card container">
+            <h6 class="modal-title mt-3" id="transactionModalLabel">
+              Dados Transação
+            </h6>
+            <div class="card container text-center mb-3">
+              <div class="row">
+                <div class="col mb-3">
+                  {{ formTransacoes.moedaTransacao.label }} {{
+                  formTransacoes.moedaTransacao(class="form-select") }}
+                  <!-- Campo oculto para armazenar o ID da moeda de transação -->
+                  <input type="hidden" name="moedaTransacaoId" id="moedaTransacaoId" value="{{ formTransacoes.moedaTransacao.data }}">
+                </div>
+                <div class="col mb-3">
+                  {{ formTransacoes.precoTransacao.label }} {{
+                  formTransacoes.precoTransacao(class="form-control") }}
+                </div>
+                <div class="col mb-3">
+                  {{ formTransacoes.quantidadeTransacao.label }} {{
+                  formTransacoes.quantidadeTransacao(class="form-control") }}
+                </div>
+                <div class="col mb-3">
+                  {{ formTransacoes.totalTransacao.label }} {{
+                  formTransacoes.totalTransacao(class_="form-control bg-light border border-secondary", readonly=True) }}
+                </div>
+              </div>
+            </div>
+            <div id="taxaSection">
+              <h6 class="modal-title" id="transactionModalLabel">
+                  Sobre a Taxa
+              </h6>
+              <div class="card container text-center mb-3">
+                <div class="row">
+                  <div class="col mb-3">
+                    {{ formTransacoes.moedaTaxa.label }} {{
+                    formTransacoes.moedaTaxa(class="form-select") }}
+                    <!-- Campos ocultos para IDs -->
+                    <input type="hidden" name="carteriaSaidaTransacao_id" id="carteriaSaidaTransacao_id" value="{{ formTransacoes.carteriaSaidaTransacao.data }}">
+                    <input type="hidden" name="carteriaRecebimentoTransacao_id" id="carteriaRecebimentoTransacao_id" value="{{ formTransacoes.carteriaRecebimentoTransacao.data }}">
+                  </div>
+                  <div class="col mb-3">
+                    {{ formTransacoes.precoTaxa.label }} {{
+                    formTransacoes.precoTaxa(class="form-control") }}
+                  </div>
+                  <div class="col mb-3">
+                    {{ formTransacoes.quantidadeTaxa.label }} {{
+                    formTransacoes.quantidadeTaxa(class="form-control") }}
+                  </div>
+                  <div class="col mb-3">
+                    {{ formTransacoes.totalTaxa.label }} {{
+                    formTransacoes.totalTaxa(class="form-control bg-light border border-secondary", readonly=True) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h6 class="modal-title mt-3" id="transactionModalLabel">
+            Locais da Transação
+          </h6>
+          <div class="card container text-center">
+            <div class="row">
+              <div class="col mb-3" id="saida_wallet_container">
+                {{ formTransacoes.carteriaSaidaTransacao.label }} {{
+                formTransacoes.carteriaSaidaTransacao(class="form-select") }}
+                <!-- Campo oculto para armazenar o ID da carteira de saída -->
+                <input type="hidden" name="carteriaSaidaTransacaoId" id="carteriaSaidaTransacaoId" value="{{ formTransacoes.carteriaSaidaTransacao.data }}">
+              </div>
+              <div class="col mb-3" id="receiving_wallet_container">
+                {{ formTransacoes.carteriaRecebimentoTransacao.label }} {{
+                formTransacoes.carteriaRecebimentoTransacao(class="form-select") }}
+                <!-- Campo oculto para armazenar o ID da carteira de recebimento -->
+                <input type="hidden" name="carteriaRecebimentoTransacaoId" id="carteriaRecebimentoTransacaoId" value="{{ formTransacoes.carteriaRecebimentoTransacao.data }}">
+              </div>
+            </div>
+          </div>
+          <div class="d-grid gap-3 mt-3">
+            <button type="submit" class="btn btn-primary">Adicionar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="static/js/scripts_transacoes.js" defer></script>

@@ -71,9 +71,4 @@ class Price(db.Model):
     price = db.Column(db.Float, nullable=False)
     timestamp = db.Column(db.String, nullable=False)
 
-class WalletSummary(db.Model):
-    __tablename__ = 'wallet_summary'
-    crypto = db.Column(db.String, primary_key=True)
-    quantity = db.Column(db.Float)
-    price = db.Column(db.Float)
-    total_value = db.Column(db.Float)
+

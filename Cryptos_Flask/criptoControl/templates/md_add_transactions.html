@@ -127,3 +127,15 @@
 </div>
 
 <script src="static/js/scripts_transacoes.js" defer></script>
+<script>
+  // Script para reabrir o modal se houver mensagens flash
+  document.addEventListener('DOMContentLoaded', function() {
+    // Verifica se o alerta de erro está presente e visível
+    var modalErrorAlert = document.getElementById('modalErrorAlert');
+    if (modalErrorAlert) {
+      // Reabre o modal caso o alerta esteja visível
+      var transactionModal = new bootstrap.Modal(document.getElementById('transactionModal'));
+      transactionModal.show();
+    }
+  });
+</script>
