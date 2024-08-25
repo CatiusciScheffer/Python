@@ -51,7 +51,7 @@ class Transaction(db.Model):
     crypto_quantity = db.Column(db.Float, nullable=False)
     transaction_total = db.Column(db.Float, nullable=False)
     
-    date = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    date = db.Column(db.Date, nullable=False, default=datetime.now)
         
     fee_crypto_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.id'), nullable=False)
     fee_crypto = db.relationship('Cryptocurrency', foreign_keys=[fee_crypto_id])
@@ -71,3 +71,9 @@ class Price(db.Model):
     price = db.Column(db.Float, nullable=False)
     timestamp = db.Column(db.String, nullable=False)
 
+class WalletSummary(db.Model):
+    __tablename__ = 'wallet_summary'
+    crypto = db.Column(db.String, primary_key=True)
+    quantity = db.Column(db.Float)
+    price = db.Column(db.Float)
+    total_value = db.Column(db.Float)

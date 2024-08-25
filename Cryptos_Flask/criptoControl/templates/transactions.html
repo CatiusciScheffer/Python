@@ -43,7 +43,7 @@
                     <td class="quantidade-taxa">{{ transacao.fee_quantity }}</td> <!-- Quantidade da taxa -->
                     <td class="total-taxa">{{ transacao.fee_total }}</td> <!-- Total da taxa em U$ -->
                     <td class="total-transacao">{{ transacao.totalTransacao }}</td> <!-- Total da transação -->
-                    <td>{{ transacao.date }}</td> <!-- Data da transação -->
+                    <td>{{ transacao.date.strftime('%d/%m/%Y') }}</td> <!-- Data da transação -->
                     <td>
                         <!-- Formulário para atualizar o status da transação -->
                         <form method="POST" action="{{ url_for('delete_transacao') }}" style="display:inline;">

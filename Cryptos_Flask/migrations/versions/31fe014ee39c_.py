@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: f9f0cb207887
+Revision ID: 31fe014ee39c
 Revises: 
-Create Date: 2024-08-21 20:02:43.756744
+Create Date: 2024-08-24 19:36:45.456254
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'f9f0cb207887'
+revision = '31fe014ee39c'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -35,6 +35,13 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')
+    )
+    op.create_table('wallet_summary',
+    sa.Column('crypto', sa.String(), nullable=False),
+    sa.Column('quantity', sa.Float(), nullable=True),
+    sa.Column('price', sa.Float(), nullable=True),
+    sa.Column('total_value', sa.Float(), nullable=True),
+    sa.PrimaryKeyConstraint('crypto')
     )
     op.create_table('prices',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -69,7 +76,7 @@ def upgrade():
     sa.Column('crypto_price', sa.Float(), nullable=False),
     sa.Column('crypto_quantity', sa.Float(), nullable=False),
     sa.Column('transaction_total', sa.Float(), nullable=False),
-    sa.Column('date', sa.DateTime(), nullable=False),
+    sa.Column('date', sa.Date(), nullable=False),
     sa.Column('fee_crypto_id', sa.Integer(), nullable=False),
     sa.Column('fee_price', sa.Float(), nullable=False),
     sa.Column('fee_quantity', sa.Float(), nullable=False),
@@ -90,6 +97,7 @@ def downgrade():
     op.drop_table('wallets')
     op.drop_table('wallet_balances')
     op.drop_table('prices')
+    op.drop_table('wallet_summary')
     op.drop_table('users')
     op.drop_table('cryptocurrencies')
     # ### end Alembic commands ###

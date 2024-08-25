@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, request, redirect,jsonify
 from sqlalchemy import func, desc
 from criptoControl.forms import TransacaoForm, AddWalletForm, AddCryptoForm
-from criptoControl.models import db, User, Wallet, Cryptocurrency, WalletBalance, Transaction, Price
+from criptoControl.models import db, User, Wallet, Cryptocurrency, WalletBalance, Transaction, Price, WalletSummary
 from criptoControl.api import get_crypto_price
 from criptoControl import app
 from datetime import datetime
@@ -558,3 +558,53 @@ def delete_transacao():
         session.close()
     return redirect(url_for('transacoes'))
 
+
+@app.route('/wallet_summary')
+def wallet_summary():
+    # Obtém os dados de todas as carteiras
+    vw_saldos, total_valor = get_wallet_summary()
+    
+    # Renderiza o template passando os dados
+    return render_template('wallet_summary.html', saldos=vw_saldos, total_valor=total_valor)
+
+def get_wallet_summary():
+    # Subconsulta para obter o preço mais recente
+    latest_prices_subquery = (
+        db.session.query(
+            Price.cryptocurrency_id,
+            func.max(Price.timestamp).label('latest_timestamp')
+        )
+        .group_by(Price.cryptocurrency_id)
+        .subquery()
+    )
+    
+    # Consulta principal
+    query = (
+        db.session.query(
+            Wallet.name.label('carteira'),
+            Cryptocurrency.name.label('moeda'),
+            WalletBalance.balance.label('quantidade'),
+            Price.price.label('preço'),
+            (WalletBalance.balance * Price.price).label('valor')
+        )
+        .join(WalletBalance, Wallet.id == WalletBalance.wallet_id)
+        .join(Cryptocurrency, Cryptocurrency.id == WalletBalance.cryptocurrency_id)
+        .join(Price, Price.cryptocurrency_id == Cryptocurrency.id)
+        .join(latest_prices_subquery, 
+               (Price.cryptocurrency_id == latest_prices_subquery.c.cryptocurrency_id) &
+               (Price.timestamp == latest_prices_subquery.c.latest_timestamp))
+        .order_by(Cryptocurrency.name)
+        .all()
+    )
+    
+    # Calcular a soma da coluna 'valor'
+    total_valor = sum(row.valor for row in query)
+    
+    # Retornar os resultados como uma lista de dicionários e a soma total
+    return [{
+        'carteira': row.carteira,
+        'moeda': row.moeda,
+        'quantidade': row.quantidade,
+        'preço': row.preço,
+        'valor': row.valor
+    } for row in query], total_valor
