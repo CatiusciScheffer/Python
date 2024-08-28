@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 31fe014ee39c
+Revision ID: 32b39553ff13
 Revises: 
-Create Date: 2024-08-24 19:36:45.456254
+Create Date: 2024-08-27 19:23:47.563340
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '31fe014ee39c'
+revision = '32b39553ff13'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -35,13 +35,6 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')
-    )
-    op.create_table('wallet_summary',
-    sa.Column('crypto', sa.String(), nullable=False),
-    sa.Column('quantity', sa.Float(), nullable=True),
-    sa.Column('price', sa.Float(), nullable=True),
-    sa.Column('total_value', sa.Float(), nullable=True),
-    sa.PrimaryKeyConstraint('crypto')
     )
     op.create_table('prices',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -97,7 +90,6 @@ def downgrade():
     op.drop_table('wallets')
     op.drop_table('wallet_balances')
     op.drop_table('prices')
-    op.drop_table('wallet_summary')
     op.drop_table('users')
     op.drop_table('cryptocurrencies')
     # ### end Alembic commands ###

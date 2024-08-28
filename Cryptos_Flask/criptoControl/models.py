@@ -34,7 +34,6 @@ class WalletBalance(db.Model):
     cryptocurrency_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.id'), nullable=False)
     balance = db.Column(db.Float, nullable=False)
 
-
 class Transaction(db.Model):
     __tablename__ = 'transactions'
     

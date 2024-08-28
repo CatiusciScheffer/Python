@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Condição para mostrar/ocultar a carteira de recebimento
         if (selectedValue === 'Venda') {
-            receivingWalletContainer.style.display = 'none';
+            receivingWalletContainer.style.display = 'block';
             saidaWalletContainer.style.display = 'block';
             taxaSection.style.display = 'block'; // Mostra a seção "Sobre a Taxa"
         } else if (selectedValue === 'Compra' || selectedValue === 'Saldo') {

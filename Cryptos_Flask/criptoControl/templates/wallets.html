@@ -1,7 +1,6 @@
 {% extends 'index.html' %}
 
 {% block body %}
-
 <div class="container">
     {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
@@ -18,16 +17,15 @@
             <tr>
                 <th>Nome</th>
                 <th>Rede</th>
-                <th>Valor Total</th>
                 <th>Ação</th>
             </tr>
         </thead>
         <tbody>
             {% for carteira in carteiras %}
             <tr>
-                <td>{{ carteira.carteira }}</td>
-                <td>{{ carteira.Rede }}</td>
-                <td>{{ carteira.total_valor | round(2) }}</td>
+                <!-- Use as propriedades dos objetos Wallet -->
+                <td>{{ carteira.name }}</td>
+                <td>{{ carteira.network }}</td>
                 <td>
                     <!-- Formulário para atualizar o status da carteira -->
                     <form method="POST" action="{{ url_for('delete_wallet') }}" style="display:inline;">
@@ -42,6 +40,4 @@
         </tbody>
     </table>
 </div>
-
 {% endblock %}
-
