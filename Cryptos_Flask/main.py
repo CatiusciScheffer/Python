@@ -1,5 +1,5 @@
 from criptoControl import app
-import webview
+#import webview
 
 
 if __name__ == '__main__':

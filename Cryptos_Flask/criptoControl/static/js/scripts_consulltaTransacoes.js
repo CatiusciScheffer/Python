@@ -1,16 +1,16 @@
 document.addEventListener('DOMContentLoaded', function() {
-    function calcularTotalTransacao(row) {
+    function calculartotal_paid(row) {
         // Obtém os valores dos campos da linha
         var quantidade = parseFloat(row.querySelector('.quantidade').innerText) || 0;
         var preco = parseFloat(row.querySelector('.preco').innerText) || 0;
         var totalMoeda = parseFloat(row.querySelector('.total-moeda').innerText) || 0;
-        var totalTaxa = parseFloat(row.querySelector('.total-taxa').innerText) || 0;
+        var total_fee = parseFloat(row.querySelector('.total-taxa').innerText) || 0;
         
         // Calcula o total da transação
-        var totalTransacao = totalMoeda + totalTaxa;
+        var total_paid = totalMoeda + total_fee;
 
         // Atualiza o campo Total Transação
-        row.querySelector('.total-transacao').innerText = totalTransacao.toFixed(2);
+        row.querySelector('.total-transacao').innerText = total_paid.toFixed(2);
     }
 
     // Obtém todas as linhas da tabela
@@ -18,6 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Itera sobre as linhas e calcula o total
     linhas.forEach(function(linha) {
-        calcularTotalTransacao(linha);
+        calculartotal_paid(linha);
     });
 });

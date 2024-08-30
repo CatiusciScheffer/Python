@@ -1,6 +1,6 @@
 import requests
 
-def get_crypto_price(api_key, symbol):
+def get_crypto_payment_price(api_key, symbol):
     """
     Obtém o preço atual de uma criptomoeda específica em USD usando a API da CoinMarketCap.
 

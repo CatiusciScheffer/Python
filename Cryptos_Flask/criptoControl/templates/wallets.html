@@ -30,7 +30,7 @@
                     <!-- Formulário para atualizar o status da carteira -->
                     <form method="POST" action="{{ url_for('delete_wallet') }}" style="display:inline;">
                         <!-- Campo oculto para passar o ID da carteira -->
-                        <input type="hidden" name="wallet_id" value="{{ carteira.id }}">
+                        <input type="hidden" name="payment_wallet_id" value="{{ carteira.id }}">
                         <!-- Botão de atualizar status -->
                         <button type="submit" class="btn btn-danger btn-sm">Excluir/Inativar</button>
                     </form>
