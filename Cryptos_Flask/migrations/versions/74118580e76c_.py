@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 7ab1fe1302f7
+Revision ID: 74118580e76c
 Revises: 
-Create Date: 2024-08-30 20:27:21.736488
+Create Date: 2024-08-31 16:07:42.511092
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '7ab1fe1302f7'
+revision = '74118580e76c'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -65,20 +65,20 @@ def upgrade():
     sa.Column('transactions_id', sa.Integer(), nullable=False),
     sa.Column('transaction_type', sa.String(), nullable=False),
     sa.Column('transaction_date', sa.Date(), nullable=False),
-    sa.Column('payment_wallet_id', sa.Integer(), nullable=False),
+    sa.Column('payment_wallet_id', sa.Integer(), nullable=True),
     sa.Column('receiving_wallet_id', sa.Integer(), nullable=True),
-    sa.Column('crypto_payment_id', sa.Integer(), nullable=False),
-    sa.Column('crypto_payment_price', sa.Float(), nullable=False),
-    sa.Column('crypto_payment_quantity', sa.Float(), nullable=False),
-    sa.Column('total_paid', sa.Float(), nullable=False),
-    sa.Column('crypto_receive_id', sa.Integer(), nullable=False),
-    sa.Column('crypto_receive_price', sa.Float(), nullable=False),
-    sa.Column('crypto_receive_quantity', sa.Float(), nullable=False),
-    sa.Column('total_received', sa.Float(), nullable=False),
-    sa.Column('crypto_fee_id', sa.Integer(), nullable=False),
-    sa.Column('crypto_fee_price', sa.Float(), nullable=False),
-    sa.Column('crypto_fee_quantity', sa.Float(), nullable=False),
-    sa.Column('total_fee', sa.Float(), nullable=False),
+    sa.Column('crypto_payment_id', sa.Integer(), nullable=True),
+    sa.Column('crypto_payment_price', sa.Float(), nullable=True),
+    sa.Column('crypto_payment_quantity', sa.Float(), nullable=True),
+    sa.Column('total_paid', sa.Float(), nullable=True),
+    sa.Column('crypto_receive_id', sa.Integer(), nullable=True),
+    sa.Column('crypto_receive_price', sa.Float(), nullable=True),
+    sa.Column('crypto_receive_quantity', sa.Float(), nullable=True),
+    sa.Column('total_received', sa.Float(), nullable=True),
+    sa.Column('crypto_fee_id', sa.Integer(), nullable=True),
+    sa.Column('crypto_fee_price', sa.Float(), nullable=True),
+    sa.Column('crypto_fee_quantity', sa.Float(), nullable=True),
+    sa.Column('total_fee', sa.Float(), nullable=True),
     sa.ForeignKeyConstraint(['crypto_fee_id'], ['cryptocurrencies.crypto_id'], ),
     sa.ForeignKeyConstraint(['crypto_payment_id'], ['cryptocurrencies.crypto_id'], ),
     sa.ForeignKeyConstraint(['crypto_receive_id'], ['cryptocurrencies.crypto_id'], ),

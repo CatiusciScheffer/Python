@@ -3,15 +3,7 @@
 {% block body %}
 
 <div class="container">
-    {% with messages = get_flashed_messages(with_categories=True) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert {{ category }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+    
     <h4 class="mt-4">Moedas Cadastradas</h4>
     <table class="table">
         <thead>
@@ -22,15 +14,15 @@
             </tr>
         </thead>
         <tbody>
-            {% for cryptocurrency in moedas %}
+            {% for crypto in cryptos %}
             <tr>
-                <td>{{ cryptocurrency.name }}</td>
-                <td>{{ cryptocurrency.symbol }}</td>
+                <td>{{ crypto.crypto_name }}</td>
+                <td>{{ crypto.crypto_symbol }}</td>
                 <td>
-                    <!-- Formulário para atualizar o status da moeda -->
+                    <!-- Formulário para atualizar o status da crypto -->
                     <form method="POST" action="{{ url_for('delete_crypto') }}" style="display:inline;">
-                        <!-- Campo oculto para passar o ID da moeda -->
-                        <input type="hidden" name="crypto_id" value="{{ cryptocurrency.id }}">
+                        <!-- Campo oculto para passar o ID da crypto -->
+                        <input type="hidden" name="crypto_id" value="{{ crypto.crypto_id }}">
                         <!-- Botão de atualizar status -->
                         <button type="submit" class="btn btn-danger btn-sm">Excluir/Inativar</button>
                     </form>

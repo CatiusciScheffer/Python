@@ -15,14 +15,14 @@
       </div>
       <div class="modal-body p-4">
         <form method="POST" action="{{ url_for('add_wallet') }}">
-          {{ formAddCarteiras.csrf_token }}
-          {{ formAddCarteiras.hidden_tag() }}
+          {{ formAddWallet.csrf_token }}
+          {{ formAddWallet.hidden_tag() }}
           <fieldset>
             <div class="card container text-center p-4">
-              {{ formAddCarteiras.wallet_name.label }} {{
-              formAddCarteiras.wallet_name(class="form-select") }} {{
-              formAddCarteiras.wallet_network.label }} {{
-              formAddCarteiras.wallet_network(class="form-select") }}
+              {{ formAddWallet.wallet_name.label }} {{
+              formAddWallet.wallet_name(class="form-select") }} {{
+              formAddWallet.wallet_network.label }} {{
+              formAddWallet.wallet_network(class="form-select") }}
             </div>
           </fieldset>
           <div class="d-grid gap-3 mt-3">

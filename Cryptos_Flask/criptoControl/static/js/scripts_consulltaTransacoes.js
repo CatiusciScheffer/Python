@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Obtém os valores dos campos da linha
         var quantidade = parseFloat(row.querySelector('.quantidade').innerText) || 0;
         var preco = parseFloat(row.querySelector('.preco').innerText) || 0;
-        var totalMoeda = parseFloat(row.querySelector('.total-moeda').innerText) || 0;
+        var totalMoeda = parseFloat(row.querySelector('.total-crypto').innerText) || 0;
         var total_fee = parseFloat(row.querySelector('.total-taxa').innerText) || 0;
         
         // Calcula o total da transação

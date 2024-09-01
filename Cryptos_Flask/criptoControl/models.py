@@ -41,7 +41,7 @@ class Transaction(db.Model):
     transaction_date = db.Column(db.Date, nullable=False, default=datetime.now)
     
     #carteira pagamento
-    payment_wallet_id = db.Column(db.Integer, db.ForeignKey('wallets.wallet_id'), nullable=False)
+    payment_wallet_id = db.Column(db.Integer, db.ForeignKey('wallets.wallet_id'), nullable=True)
     payment_wallet = db.relationship('Wallet', foreign_keys=[payment_wallet_id], backref='transactions')
     
     #carteira recebimento
@@ -49,25 +49,25 @@ class Transaction(db.Model):
     receiving_wallet = db.relationship('Wallet', foreign_keys=[receiving_wallet_id], backref='received_transactions')
 
     #cripto pagamento
-    crypto_payment_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.crypto_id'), nullable=False)
+    crypto_payment_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.crypto_id'), nullable=True)
     crypto_payment = db.relationship('Cryptocurrency', foreign_keys=[crypto_payment_id])
-    crypto_payment_price = db.Column(db.Float, nullable=False)
-    crypto_payment_quantity = db.Column(db.Float, nullable=False)
-    total_paid = db.Column(db.Float, nullable=False)
+    crypto_payment_price = db.Column(db.Float, nullable=True)
+    crypto_payment_quantity = db.Column(db.Float, nullable=True)
+    total_paid = db.Column(db.Float, nullable=True)
     
     #cripto recebimento
-    crypto_receive_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.crypto_id'), nullable=False)
+    crypto_receive_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.crypto_id'), nullable=True)
     crypto_receive = db.relationship('Cryptocurrency', foreign_keys=[crypto_payment_id])
-    crypto_receive_price = db.Column(db.Float, nullable=False)
-    crypto_receive_quantity = db.Column(db.Float, nullable=False)
-    total_received = db.Column(db.Float, nullable=False)
+    crypto_receive_price = db.Column(db.Float, nullable=True)
+    crypto_receive_quantity = db.Column(db.Float, nullable=True)
+    total_received = db.Column(db.Float, nullable=True)
 
     #crypto taxa    
-    crypto_fee_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.crypto_id'), nullable=False)
+    crypto_fee_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.crypto_id'), nullable=True)
     crypto_fee = db.relationship('Cryptocurrency', foreign_keys=[crypto_fee_id])
-    crypto_fee_price = db.Column(db.Float, nullable=False)
-    crypto_fee_quantity = db.Column(db.Float, nullable=False)
-    total_fee = db.Column(db.Float, nullable=False)    
+    crypto_fee_price = db.Column(db.Float, nullable=True)
+    crypto_fee_quantity = db.Column(db.Float, nullable=True)
+    total_fee = db.Column(db.Float, nullable=True)    
 
 
 class Price(db.Model):
@@ -76,6 +76,6 @@ class Price(db.Model):
     price_crypto_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.crypto_id'), nullable=False)
     price_cryptocurrency = db.relationship('Cryptocurrency')  
     price = db.Column(db.Float, nullable=False)
-    price_consult_datetime = db.Column(db.String, nullable=False)
+    price_consult_datetime = db.Column(db.String, nullable=False)#não mudar tipo!
 
 

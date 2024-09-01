@@ -5,7 +5,7 @@
         <a
           class="nav-link active"
           aria-current="page"
-          href="{{ url_for('adicionar_transacoes') }}"
+          href="{{ url_for('add_transactions') }}"
           >Adicionar Transação</a
         >
 
@@ -29,7 +29,7 @@
 
         <!--link que atualiza preço com API via formulário-->
         <form
-          id="atualizar-precos-form"
+          id="atualizar-prices-form"
           action="{{ url_for('update_prices') }}"
           method="POST"
           style="display: none"
@@ -37,7 +37,7 @@
         <a
           class="nav-link"
           href="#"
-          onclick="document.getElementById('atualizar-precos-form').submit();"
+          onclick="document.getElementById('atualizar-prices-form').submit();"
           >Atualizar Preços</a
         >
       </nav>

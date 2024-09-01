@@ -15,14 +15,14 @@
       </div>
       <div class="modal-body p-4">
         <form method="POST" action="{{ url_for('add_crypto') }}">
-          {{ formAddMoedas.csrf_token }}
-          {{ formAddMoedas.hidden_tag() }}
+          {{ formAddCrypto.csrf_token }}
+          {{ formAddCrypto.hidden_tag() }}
           <fieldset>
             <div class="card container text-center p-4">
-              {{ formAddMoedas.crypto_name.label }} 
-              {{ formAddMoedas.crypto_name(class="form-select") }} 
-              {{ formAddMoedas.crypto_symbol.label }} 
-              {{ formAddMoedas.crypto_symbol(class="form-select") }}
+              {{ formAddCrypto.crypto_name.label }} 
+              {{ formAddCrypto.crypto_name(class="form-select") }} 
+              {{ formAddCrypto.crypto_symbol.label }} 
+              {{ formAddCrypto.crypto_symbol(class="form-select") }}
             </div>
           </fieldset>
           <div class="d-grid gap-3 mt-3">

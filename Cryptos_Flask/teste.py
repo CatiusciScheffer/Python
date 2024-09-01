@@ -4,18 +4,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const quantidadeInput = document.querySelector('input[name="crypto_payment_quantity"]');
     const totalInput = document.querySelector('input[name="total_paid"]');
     const moedaSelect = document.querySelector('select[name="crypto_payment"]');
-
+    
     // Seleciona os campos do formulário para a taxa
     const crypto_fee_priceInput = document.querySelector('input[name="crypto_fee_price"]');
     const crypto_fee_quantityInput = document.querySelector('input[name="crypto_fee_quantity"]');
     const total_feeInput = document.querySelector('input[name="total_fee"]');
     const crypto_feeSelect = document.querySelector('select[name="crypto_fee"]');
 
-    // Seleciona os campos do formulário para o recebimento
-    const crypto_receive_priceInput = document.querySelector('input[name="crypto_receive_price"]');
-    const crypto_receive_quantityInput = document.querySelector('input[name="crypto_receive_quantity"]');
-    const total_receivedInput = document.querySelector('input[name="total_received"]');
-    const crypto_receiveSelect = document.querySelector('select[name="crypto_receive"]');
+    // Seleciona o elemento que contém a seção "Sobre a Taxa"
+    const section_crypto_fee = document.getElementById('section_crypto_fee');
+    
+    // Seleciona os campos ocultos para IDs
+    const carteriaSaidaIdInput = document.getElementById('payment_wallet_id');
+    const carteriaRecebimentoIdInput = document.getElementById('carteriaRecebimentoTransacao_id');
 
     // Função para calcular o total de uma transação
     function calcularTotal(precoInput, quantidadeInput, totalInput) {
@@ -62,17 +63,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     });
 
-    // Atualiza o preço da crypto selecionada no recebimento
-    crypto_receiveSelect.addEventListener('change', function() {
-        const cryptocurrencyId = this.value;
-        fetch(`/get_price/${cryptocurrencyId}`)
-            .then(response => response.json())
-            .then(data => {
-                crypto_receive_priceInput.value = data.price;
-                calcularTotal(crypto_receive_priceInput, crypto_receive_quantityInput, total_receivedInput);
-            });
-    });
-
     // Adiciona os eventos de escuta para transações
     adicionarEventos(precoInput, quantidadeInput, totalInput, moedaSelect, function() {
         calcularTotal(precoInput, quantidadeInput, totalInput);
@@ -83,42 +73,33 @@ document.addEventListener('DOMContentLoaded', function() {
         calcularTotal(crypto_fee_priceInput, crypto_fee_quantityInput, total_feeInput);
     });
 
-    // Adiciona os eventos de escuta para recebimentos
-    adicionarEventos(crypto_receive_priceInput, crypto_receive_quantityInput, total_receivedInput, crypto_receiveSelect, function() {
-        calcularTotal(crypto_receive_priceInput, crypto_receive_quantityInput, total_receivedInput);
-    });
-
     // Ocultar a carteira conforme tipo de transação
     const transaction_type = document.getElementById('transaction_type');
     const section_wallet_received = document.getElementById('receiving_wallet_container');
     const section_wallet_payment = document.getElementById('saida_wallet_container');
-    const section_crypto_fee = document.getElementById('section_crypto_fee');
-    const section_crypto_received = document.getElementById('section_crypto_received');
-    const section_crypto_payment = document.getElementById('section_crypto_payment');
 
     function toggleWalletContainers() {
         const selectedValue = transaction_type.value;
 
-        // Condição para mostrar/ocultar elementos
-        if (selectedValue === 'Saldo') {
-            section_wallet_received.style.display = 'block';
-            section_wallet_payment.style.display = 'none';
-            section_crypto_fee.style.display = 'none';
-            section_crypto_received.style.display = 'block';
-            section_crypto_payment.style.display = 'none';
-        } else if (selectedValue === 'Transferência'){
+        // Condição para mostrar/ocultar a carteira de recebimento
+        if (selectedValue === 'Venda') {
             section_wallet_received.style.display = 'block';
             section_wallet_payment.style.display = 'block';
-            section_crypto_fee.style.display = 'block';
-            section_crypto_received.style.display = 'block';
-            section_crypto_payment.style.display = 'none';
+            section_crypto_fee.style.display = 'block'; // Mostra a seção "Sobre a Taxa"
+        } else if (selectedValue === 'Compra' || selectedValue === 'Saldo') {
+            section_wallet_received.style.display = 'block';
+            section_wallet_payment.style.display = 'none';
+    
+            if (selectedValue === 'Saldo') {
+                section_crypto_fee.style.display = 'none'; // Oculta a seção "Sobre a Taxa" se for "Saldo"
+            } else {
+                section_crypto_fee.style.display = 'block'; // Mostra a seção "Sobre a Taxa" se for "Compra"
+            }
         } else {
             section_wallet_received.style.display = 'block';
             section_wallet_payment.style.display = 'block';
-            section_crypto_fee.style.display = 'block';
-            section_crypto_received.style.display = 'block';
-            section_crypto_payment.style.display = 'block';
-        }
+            section_crypto_fee.style.display = 'block'; // Mostra a seção "Sobre a Taxa"
+        } 
     }
 
     // Inicializa a visibilidade com base no valor selecionado ao carregar a página
@@ -127,15 +108,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Adiciona evento de mudança ao dropdown
     transaction_type.addEventListener('change', toggleWalletContainers);
 
-    // Atualiza os campos ocultos com base na seleção das carteiras
+   // Atualiza os campos ocultos com base na seleção das carteiras
     const carteriaSaidaSelect = document.getElementById('payment_wallet');
     carteriaSaidaSelect.addEventListener('change', function() {
-        document.getElementById('hidden_payment_wallet_id').value = this.value;
+        const carteriaSaidaIdInput = document.getElementById('payment_wallet');
+        carteriaSaidaIdInput.value = this.value; // Atualiza o valor do campo oculto
     });
 
     const carteriaRecebimentoSelect = document.getElementById('receiving_wallet');
     carteriaRecebimentoSelect.addEventListener('change', function() {
-        document.getElementById('hidden_carteriaRecebimentoTransacao_id').value = this.value;
+        const carteriaRecebimentoIdInput = document.getElementById('carteriaRecebimentoTransacaoId');
+        carteriaRecebimentoIdInput.value = this.value; // Atualiza o valor do campo oculto
     });
-
+    
 });
