@@ -1,4 +1,4 @@
-from flask import render_template, url_for, flash, request, redirect,jsonify
+from flask import render_template, url_for, flash, request, redirect, jsonify, session
 from sqlalchemy import func, or_
 from criptoControl.forms import TransactionsForm, AddWalletForm, AddCryptoForm
 from criptoControl.models import db, Wallet, Cryptocurrency, WalletBalance, Transaction, Price
@@ -49,27 +49,46 @@ def add_transactions():
     formTransactions = TransactionsForm()
     formAddWallet = AddWalletForm()
     formAddCrypto = AddCryptoForm()
-    session = create_session()
+    db_session = create_session()  # Renomeado para evitar conflito com flask.session
 
     try:        
         # Busca as informações no banco
-        transactions = session.query(Transaction).all()
-        wallets = session.query(Wallet).filter(Wallet.wallet_status=='N').all()
-        cryptos = session.query(Cryptocurrency).filter(Cryptocurrency.crypto_status=='N').all()
+        transactions = db_session.query(Transaction).all()
+        wallets = db_session.query(Wallet).filter(Wallet.wallet_status=='N').all()
+        cryptos = db_session.query(Cryptocurrency).filter(Cryptocurrency.crypto_status=='N').all()
 
         # Popular as informações do banco no HTML
         formTransactions.crypto_payment.choices = [('', '')] + [(crypto.crypto_id, f"{crypto.crypto_name}({crypto.crypto_symbol})") for crypto in cryptos]
-        
         formTransactions.crypto_fee.choices = [('', '')] + [(crypto.crypto_id, f"{crypto.crypto_name}({crypto.crypto_symbol})") for crypto in cryptos]
-
         formTransactions.crypto_receive.choices = [('', '')] + [(crypto.crypto_id, f"{crypto.crypto_name}({crypto.crypto_symbol})") for crypto in cryptos]
-
         formTransactions.payment_wallet.choices = [('', '')] + [(wallet.wallet_id, wallet.wallet_name) for wallet in wallets]
-        
         formTransactions.receiving_wallet.choices = [('', '')] + [(wallet.wallet_id, wallet.wallet_name) for wallet in wallets]
+
+        # Verificar se existem dados armazenados na sessão para recuperar preenchimento
+        if 'form_data' in session:
+            form_data = session.pop('form_data')  # Use `session` directly from Flask
+            
+            # Preencher o formulário com os dados recuperados
+            formTransactions.transaction_type.data = form_data.get('transaction_type')
+            formTransactions.transaction_date.data = form_data.get('transaction_date')
+            formTransactions.receiving_wallet.data = form_data.get('receiving_wallet_id')
+            formTransactions.payment_wallet.data = form_data.get('payment_wallet_id')
+            formTransactions.crypto_payment.data = form_data.get('crypto_payment_id')
+            formTransactions.crypto_payment_price.data = form_data.get('crypto_payment_price')
+            formTransactions.crypto_payment_quantity.data = form_data.get('crypto_payment_quantity')
+            formTransactions.total_paid.data = form_data.get('total_paid')
+            formTransactions.crypto_receive.data = form_data.get('crypto_receive_id')
+            formTransactions.crypto_receive_price.data = form_data.get('crypto_receive_price')
+            formTransactions.crypto_receive_quantity.data = form_data.get('crypto_receive_quantity')
+            formTransactions.total_received.data = form_data.get('total_received')
+            formTransactions.crypto_fee.data = form_data.get('crypto_fee_id')
+            formTransactions.crypto_fee_price.data = form_data.get('crypto_fee_price')
+            formTransactions.crypto_fee_quantity.data = form_data.get('crypto_fee_quantity')
+            formTransactions.total_fee.data = form_data.get('total_fee')
+
     finally:
-        session.close()
-    
+        db_session.close()  # Fechar a sessão do SQLAlchemy
+
     return render_template('add_transactions.html', transactions=transactions, wallets=wallets, cryptos=cryptos, formTransactions=formTransactions, formAddWallet=formAddWallet, formAddCrypto=formAddCrypto)
 
 
@@ -352,13 +371,7 @@ def add_transaction():
         # Convertendo para float com verificação
         crypto_fee_price = float(crypto_fee_price) if crypto_fee_price else 0.0
         crypto_fee_quantity = float(crypto_fee_quantity) if crypto_fee_quantity else 0.0
-        total_fee = float(total_fee) if total_fee else 0.0
-
-        # Ajustar data da transação
-        if not transaction_date:
-            transaction_date = datetime.now()
-        else:
-            transaction_date = datetime.strptime(transaction_date, '%Y-%m-%d')
+        total_fee = float(total_fee) if total_fee else 0.0                         
 
         # Cria a sessão
         with app.app_context():
@@ -468,12 +481,29 @@ def realizar_compra(session, transaction_date, payment_wallet_id, receiving_wall
 
 #************************************************************************************************
 
-def inserir_saldo(session, receiving_wallet_id, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received, transaction_date):
+def inserir_saldo(db_session, receiving_wallet_id, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received, transaction_date):
     try:
-        if ([receiving_wallet_id, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received]) is not None:            
+        if transaction_date:
+            transaction_date = datetime.strptime(transaction_date, '%Y-%m-%d')
+        else:
+            # Armazenar dados do formulário na sessão do Flask
+            session['form_data'] = {
+                'transaction_type' : 'Saldo',
+                'receiving_wallet_id': receiving_wallet_id,
+                'crypto_receive_id': crypto_receive_id,
+                'crypto_receive_price': crypto_receive_price,
+                'crypto_receive_quantity': crypto_receive_quantity,
+                'total_received': total_received
+            }
+
+            flash('Preencha data!', 'alert-danger')
+            
+            return redirect(url_for('add_transactions'))
+        
+        if all([receiving_wallet_id, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received]) and total_received > 0.0 and crypto_receive_quantity > 0.0: 
 
             # Obter o saldo atual da carteira para a criptomoeda específica
-            balance_wallet = session.query(WalletBalance).filter_by(balance_wallet_id=receiving_wallet_id, balance_crypto_id=crypto_receive_id).first()
+            balance_wallet = db_session.query(WalletBalance).filter_by(balance_wallet_id=receiving_wallet_id, balance_crypto_id=crypto_receive_id).first()
             
             # Criar a transação
             transaction = Transaction(
@@ -486,8 +516,8 @@ def inserir_saldo(session, receiving_wallet_id, crypto_receive_id, crypto_receiv
                 total_received = total_received
             )
 
-            session.add(transaction)
-            session.commit()
+            db_session.add(transaction)
+            db_session.commit()
 
             # Atualizar o saldo da criptomoeda após a compra
             if balance_wallet is not None:
@@ -500,13 +530,27 @@ def inserir_saldo(session, receiving_wallet_id, crypto_receive_id, crypto_receiv
                     balance_crypto_id=crypto_receive_id,
                     balance=crypto_receive_quantity
                 )
-                session.add(novo_saldo)
+                db_session.add(novo_saldo)
             
             flash(f'Saldo adicionado com sucesso!', 'alert-success')
         else:
-            flash('Preencha todos os campos!', 'alert-danger')
+            # Armazenar dados do formulário na sessão do Flask
+            session['form_data'] = {
+                'transaction_type' : 'Saldo',
+                'receiving_wallet_id': receiving_wallet_id,
+                'crypto_receive_id': crypto_receive_id,
+                'crypto_receive_price': crypto_receive_price,
+                'crypto_receive_quantity': crypto_receive_quantity,
+                'total_received': total_received,
+                'transaction_date' : transaction_date
+            }
+
+            flash('Preencha/Verifique todos os campos!', 'alert-danger')
+            
+            return redirect(url_for('add_transactions'))
+           
     except Exception as e:
-        session.rollback()
+        db_session.rollback()
         flash(f'Erro na Transação de Compra: {e}', 'alert-danger')
         print(f'Erro na Transação de Compra: {e}')
         raise

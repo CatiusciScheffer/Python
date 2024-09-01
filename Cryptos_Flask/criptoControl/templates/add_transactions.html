@@ -18,29 +18,12 @@
         <div class="row justify-content-center">
           <div class="col mb-3">
             {{ formTransactions.transaction_type.label }}
-            {% if formTransactions.transaction_type.errors %}
-              {{ formTransactions.transaction_type(class="form-select is-invalid", id="transaction_type") }}
-              <div class="invalid-feedback">
-                {% for erro in formTransactions.transaction_type.errors %}
-                  {{ erro }}
-                {% endfor %}
-              </div>
-            {% else %}
-              {{ formTransactions.transaction_type(class="form-select", id="transaction_type") }}
-            {% endif %}
+            {{ formTransactions.transaction_type(class="form-select", id="transaction_type") }}
           </div>
           <div class="col mb-3">
             {{ formTransactions.transaction_date.label }}
-            {% if formTransactions.transaction_date.errors %}
-              {{ formTransactions.transaction_date(class="form-control is-invalid", id="transaction_date") }}
-              <div class="invalid-feedback">
-                {% for erro in formTransactions.transaction_date.errors %}
-                  {{ erro }}
-                {% endfor %}
-              </div>
-            {% else %}
-              {{ formTransactions.transaction_date(class="form-control", id="transaction_date") }}
-            {% endif %}
+            {{ formTransactions.transaction_date(class="form-select", value=transaction_date.strftime('%d-%m-%Y') if transaction_date else '') }}
+
           </div>
         </div>
       </div>
@@ -51,16 +34,7 @@
             <div class="row">
               <div class="col mb-3">
                 {{ formTransactions.crypto_payment.label }}
-                {% if formTransactions.crypto_payment.errors %}
-                  {{ formTransactions.crypto_payment(class="form-select is-invalid", id="crypto_payment") }}
-                  <div class="invalid-feedback">
-                    {% for erro in formTransactions.crypto_payment.errors %}
-                      {{ erro }}
-                    {% endfor %}
-                  </div>
-                {% else %}
-                  {{ formTransactions.crypto_payment(class="form-select", id="crypto_payment") }}
-                {% endif %}
+                {{ formTransactions.crypto_payment(class="form-select", id="crypto_payment") }}
                 <input
                   type="hidden"
                   name="crypto_paymentId"
@@ -70,42 +44,15 @@
               </div>
               <div class="col mb-3">
                 {{ formTransactions.crypto_payment_price.label }}
-                {% if formTransactions.crypto_payment_price.errors %}
-                  {{ formTransactions.crypto_payment_price(class="form-control is-invalid", id="crypto_payment_price") }}
-                  <div class="invalid-feedback">
-                    {% for erro in formTransactions.crypto_payment_price.errors %}
-                      {{ erro }}
-                    {% endfor %}
-                  </div>
-                {% else %}
-                  {{ formTransactions.crypto_payment_price(class="form-control", id="crypto_payment_price") }}
-                {% endif %}
+                {{ formTransactions.crypto_payment_price(class="form-control", id="crypto_payment_price") }}
               </div>
               <div class="col mb-3">
                 {{ formTransactions.crypto_payment_quantity.label }}
-                {% if formTransactions.crypto_payment_quantity.errors %}
-                  {{ formTransactions.crypto_payment_quantity(class="form-control is-invalid", id="crypto_payment_quantity") }}
-                  <div class="invalid-feedback">
-                    {% for erro in formTransactions.crypto_payment_quantity.errors %}
-                      {{ erro }}
-                    {% endfor %}
-                  </div>
-                {% else %}
-                  {{ formTransactions.crypto_payment_quantity(class="form-control", id="crypto_payment_quantity") }}
-                {% endif %}
+                {{ formTransactions.crypto_payment_quantity(class="form-control", id="crypto_payment_quantity") }}
               </div>
               <div class="col mb-3">
                 {{ formTransactions.total_paid.label }}
-                {% if formTransactions.total_paid.errors %}
-                  {{ formTransactions.total_paid(class="form-control bg-light border border-secondary is-invalid", readonly=True, id="total_paid") }}
-                  <div class="invalid-feedback">
-                    {% for erro in formTransactions.total_paid.errors %}
-                      {{ erro }}
-                    {% endfor %}
-                  </div>
-                {% else %}
-                  {{ formTransactions.total_paid(class="form-control bg-light border border-secondary", readonly=True, id="total_paid") }}
-                {% endif %}
+                {{ formTransactions.total_paid(class="form-control bg-light border border-secondary", readonly=True, id="total_paid") }}
               </div>
             </div>
           </div>
@@ -116,16 +63,7 @@
             <div class="row">
               <div class="col mb-3">
                 {{ formTransactions.crypto_fee.label }}
-                {% if formTransactions.crypto_fee.errors %}
-                  {{ formTransactions.crypto_fee(class="form-select is-invalid", id="crypto_fee") }}
-                  <div class="invalid-feedback">
-                    {% for erro in formTransactions.crypto_fee.errors %}
-                      {{ erro }}
-                    {% endfor %}
-                  </div>
-                {% else %}
-                  {{ formTransactions.crypto_fee(class="form-select", id="crypto_fee") }}
-                {% endif %}
+                {{ formTransactions.crypto_fee(class="form-select", id="crypto_fee") }}
                 <input
                   type="hidden"
                   name="payment_wallet_id"
@@ -141,42 +79,15 @@
               </div>
               <div class="col mb-3">
                 {{ formTransactions.crypto_fee_price.label }}
-                {% if formTransactions.crypto_fee_price.errors %}
-                  {{ formTransactions.crypto_fee_price(class="form-control is-invalid", id="crypto_fee_price") }}
-                  <div class="invalid-feedback">
-                    {% for erro in formTransactions.crypto_fee_price.errors %}
-                      {{ erro }}
-                    {% endfor %}
-                  </div>
-                {% else %}
-                  {{ formTransactions.crypto_fee_price(class="form-control", id="crypto_fee_price") }}
-                {% endif %}
+                {{ formTransactions.crypto_fee_price(class="form-control", id="crypto_fee_price") }}
               </div>
               <div class="col mb-3">
                 {{ formTransactions.crypto_fee_quantity.label }}
-                {% if formTransactions.crypto_fee_quantity.errors %}
-                  {{ formTransactions.crypto_fee_quantity(class="form-control is-invalid", id="crypto_fee_quantity") }}
-                  <div class="invalid-feedback">
-                    {% for erro in formTransactions.crypto_fee_quantity.errors %}
-                      {{ erro }}
-                    {% endfor %}
-                  </div>
-                {% else %}
-                  {{ formTransactions.crypto_fee_quantity(class="form-control", id="crypto_fee_quantity") }}
-                {% endif %}
+                {{ formTransactions.crypto_fee_quantity(class="form-control", id="crypto_fee_quantity") }}
               </div>
               <div class="col mb-3">
                 {{ formTransactions.total_fee.label }}
-                {% if formTransactions.total_fee.errors %}
-                  {{ formTransactions.total_fee(class="form-control bg-light border border-secondary is-invalid", readonly=True, id="total_fee") }}
-                  <div class="invalid-feedback">
-                    {% for erro in formTransactions.total_fee.errors %}
-                      {{ erro }}
-                    {% endfor %}
-                  </div>
-                {% else %}
-                  {{ formTransactions.total_fee(class="form-control bg-light border border-secondary", readonly=True, id="total_fee") }}
-                {% endif %}
+                {{ formTransactions.total_fee(class="form-control bg-light border border-secondary", readonly=True, id="total_fee") }}
               </div>
             </div>
           </div>
@@ -187,16 +98,7 @@
             <div class="row">
               <div class="col mb-3">
                 {{ formTransactions.crypto_receive.label }}
-                {% if formTransactions.crypto_receive.errors %}
-                  {{ formTransactions.crypto_receive(class="form-select is-invalid", id="crypto_receive") }}
-                  <div class="invalid-feedback">
-                    {% for erro in formTransactions.crypto_receive.errors %}
-                      {{ erro }}
-                    {% endfor %}
-                  </div>
-                {% else %}
-                  {{ formTransactions.crypto_receive(class="form-select", id="crypto_receive") }}
-                {% endif %}
+                {{ formTransactions.crypto_receive(class="form-select", id="crypto_receive") }}
                 <input
                   type="hidden"
                   name="payment_wallet_id"
@@ -212,42 +114,15 @@
               </div>
               <div class="col mb-3">
                 {{ formTransactions.crypto_receive_price.label }}
-                {% if formTransactions.crypto_receive_price.errors %}
-                  {{ formTransactions.crypto_receive_price(class="form-control is-invalid", id="crypto_receive_price") }}
-                  <div class="invalid-feedback">
-                    {% for erro in formTransactions.crypto_receive_price.errors %}
-                      {{ erro }}
-                    {% endfor %}
-                  </div>
-                {% else %}
-                  {{ formTransactions.crypto_receive_price(class="form-control", id="crypto_receive_price") }}
-                {% endif %}
+                {{ formTransactions.crypto_receive_price(class="form-control", id="crypto_receive_price") }}
               </div>
               <div class="col mb-3">
                 {{ formTransactions.crypto_receive_quantity.label }}
-                {% if formTransactions.crypto_receive_quantity.errors %}
-                  {{ formTransactions.crypto_receive_quantity(class="form-control is-invalid", id="crypto_receive_quantity") }}
-                  <div class="invalid-feedback">
-                    {% for erro in formTransactions.crypto_receive_quantity.errors %}
-                      {{ erro }}
-                    {% endfor %}
-                  </div>
-                {% else %}
-                  {{ formTransactions.crypto_receive_quantity(class="form-control", id="crypto_receive_quantity") }}
-                {% endif %}
+                {{ formTransactions.crypto_receive_quantity(class="form-control", id="crypto_receive_quantity") }}
               </div>
               <div class="col mb-3">
                 {{ formTransactions.total_received.label }}
-                {% if formTransactions.total_received.errors %}
-                  {{ formTransactions.total_received(class="form-control bg-light border border-secondary is-invalid", readonly=True, id="total_received") }}
-                  <div class="invalid-feedback">
-                    {% for erro in formTransactions.total_received.errors %}
-                      {{ erro }}
-                    {% endfor %}
-                  </div>
-                {% else %}
-                  {{ formTransactions.total_received(class="form-control bg-light border border-secondary", readonly=True, id="total_received") }}
-                {% endif %}
+                {{ formTransactions.total_received(class="form-control bg-light border border-secondary", readonly=True, id="total_received") }}
               </div>
             </div>
           </div>
@@ -258,16 +133,7 @@
         <div class="row">
           <div class="col mb-3" id="saida_wallet_container">
             {{ formTransactions.payment_wallet.label }}
-            {% if formTransactions.payment_wallet.errors %}
-              {{ formTransactions.payment_wallet(class="form-select is-invalid", id="payment_wallet") }}
-              <div class="invalid-feedback">
-                {% for erro in formTransactions.payment_wallet.errors %}
-                  {{ erro }}
-                {% endfor %}
-              </div>
-            {% else %}
-              {{ formTransactions.payment_wallet(class="form-select", id="payment_wallet") }}
-            {% endif %}
+            {{ formTransactions.payment_wallet(class="form-select", id="payment_wallet") }}
             <input
               type="hidden"
               name="payment_wallet"
@@ -277,16 +143,7 @@
           </div>
           <div class="col mb-3" id="receiving_wallet_container">
             {{ formTransactions.receiving_wallet.label }}
-            {% if formTransactions.receiving_wallet.errors %}
-              {{ formTransactions.receiving_wallet(class="form-select is-invalid", id="receiving_wallet") }}
-              <div class="invalid-feedback">
-                {% for erro in formTransactions.receiving_wallet.errors %}
-                  {{ erro }}
-                {% endfor %}
-              </div>
-            {% else %}
-              {{ formTransactions.receiving_wallet(class="form-select", id="receiving_wallet") }}
-            {% endif %}
+            {{ formTransactions.receiving_wallet(class="form-select", id="receiving_wallet") }}
             <input
               type="hidden"
               name="carteriaRecebimentoTransacaoId"
