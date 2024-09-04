@@ -16,35 +16,100 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Carteira</th>
+                    <th>W.Saída</th>
+                    <th>W.Recebimento</th>
                     <th>Tipo</th>
-                    <th>Moeda</th>
+                    <th>Data</th>
+                    <th>Pago</th>
                     <th>Qtd.</th>
                     <th>Preço</th>
-                    <th>Total Moeda</th>
+                    <th>Total Pago</th>
+                    <th>Recebido</th>
+                    <th>Qtd.</th>
+                    <th>Preço</th>
+                    <th>Total Recebido</th>
                     <th>Moeda(Tx)</th>
                     <th>Qtd.(Tx)</th>
+                    <th>Preço</th>
                     <th>Total(Tx)</th>
-                    <th>Total</th>
-                    <th>Data</th>
-                    <th></t
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                {% for transaction in transactions %}
+                {% for transaction in cons_transactions %}
                 <tr>
                     <td>{{ transaction.transactions_id }}</td>
-                    <td>{{ transaction.payment_wallet.name }}</td> <!-- Nome da carteira -->
-                    <td>{{ transaction.transaction_type }}</td> <!-- Tipo da transação -->
-                    <td>{{ transaction.crypto_payment.name }}</td> <!-- Nome da criptomoeda -->
-                    <td class="quantidade">{{ transaction.crypto_payment_quantity }}</td> <!-- Quantidade de criptomoeda -->
-                    <td class="preco">{{ transaction.crypto_payment_price }}</td> <!-- Preço da criptomoeda em U$ -->
-                    <td class="total-crypto">{{ transaction.total_paid }}</td> <!-- Total da transação em U$ -->
-                    <td>{{ transaction.crypto_fee.name }}</td> <!-- Nome da criptomoeda da taxa -->
-                    <td class="quantidade-taxa">{{ transaction.crypto_fee_quantity }}</td> <!-- Quantidade da taxa -->
-                    <td class="total-taxa">{{ transaction.total_fee }}</td> <!-- Total da taxa em U$ -->
-                    <td class="total-transaction">{{ transaction.total_paid }}</td> <!-- Total da transação -->
-                    <td>{{ transaction.transaction_date.strftime('%d/%m/%Y') }}</td> <!-- Data da transação -->
+                    <td>{{ transaction.payment_wallet.wallet_name }}</td>
+                    <td>{{ transaction.receiving_wallet.wallet_name }}</td>                    
+                    <td>{{ transaction.transaction_type }}</td>
+                    <td>{{ transaction.transaction_date.strftime('%d/%m/%Y') }}</td>                    
+                    <td>{{ transaction.crypto_payment.crypto_symbol }}</td>
+                    <td>
+                        {% if transaction.crypto_payment_quantity is not none %}
+                            <span class="text-danger">{{ transaction.crypto_payment_quantity }}</span>
+                        {% else %}
+                            <!-- Exibe um espaço em branco -->
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if transaction.crypto_payment_price is not none %}
+                        <span class="text-danger">{{ "%.2f" | format(transaction.crypto_payment_price) }}</span>
+                        {% else %}
+                            <!-- Exibe um espaço em branco -->
+                        {% endif %}
+                    </td>                    
+                    <td>
+                        {% if transaction.total_paid is not none %}
+                        <span class="text-danger">{{ "%.2f" | format(transaction.total_paid) }}</span>
+                        {% else %}
+                            <!-- Exibe um espaço em branco -->
+                        {% endif %}
+                    </td>
+                    
+                    <td>{{ transaction.crypto_receive.crypto_symbol }}</td>
+                    <td>
+                        {% if transaction.crypto_receive_quantity is not none %}
+                        <span class="text-primary">{{ transaction.crypto_receive_quantity }}</span>
+                        {% else %}
+                            <!-- Exibe um espaço em branco -->
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if transaction.crypto_receive_price is not none %}
+                        <span class="text-primary">{{ "%.2f" | format(transaction.crypto_receive_price) }}</span>
+                        {% else %}
+                            <!-- Exibe um espaço em branco -->
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if transaction.total_received is not none %}
+                        <span class="text-primary">{{ "%.2f" | format(transaction.total_received) }}</span>
+                        {% else %}
+                            <!-- Exibe um espaço em branco -->
+                        {% endif %}
+                    </td>
+                    <td>{{ transaction.crypto_fee.crypto_symbol }}</td> 
+                    <td>
+                        {% if transaction.crypto_fee_quantity is not none %}
+                        <span class="text-warning">{{ transaction.crypto_fee_quantity }}</span>
+                        {% else %}
+                            <!-- Exibe um espaço em branco -->
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if transaction.crypto_fee_price is not none %}
+                        <span class="text-warning">{{ "%.2f" | format(transaction.crypto_fee_price) }}</span>
+                        {% else %}
+                            <!-- Exibe um espaço em branco -->
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if transaction.total_fee is not none %}
+                        <span class="text-warning">{{ "%.2f" | format(transaction.total_fee) }}</span>
+                        {% else %}
+                            <!-- Exibe um espaço em branco -->
+                        {% endif %}
+                    </td>
                     <td>
                         <!-- Formulário para atualizar o status da transação -->
                         <form method="POST" action="{{ url_for('delete_transaction') }}" style="display:inline;">

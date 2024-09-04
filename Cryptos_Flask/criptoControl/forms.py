@@ -21,7 +21,7 @@ class TransactionsForm(FlaskForm):
     total_received = FloatField('Total Recebido', validators=[Optional()])
     payment_wallet = SelectField('Carteira Saída', choices=[], validators=[Optional()])
     receiving_wallet = SelectField('Carteira Recebimento', choices=[], validators=[Optional()])
-    transaction_date = DateField('Data da Transação', format='%d-%m-%Y', validators=[Optional()])
+    transaction_date = DateField('Data da Transação', format='%Y-%m-%d', validators=[Optional()])
     btn_add_transactions = SubmitField('Adicionar')
 
 

@@ -22,7 +22,7 @@
           </div>
           <div class="col mb-3">
             {{ formTransactions.transaction_date.label }}
-            {{ formTransactions.transaction_date(class="form-select", value=transaction_date.strftime('%d-%m-%Y') if transaction_date else '') }}
+            {{ formTransactions.transaction_date(class="form-select", value=transaction_date.strftime('%Y-%m-%d') if transaction_date else '') }}
 
           </div>
         </div>
