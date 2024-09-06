@@ -25,7 +25,7 @@
             <tbody>
                 {% for saldo in saldos %}
                     <tr>
-                        <td>{{ saldo.wallet }}</td>
+                        <td>{{ saldo.carteira }}</td>
                         <td>{{ saldo.crypto }}</td>
                         <td class="text-end">{{ saldo.quantidade }}</td>
                         <td class="text-end">{{ saldo.preço | round(2) }}</td>
