@@ -15,7 +15,7 @@
   <body>
     
     {% include 'navibar.html' %} 
-    
+    {% include 'naviVert.html' %}
     <div class="container">
       {% with messages = get_flashed_messages(with_categories=True) %}
           {% if messages %}
@@ -30,10 +30,30 @@
     
     {% block body %}
     <div class="container">
-      {% include 'naviVert.html' %} 
+       
       {% include 'md_add_crypto.html' %}      
       {% include 'md_add_wallet.html' %}
       {% include 'md_add_crypto.html' %}
+    </div>
+    
+    <!--PARTE DOS DASHBOARDS-->
+    <div class="container col">
+      <div class="row">
+        <div class="col card">
+          <p>dashboard</p>
+        </div>
+        <div class="col card">
+          <p>dashboard</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col card">
+          <p>dashboard</p>
+        </div>
+        <div class="col card">
+          <p>dashboard</p>
+        </div>
+      </div>
     </div>
     {% endblock %}
 

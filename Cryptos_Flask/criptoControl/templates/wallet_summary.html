@@ -1,13 +1,5 @@
 {% extends 'index.html' %}
 
-{% block head %}
-    <style>
-        .modal-dialog {
-            max-width: 800px;
-        }
-    </style>
-{% endblock %}
-
 {% block body %}
     <div class="container mt-4">
         <!-- Tabela de Saldos da Carteira -->
@@ -31,6 +23,10 @@
                         <td class="text-end">{{ saldo.preço | round(2) }}</td>
                         <td class="text-end">{{ saldo.valor | round(2) }}</td>
                     </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">Nenhum dado disponível.</td>
+                    </tr>
                 {% endfor %}
             </tbody>
             <tfoot>
@@ -41,6 +37,4 @@
             </tfoot>
         </table>
     </div>
-    
 {% endblock %}
-

@@ -402,7 +402,7 @@ def add_transaction():
     
 
 #********     COMPRA    *******     COMPRA    ********
-#armazenar dados do formulário na transação de compra
+#armazenar dados do formulário de transações para qualquer transação
 def store_data(transaction_type, receiving_wallet_id=None, payment_wallet_id=None,
                crypto_receive_id=None, crypto_receive_price=None, crypto_receive_quantity=None,
                total_received=None, crypto_payment_id=None, crypto_payment_price=None,
@@ -427,7 +427,7 @@ def store_data(transaction_type, receiving_wallet_id=None, payment_wallet_id=Non
         'total_fee': total_fee
     }
 
-
+#esta função é usada na transação da compra e da venda
 def check_mandatory_fields_in_purchase(payment_wallet_id, receiving_wallet_id, crypto_payment_id, crypto_payment_price, crypto_payment_quantity, total_paid, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received, crypto_fee_id, crypto_fee_price, crypto_fee_quantity, total_fee, transaction_type, transaction_date=None):
 
     if not all([payment_wallet_id, receiving_wallet_id, crypto_payment_id, crypto_payment_price, crypto_payment_quantity, total_paid, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received, crypto_fee_id, crypto_fee_price, crypto_fee_quantity, total_fee, transaction_type]):
@@ -478,12 +478,9 @@ def check_mandatory_fields_in_purchase(payment_wallet_id, receiving_wallet_id, c
 def realizar_compra(session, transaction_date, payment_wallet_id, receiving_wallet_id, crypto_payment_id, crypto_payment_price, crypto_payment_quantity, total_paid, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received, crypto_fee_id, crypto_fee_price, crypto_fee_quantity, total_fee, transaction_type):
     
     try:
-        print('Realizando Compra.')
-
         # Verificar campos obrigatórios
         redirect_result_com = check_mandatory_fields_in_purchase(payment_wallet_id, receiving_wallet_id, crypto_payment_id, crypto_payment_price, crypto_payment_quantity, total_paid, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received, crypto_fee_id, crypto_fee_price, crypto_fee_quantity, total_fee, transaction_type, transaction_date)
         if redirect_result_com:
-            print('Campo vazio')
             return redirect_result_com
         
         # Carteira de pagamento
@@ -491,8 +488,7 @@ def realizar_compra(session, transaction_date, payment_wallet_id, receiving_wall
         # Carteira de recebimento
         receiving_wallet = session.query(WalletBalance).filter_by(balance_wallet_id=receiving_wallet_id, balance_crypto_id=crypto_receive_id).first()
 
-        print(f'payment_wallet: {payment_wallet}, receiving_wallet: {receiving_wallet}')
-
+       
         # Consulta se tem saldo suficiente para a taxa na carteira da transação
         fee_wallet_balance = session.query(WalletBalance).filter_by(
             balance_wallet_id=payment_wallet_id, 
@@ -504,17 +500,20 @@ def realizar_compra(session, transaction_date, payment_wallet_id, receiving_wall
             balance_wallet_id=payment_wallet_id, 
             balance_crypto_id=crypto_payment_id
         ).first()
+        
+        saldo_pagto_tran = False
 
-        saldo_pagto_fee_tran = False
-
-        if fee_wallet_balance and crypto_wallet_balance:
-            saldo_pagto_fee_tran = (fee_wallet_balance.balance >= crypto_fee_quantity) and (crypto_wallet_balance.balance >= crypto_payment_quantity)
+        if crypto_payment_id != crypto_fee_id:
+            if fee_wallet_balance and crypto_wallet_balance:
+                saldo_pagto_tran = (fee_wallet_balance.balance >= crypto_fee_quantity) and (crypto_wallet_balance.balance >= crypto_payment_quantity)
+        else:
+            if fee_wallet_balance and crypto_wallet_balance:
+                saldo_pagto_tran = (crypto_wallet_balance.balance >= crypto_fee_quantity + crypto_payment_quantity)
+                print(saldo_pagto_tran)
 
         # Verifica se tem saldo da crypto da taxa
-        if saldo_pagto_fee_tran:
-            print(f'Saldo da taxa: {fee_wallet_balance.balance}')
-            print(f'Saldo suficiente para a taxa. Deduzindo {crypto_fee_quantity} da wallet de taxa e {crypto_payment_quantity} da wallet de pagamento.')
-
+        if saldo_pagto_tran:
+           
             # Criar a transação
             transaction = Transaction(
                 transaction_type=transaction_type, 
@@ -535,8 +534,6 @@ def realizar_compra(session, transaction_date, payment_wallet_id, receiving_wall
                 total_fee=total_fee
             )
             
-            print(f'Transaction: {transaction}')
-
             # Registrar a transação
             session.add(transaction)
 
@@ -562,8 +559,26 @@ def realizar_compra(session, transaction_date, payment_wallet_id, receiving_wall
 
             flash('Transação realizada com sucesso!', 'alert-success')
         else:
-            flash('Transação não realizada: Saldo Insuficiente!', 'alert-danger')
-
+            store_data(
+                transaction_type=transaction_type,
+                payment_wallet_id=payment_wallet_id,
+                receiving_wallet_id=receiving_wallet_id,
+                crypto_payment_id=crypto_payment_id,
+                crypto_payment_price=crypto_payment_price,
+                crypto_payment_quantity=crypto_payment_quantity,
+                total_paid=total_paid,
+                crypto_receive_id=crypto_receive_id,
+                crypto_receive_price=crypto_receive_price,
+                crypto_receive_quantity=crypto_receive_quantity,
+                total_received=total_received,
+                crypto_fee_id=crypto_fee_id,
+                crypto_fee_price=crypto_fee_price,
+                crypto_fee_quantity=crypto_fee_quantity,
+                total_fee=total_fee,
+                transaction_date=transaction_date
+            )
+            flash('Saldo Insuficiente', 'alert-danger')
+            return redirect(url_for('add_transactions'))
     except Exception as e:
         session.rollback()
         flash(f'Erro na Transação de Compra: {e}', 'alert-danger')
@@ -647,8 +662,7 @@ def enter_balance(db_session, receiving_wallet_id, crypto_receive_id, crypto_rec
 #************************************************************************************************
 def realizar_venda(session, transaction_date, payment_wallet_id, receiving_wallet_id, crypto_payment_id, crypto_payment_price, crypto_payment_quantity, total_paid, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received, crypto_fee_id, crypto_fee_price, crypto_fee_quantity, total_fee, transaction_type):
     try:
-        print('Realizando Venda.')
-
+        
         # Verificar campos obrigatórios
         redirect_result_com = check_mandatory_fields_in_purchase(payment_wallet_id, receiving_wallet_id, crypto_payment_id, crypto_payment_price, crypto_payment_quantity, total_paid, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received, crypto_fee_id, crypto_fee_price, crypto_fee_quantity, total_fee, transaction_type, transaction_date)
         if redirect_result_com:
@@ -658,8 +672,6 @@ def realizar_venda(session, transaction_date, payment_wallet_id, receiving_walle
         payment_wallet = session.query(WalletBalance).filter_by(balance_wallet_id=payment_wallet_id, balance_crypto_id=crypto_payment_id).first()
         # Carteira de recebimento
         receiving_wallet = session.query(WalletBalance).filter_by(balance_wallet_id=receiving_wallet_id, balance_crypto_id=crypto_payment_id).first()
-
-        print(f'payment_wallet: {payment_wallet}, receiving_wallet: {receiving_wallet}')
 
         # Consulta se tem saldo suficiente para a taxa na carteira da transação
         fee_wallet_balance = session.query(WalletBalance).filter_by(
@@ -673,20 +685,18 @@ def realizar_venda(session, transaction_date, payment_wallet_id, receiving_walle
             balance_crypto_id=crypto_payment_id
         ).first()
 
-        saldo_pagto_fee_tran = False
+        saldo_pagto_tran = False
 
         if crypto_payment_id != crypto_fee_id:
             if fee_wallet_balance and crypto_wallet_balance:
-                saldo_pagto_fee_tran = (fee_wallet_balance.balance >= crypto_fee_quantity) and (crypto_wallet_balance.balance >= crypto_payment_quantity)
+                saldo_pagto_tran = (fee_wallet_balance.balance >= crypto_fee_quantity) and (crypto_wallet_balance.balance >= crypto_payment_quantity)
         else:
             if fee_wallet_balance and crypto_wallet_balance:
-                saldo_pagto_fee_tran = (fee_wallet_balance.balance + crypto_wallet_balance.balance >= crypto_fee_quantity + crypto_payment_quantity)
+                saldo_pagto_tran = (fee_wallet_balance.balance + crypto_wallet_balance.balance >= crypto_fee_quantity + crypto_payment_quantity)
 
         # Verifica se tem saldo da crypto da taxa
-        if saldo_pagto_fee_tran:
-            print(f'Saldo da taxa: {fee_wallet_balance.balance if fee_wallet_balance else 0}')
-            print(f'Saldo suficiente para a taxa. Deduzindo {crypto_fee_quantity} da wallet de taxa.')
-
+        if saldo_pagto_tran:
+            
             # Criar a transação
             transaction = Transaction(
                 transaction_type=transaction_type, 
@@ -733,8 +743,27 @@ def realizar_venda(session, transaction_date, payment_wallet_id, receiving_walle
 
             flash('Transação realizada com sucesso!', 'alert-success')
         else:
-            flash('Transação não realizada: Saldo Insuficiente!', 'alert-danger')
-
+            store_data(
+                transaction_type=transaction_type,
+                payment_wallet_id=payment_wallet_id,
+                receiving_wallet_id=receiving_wallet_id,
+                crypto_payment_id=crypto_payment_id,
+                crypto_payment_price=crypto_payment_price,
+                crypto_payment_quantity=crypto_payment_quantity,
+                total_paid=total_paid,
+                crypto_receive_id=crypto_receive_id,
+                crypto_receive_price=crypto_receive_price,
+                crypto_receive_quantity=crypto_receive_quantity,
+                total_received=total_received,
+                crypto_fee_id=crypto_fee_id,
+                crypto_fee_price=crypto_fee_price,
+                crypto_fee_quantity=crypto_fee_quantity,
+                total_fee=total_fee,
+                transaction_date=transaction_date
+            )
+            flash('Saldo Insuficiente!', 'alert-danger')
+            return redirect(url_for('add_transactions'))
+                        
     except Exception as e:
         session.rollback()
         flash(f'Erro na Transação de Venda: {e}', 'alert-danger')
@@ -848,12 +877,24 @@ def realizar_transferencia(
 
             # Commit das mudanças
             session.commit()
-            flash('Transação realizada com sucesso!', 'alert-success')
-        
+            flash('Transação realizada com sucesso!', 'alert-success')        
         else:
-            flash('Transação não realizada: Saldo Insuficiente!', 'alert-danger')
-            session.rollback()
-            
+            store_data(
+                transaction_type=transaction_type,
+                payment_wallet_id=payment_wallet_id,
+                receiving_wallet_id=receiving_wallet_id,
+                crypto_receive_id=crypto_receive_id,
+                crypto_receive_price=crypto_receive_price,
+                crypto_receive_quantity=crypto_receive_quantity,
+                total_received=total_received,
+                crypto_fee_id=crypto_fee_id,
+                crypto_fee_price=crypto_fee_price,
+                crypto_fee_quantity=crypto_fee_quantity,
+                total_fee=total_fee,
+                transaction_date=transaction_date
+            )
+            flash('Saldo Insuficiente!', 'alert-danger')
+            session.rollback()            
     except Exception as e:
         flash(f'Erro ao realizar transferência: {e}', 'alert-danger')
         session.rollback()
@@ -951,11 +992,6 @@ def delete_transaction():
 
 
 
-
-
-
-
-
 # ************ MOSTRAR SALDOS DE MOEDA POR CARTERIA ****************
 @app.route('/wallet_summary')
 def wallet_summary():
@@ -976,7 +1012,7 @@ def get_wallet_summary():
         .group_by(Price.price_crypto_id)
         .subquery()
     )
-    
+
     # Consulta principal
     query = (
         db.session.query(
@@ -988,11 +1024,11 @@ def get_wallet_summary():
         )
         .join(WalletBalance, Wallet.wallet_id == WalletBalance.balance_wallet_id)
         .join(Cryptocurrency, Cryptocurrency.crypto_id == WalletBalance.balance_crypto_id)
-        .join(Price, Price.price_id == Cryptocurrency.crypto_id)
+        .join(Price, Price.price_crypto_id == Cryptocurrency.crypto_id)
         .join(latest_prices_subquery, 
                (Price.price_crypto_id == latest_prices_subquery.c.price_crypto_id) &
                (Price.price_consult_datetime == latest_prices_subquery.c.latest_timestamp))
-        .order_by(Wallet.wallet_name)
+        .order_by(Wallet.wallet_name, Cryptocurrency.crypto_name)
         .all()
     )
     
@@ -1007,5 +1043,6 @@ def get_wallet_summary():
         'preço': row.preço,
         'valor': row.valor
     } for row in query], total_valor
+
 
 # ------ FIM _____  MOSTRAR SALDOS DE MOEDA POR CARTERIA ---------------

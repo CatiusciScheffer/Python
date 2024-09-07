@@ -43,7 +43,7 @@
                     <td>{{ transaction.receiving_wallet.wallet_name }}</td>                    
                     <td>{{ transaction.transaction_type }}</td>
                     <td>{{ transaction.transaction_date.strftime('%d/%m/%Y') }}</td>                    
-                    <td>{{ transaction.crypto_payment.crypto_symbol }}</td>
+                    <td><span class="text-danger">{{ transaction.crypto_payment.crypto_symbol }}</span></td>
                     <td>
                         {% if transaction.crypto_payment_quantity is not none %}
                             <span class="text-danger">{{ transaction.crypto_payment_quantity }}</span>
@@ -66,7 +66,7 @@
                         {% endif %}
                     </td>
                     
-                    <td>{{ transaction.crypto_receive.crypto_symbol }}</td>
+                    <td><span class="text-primary">{{ transaction.crypto_receive.crypto_symbol }}</span></td>
                     <td>
                         {% if transaction.crypto_receive_quantity is not none %}
                         <span class="text-primary">{{ transaction.crypto_receive_quantity }}</span>
@@ -88,7 +88,7 @@
                             <!-- Exibe um espaço em branco -->
                         {% endif %}
                     </td>
-                    <td>{{ transaction.crypto_fee.crypto_symbol }}</td> 
+                    <td><span class="text-warning">{{ transaction.crypto_fee.crypto_symbol }}</span></td> 
                     <td>
                         {% if transaction.crypto_fee_quantity is not none %}
                         <span class="text-warning">{{ transaction.crypto_fee_quantity }}</span>
