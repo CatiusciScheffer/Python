@@ -1,129 +1,161 @@
-{% extends 'index.html' %}
+{% extends 'index.html' %} {% block head %} {% endblock %} {% block body %}
+<div class="container mt-4">
+  <!-- Tabela de Transações -->
+  <caption>
+    <h4>Lista de Transações</h4>
+  </caption>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>W.Saída</th>
+        <th>W.Recebimento</th>
+        <th>Tipo</th>
+        <th>Data</th>
+        <th>Pago</th>
+        <th>Qtd.</th>
+        <th>Preço</th>
+        <th>Total Pago</th>
+        <th>Recebido</th>
+        <th>Qtd.</th>
+        <th>Preço</th>
+        <th>Total Recebido</th>
+        <th>Moeda(Tx)</th>
+        <th>Qtd.(Tx)</th>
+        <th>Preço</th>
+        <th>Total(Tx)</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for transaction in cons_transactions %}
+      <tr>
+        <td>{{ transaction.transactions_id }}</td>
+        <td>{{ transaction.payment_wallet.wallet_name }}</td>
+        <td>{{ transaction.receiving_wallet.wallet_name }}</td>
+        <td>{{ transaction.transaction_type }}</td>
+        <td>{{ transaction.transaction_date.strftime('%d/%m/%Y') }}</td>
+        <td>
+          <span class="text-danger"
+            >{{ transaction.crypto_payment.crypto_symbol }}</span
+          >
+        </td>
+        <td>
+          {% if transaction.crypto_payment_quantity is not none %}
+          <span class="text-danger"
+            >{{ transaction.crypto_payment_quantity }}</span
+          >
+          {% else %}
+          <!-- Exibe um espaço em branco -->
+          {% endif %}
+        </td>
+        <td>
+          {% if transaction.crypto_payment_price is not none %}
+          <span class="text-danger"
+            >{{ "%.2f" | format(transaction.crypto_payment_price) }}</span
+          >
+          {% else %}
+          <!-- Exibe um espaço em branco -->
+          {% endif %}
+        </td>
+        <td>
+          {% if transaction.total_paid is not none %}
+          <span class="text-danger"
+            >{{ "%.2f" | format(transaction.total_paid) }}</span
+          >
+          {% else %}
+          <!-- Exibe um espaço em branco -->
+          {% endif %}
+        </td>
 
-{% block head %}
-   
-{% endblock %}
-
-{% block body %}
-    <div class="container mt-4">
-        <!-- Tabela de Transações -->
-        <caption>
-            <h4>
-                Lista de Transações
-            </h4>
-        </caption>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>W.Saída</th>
-                    <th>W.Recebimento</th>
-                    <th>Tipo</th>
-                    <th>Data</th>
-                    <th>Pago</th>
-                    <th>Qtd.</th>
-                    <th>Preço</th>
-                    <th>Total Pago</th>
-                    <th>Recebido</th>
-                    <th>Qtd.</th>
-                    <th>Preço</th>
-                    <th>Total Recebido</th>
-                    <th>Moeda(Tx)</th>
-                    <th>Qtd.(Tx)</th>
-                    <th>Preço</th>
-                    <th>Total(Tx)</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for transaction in cons_transactions %}
-                <tr>
-                    <td>{{ transaction.transactions_id }}</td>
-                    <td>{{ transaction.payment_wallet.wallet_name }}</td>
-                    <td>{{ transaction.receiving_wallet.wallet_name }}</td>                    
-                    <td>{{ transaction.transaction_type }}</td>
-                    <td>{{ transaction.transaction_date.strftime('%d/%m/%Y') }}</td>                    
-                    <td><span class="text-danger">{{ transaction.crypto_payment.crypto_symbol }}</span></td>
-                    <td>
-                        {% if transaction.crypto_payment_quantity is not none %}
-                            <span class="text-danger">{{ transaction.crypto_payment_quantity }}</span>
-                        {% else %}
-                            <!-- Exibe um espaço em branco -->
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if transaction.crypto_payment_price is not none %}
-                        <span class="text-danger">{{ "%.2f" | format(transaction.crypto_payment_price) }}</span>
-                        {% else %}
-                            <!-- Exibe um espaço em branco -->
-                        {% endif %}
-                    </td>                    
-                    <td>
-                        {% if transaction.total_paid is not none %}
-                        <span class="text-danger">{{ "%.2f" | format(transaction.total_paid) }}</span>
-                        {% else %}
-                            <!-- Exibe um espaço em branco -->
-                        {% endif %}
-                    </td>
-                    
-                    <td><span class="text-primary">{{ transaction.crypto_receive.crypto_symbol }}</span></td>
-                    <td>
-                        {% if transaction.crypto_receive_quantity is not none %}
-                        <span class="text-primary">{{ transaction.crypto_receive_quantity }}</span>
-                        {% else %}
-                            <!-- Exibe um espaço em branco -->
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if transaction.crypto_receive_price is not none %}
-                        <span class="text-primary">{{ "%.2f" | format(transaction.crypto_receive_price) }}</span>
-                        {% else %}
-                            <!-- Exibe um espaço em branco -->
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if transaction.total_received is not none %}
-                        <span class="text-primary">{{ "%.2f" | format(transaction.total_received) }}</span>
-                        {% else %}
-                            <!-- Exibe um espaço em branco -->
-                        {% endif %}
-                    </td>
-                    <td><span class="text-warning">{{ transaction.crypto_fee.crypto_symbol }}</span></td> 
-                    <td>
-                        {% if transaction.crypto_fee_quantity is not none %}
-                        <span class="text-warning">{{ transaction.crypto_fee_quantity }}</span>
-                        {% else %}
-                            <!-- Exibe um espaço em branco -->
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if transaction.crypto_fee_price is not none %}
-                        <span class="text-warning">{{ "%.2f" | format(transaction.crypto_fee_price) }}</span>
-                        {% else %}
-                            <!-- Exibe um espaço em branco -->
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if transaction.total_fee is not none %}
-                        <span class="text-warning">{{ "%.2f" | format(transaction.total_fee) }}</span>
-                        {% else %}
-                            <!-- Exibe um espaço em branco -->
-                        {% endif %}
-                    </td>
-                    <td>
-                        <!-- Formulário para atualizar o status da transação -->
-                        <form method="POST" action="{{ url_for('delete_transaction') }}" style="display:inline;">
-                            <!-- Campo oculto para passar o ID da transação -->
-                            <input type="hidden" name="transaction_id" value="{{ transaction.id }}">
-                            <!-- Botão de atualizar status -->
-                            <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            
-        </table>
-    </div>
-    <script src="static/js/scripts_consulltaTransacoes.js" defer></script>
+        <td>
+          <span class="text-primary"
+            >{{ transaction.crypto_receive.crypto_symbol }}</span
+          >
+        </td>
+        <td>
+          {% if transaction.crypto_receive_quantity is not none %}
+          <span class="text-primary"
+            >{{ transaction.crypto_receive_quantity }}</span
+          >
+          {% else %}
+          <!-- Exibe um espaço em branco -->
+          {% endif %}
+        </td>
+        <td>
+          {% if transaction.crypto_receive_price is not none %}
+          <span class="text-primary"
+            >{{ "%.2f" | format(transaction.crypto_receive_price) }}</span
+          >
+          {% else %}
+          <!-- Exibe um espaço em branco -->
+          {% endif %}
+        </td>
+        <td>
+          {% if transaction.total_received is not none %}
+          <span class="text-primary"
+            >{{ "%.2f" | format(transaction.total_received) }}</span
+          >
+          {% else %}
+          <!-- Exibe um espaço em branco -->
+          {% endif %}
+        </td>
+        <td>
+          <span class="text-warning"
+            >{{ transaction.crypto_fee.crypto_symbol }}</span
+          >
+        </td>
+        <td>
+          {% if transaction.crypto_fee_quantity is not none %}
+          <span class="text-warning"
+            >{{ transaction.crypto_fee_quantity }}</span
+          >
+          {% else %}
+          <!-- Exibe um espaço em branco -->
+          {% endif %}
+        </td>
+        <td>
+          {% if transaction.crypto_fee_price is not none %}
+          <span class="text-warning"
+            >{{ "%.2f" | format(transaction.crypto_fee_price) }}</span
+          >
+          {% else %}
+          <!-- Exibe um espaço em branco -->
+          {% endif %}
+        </td>
+        <td>
+          {% if transaction.total_fee is not none %}
+          <span class="text-warning"
+            >{{ "%.2f" | format(transaction.total_fee) }}</span
+          >
+          {% else %}
+          <!-- Exibe um espaço em branco -->
+          {% endif %}
+        </td>
+        <td>
+            <!-- Formulário para atualizar o status da transação -->
+          <form
+            method="POST"
+            action="{{ url_for('delete_transaction') }}"
+            style="display: inline"
+          >
+            <!-- Campo oculto para passar o ID da transação -->
+            <input
+              type="hidden"
+              name="transactions_id"
+              value="{{ transaction.transactions_id }}"
+            />
+            <!-- Botão de atualizar status -->
+            <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<script
+  src="{{ url_for('static', filename='js/scripts_consulltaTransacoes.js') }}"
+  defer
+></script>
 {% endblock %}

@@ -34,3 +34,4 @@ class AddCryptoForm(FlaskForm):
     crypto_symbol = StringField('Símbolo', validators=[DataRequired()])
 
 
+

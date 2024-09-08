@@ -17,6 +17,8 @@ class Wallet(db.Model):
     wallet_network = db.Column(db.String, nullable=False)
     wallet_status = db.Column(db.String(1), nullable=False, default='N' )
     #balances = db.relationship('WalletBalance', backref='payment_wallet', lazy=True)
+    # Relacionamento com WalletBalance
+    balances = db.relationship('WalletBalance', back_populates='wallet')
 
 class Cryptocurrency(db.Model):
     __tablename__ = 'cryptocurrencies'
@@ -24,13 +26,21 @@ class Cryptocurrency(db.Model):
     crypto_name = db.Column(db.String, unique=True, nullable=False)
     crypto_symbol = db.Column(db.String, unique=True, nullable=False)
     crypto_status = db.Column(db.String(1), nullable=False, default='N') 
+    # Relacionamento com WalletBalance
+    balances = db.relationship('WalletBalance', back_populates='cryptocurrency')
 
 class WalletBalance(db.Model):
     __tablename__ = 'wallet_balances'
+
     balance_id = db.Column(db.Integer, primary_key=True)
-    balance_wallet_id = db.Column(db.Integer, nullable=False)
+    balance_wallet_id = db.Column(db.Integer, db.ForeignKey('wallets.wallet_id'), nullable=False)
     balance_crypto_id = db.Column(db.Integer, db.ForeignKey('cryptocurrencies.crypto_id'), nullable=False)
     balance = db.Column(db.Float, nullable=False)
+
+    # Definindo relacionamentos
+    wallet = db.relationship('Wallet', back_populates='balances')
+    cryptocurrency = db.relationship('Cryptocurrency', back_populates='balances')
+
 
 class Transaction(db.Model):
     __tablename__ = 'transactions'

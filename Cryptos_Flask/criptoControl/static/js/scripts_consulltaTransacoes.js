@@ -6,18 +6,34 @@ document.addEventListener('DOMContentLoaded', function() {
         var totalMoeda = parseFloat(row.querySelector('.total-crypto').innerText) || 0;
         var total_fee = parseFloat(row.querySelector('.total-taxa').innerText) || 0;
         
+        // Log para depuração
+        console.log('Quantidade:', quantidade);
+        console.log('Preço:', preco);
+        console.log('Total Moeda:', totalMoeda);
+        console.log('Total Taxa:', total_fee);
+
         // Calcula o total da transação
         var total_paid = totalMoeda + total_fee;
 
         // Atualiza o campo Total Transação
-        row.querySelector('.total-transacao').innerText = total_paid.toFixed(2);
+        var totalTransacaoElement = row.querySelector('.total-transacao');
+        if (totalTransacaoElement) {
+            totalTransacaoElement.innerText = total_paid.toFixed(2);
+        } else {
+            console.error('Elemento para total-transacao não encontrado.');
+        }
     }
 
     // Obtém todas as linhas da tabela
     var linhas = document.querySelectorAll('table tbody tr');
     
-    // Itera sobre as linhas e calcula o total
-    linhas.forEach(function(linha) {
-        calculartotal_paid(linha);
-    });
+    // Verificação de linhas encontradas
+    if (linhas.length === 0) {
+        console.error('Nenhuma linha encontrada na tabela.');
+    } else {
+        // Itera sobre as linhas e calcula o total
+        linhas.forEach(function(linha) {
+            calculartotal_paid(linha);
+        });
+    }
 });
