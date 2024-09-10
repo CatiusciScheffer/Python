@@ -27,4 +27,5 @@ def initialize_database():
 
 
 from criptoControl import routes
+from criptoControl import routes_graficos
 
