@@ -1,0 +1,23 @@
+{% extends 'index.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h4>Editar Transação</h4>
+    <form method="POST" action="{{ url_for('edit_transaction') }}">
+        <input type="hidden" name="transaction_id" value="{{ transaction.transactions_id }}">
+        
+        <div class="form-group">
+            <label for="crypto_payment_price">Preço Pago</label>
+            <input type="text" class="form-control" id="crypto_payment_price" name="crypto_payment_price"
+                   value="{{ "%.2f" | format(transaction.crypto_payment_price if transaction.crypto_payment_price is not none else 0) }}" required>
+        </div>
+
+        <!-- Adicione outros campos de formulário aqui conforme necessário -->
+
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+</div>
+{% endblock %}

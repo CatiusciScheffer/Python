@@ -8,6 +8,7 @@ from criptoControl.api import get_crypto_payment_price
 from criptoControl import app
 from datetime import datetime
 from sqlalchemy.orm import sessionmaker, joinedload
+from decimal import Decimal, ROUND_HALF_UP
 import io
 import matplotlib.pyplot as plt
 import logging
@@ -41,7 +42,7 @@ def login():
 
 # Rota para a página principal, só acessível após login
 @app.route('/index')
-@login_required  # Garante que apenas usuários logados acessem
+@login_required  
 def index():
     formTransactions = TransactionsForm()
     formAddWallet = AddWalletForm()
@@ -69,6 +70,7 @@ def index():
 
 #***** ROTA TRANSAÇÕES *****
 @app.route('/transactions')
+@login_required
 def transactions():
     session = create_session()
     try:
@@ -85,6 +87,7 @@ def transactions():
 
 
 @app.route('/add_transactions')
+@login_required
 def add_transactions(): 
     formTransactions = TransactionsForm()
     formAddWallet = AddWalletForm()
@@ -95,13 +98,18 @@ def add_transactions():
         # Busca as informações no banco
         transactions = db_session.query(Transaction).all()
         wallets = db_session.query(Wallet).filter(Wallet.wallet_status=='N').all()
-        cryptos = db_session.query(Cryptocurrency).filter(Cryptocurrency.crypto_status=='N').all()
+        #cryptos = db_session.query(Cryptocurrency).filter(Cryptocurrency.crypto_status=='N').all()
+        cryptos = db_session.query(Cryptocurrency).filter(Cryptocurrency.crypto_status=='N').order_by(Cryptocurrency.crypto_symbol).all()
 
         # Popular as informações do banco no HTML
-        formTransactions.crypto_payment.choices = [('', '')] + [(crypto.crypto_id, f"{crypto.crypto_name}({crypto.crypto_symbol})") for crypto in cryptos]
-        formTransactions.crypto_fee.choices = [('', '')] + [(crypto.crypto_id, f"{crypto.crypto_name}({crypto.crypto_symbol})") for crypto in cryptos]
-        formTransactions.crypto_receive.choices = [('', '')] + [(crypto.crypto_id, f"{crypto.crypto_name}({crypto.crypto_symbol})") for crypto in cryptos]
+        formTransactions.crypto_payment.choices = [('', '')] + [(crypto.crypto_id, f"{crypto.crypto_symbol} - ({crypto.crypto_name})") for crypto in cryptos]
+        
+        formTransactions.crypto_fee.choices = [('', '')] + [(crypto.crypto_id, f"{crypto.crypto_symbol} - ({crypto.crypto_name})") for crypto in cryptos]
+        
+        formTransactions.crypto_receive.choices = [('', '')] + [(crypto.crypto_id, f"{crypto.crypto_symbol} - ({crypto.crypto_name})") for crypto in cryptos]
+        
         formTransactions.payment_wallet.choices = [('', '')] + [(wallet.wallet_id, wallet.wallet_name) for wallet in wallets]
+        
         formTransactions.receiving_wallet.choices = [('', '')] + [(wallet.wallet_id, wallet.wallet_name) for wallet in wallets]
 
         # Verificar se existem dados armazenados na sessão para recuperar preenchimento
@@ -134,6 +142,7 @@ def add_transactions():
 
 #***** ROTA PREÇOS *****
 @app.route('/prices')
+@login_required
 def prices():
     with app.app_context():
         session = create_session()
@@ -160,6 +169,7 @@ def prices():
 
 #***** ROTA CARTEIRAS *****
 @app.route('/wallets')
+@login_required
 def wallets():
     with app.app_context():
         wallets = Wallet.query.filter(Wallet.wallet_status != 'S').order_by(Wallet.wallet_name).all()
@@ -169,6 +179,7 @@ def wallets():
 
 #***** ROTA MOEDAS *****
 @app.route('/cryptos')
+@login_required
 def cryptos():
     with app.app_context():
         cryptos = Cryptocurrency.query.filter(Cryptocurrency.crypto_status != 'S').order_by(Cryptocurrency.crypto_name).all()
@@ -360,7 +371,7 @@ def update_prices():
         session.rollback()
     return redirect(url_for('prices'))
 
-
+'''
 @app.route('/add_transaction', methods=['POST'])
 def add_transaction():
     session = None
@@ -426,7 +437,85 @@ def add_transaction():
             session.rollback()
         flash(f'Erro ao tentar adicionar transação: {e}', 'alert-danger')
     
+    return redirect(url_for('add_transactions'))'''
+
+# Função normalize_decimal (exemplo)
+from decimal import Decimal, ROUND_HALF_UP
+
+def normalize_decimal(value):
+    """Função para substituir vírgulas por pontos em valores numéricos."""
+    if isinstance(value, str):
+        return value.replace(',', '.')
+    return value
+
+@app.route('/add_transaction', methods=['POST'])
+def add_transaction():
+    session = None
+    
+    try:
+        # Dados gerais da transação
+        transaction_type = request.form.get('transaction_type')
+        transaction_date = request.form.get('transaction_date')
+        
+        # Dados carteiras da transação        
+        receiving_wallet_id = request.form.get('receiving_wallet')
+        payment_wallet_id = request.form.get('payment_wallet')
+        
+        # Dados das moedas pagadoras
+        crypto_payment_id = request.form.get('crypto_payment')
+        crypto_payment_price = request.form.get('crypto_payment_price')
+        crypto_payment_quantity = request.form.get('crypto_payment_quantity')
+        total_paid = request.form.get('total_paid')
+        
+        # Normalizando e convertendo para float
+        crypto_payment_price = float(normalize_decimal(crypto_payment_price)) if crypto_payment_price else 0.0
+        crypto_payment_quantity = float(normalize_decimal(crypto_payment_quantity)) if crypto_payment_quantity else 0.0
+        total_paid = float(normalize_decimal(total_paid)) if total_paid else 0.0
+        
+        # Dados da moeda recebedora
+        crypto_receive_id = request.form.get('crypto_receive')
+        crypto_receive_price = request.form.get('crypto_receive_price')
+        crypto_receive_quantity = request.form.get('crypto_receive_quantity')
+        total_received = request.form.get('total_received')
+        
+        # Normalizando e convertendo para float
+        crypto_receive_price = float(normalize_decimal(crypto_receive_price)) if crypto_receive_price else 0.0
+        crypto_receive_quantity = float(normalize_decimal(crypto_receive_quantity)) if crypto_receive_quantity else 0.0
+        total_received = float(normalize_decimal(total_received)) if total_received else 0.0
+
+
+        # Dados da taxa
+        crypto_fee_id = request.form.get('crypto_fee')
+        crypto_fee_price = request.form.get('crypto_fee_price')
+        crypto_fee_quantity = request.form.get('crypto_fee_quantity')
+        total_fee = request.form.get('total_fee')
+        
+        # Normalizando e convertendo para float
+        crypto_fee_price = float(normalize_decimal(crypto_fee_price)) if crypto_fee_price else 0.0
+        crypto_fee_quantity = float(normalize_decimal(crypto_fee_quantity)) if crypto_fee_quantity else 0.0
+        total_fee = float(normalize_decimal(total_fee)) if total_fee else 0.0                         
+
+        # Cria a sessão
+        with app.app_context():
+            session = create_session()
+
+            # Realizar operações baseadas no tipo de transação
+            if transaction_type == 'Compra':
+                realizar_compra(session, transaction_date, payment_wallet_id, receiving_wallet_id, crypto_payment_id, crypto_payment_price, crypto_payment_quantity, total_paid, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received, crypto_fee_id, crypto_fee_price, crypto_fee_quantity, total_fee, transaction_type='Compra')
+            elif transaction_type == 'Saldo':
+                enter_balance(session, receiving_wallet_id, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received, transaction_date)
+            elif transaction_type == 'Venda':
+                realizar_venda(session, transaction_date, payment_wallet_id, receiving_wallet_id, crypto_payment_id, crypto_payment_price, crypto_payment_quantity, total_paid, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received, crypto_fee_id, crypto_fee_price, crypto_fee_quantity, total_fee, transaction_type='Venda')
+            elif transaction_type == 'Transferência':
+                realizar_transferencia(session, transaction_date, payment_wallet_id, receiving_wallet_id, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received, crypto_fee_id, crypto_fee_price, crypto_fee_quantity, total_fee, transaction_type='Transferência')
+
+    except Exception as e:
+        if session is not None:
+            session.rollback()
+        flash(f'Erro ao tentar adicionar transação: {e}', 'alert-danger')
+    
     return redirect(url_for('add_transactions'))
+
     
 
 #********     COMPRA    *******     COMPRA    ********
@@ -1035,6 +1124,7 @@ def get_wallet_summary():
         .join(latest_prices_subquery, 
                (Price.price_crypto_id == latest_prices_subquery.c.price_crypto_id) &
                (Price.price_consult_datetime == latest_prices_subquery.c.latest_timestamp))
+        .filter(WalletBalance.balance > 0)
         .order_by(Wallet.wallet_name, Cryptocurrency.crypto_name)
         .all()
     )
@@ -1114,6 +1204,30 @@ def grafico():
     return send_file(img, mimetype='image/png')
 
 #-------------------------------------------------------
+@app.route('/add_transactions/<int:transaction_id>', methods=['GET', 'POST'])
+@login_required
+def edit_transaction(transaction_id):
+    session = None
+    transaction = None
+    
+    try:
+        #estou na rota que consulta o banco e mostra as trsnsaçãoes existentes, nesta página tem o botão de excluir que deve pegar nesta tabela  o id da transação
+
+        # com id em mãos deve buscar os dados da referida transação no banco
+
+        #abrir a página add_transactions.html que é o formulário das transações e preencher o mesmo com dados do banco conforme id
+
+        # estando com o formulário preenchido quando usuário clicar no botão, vai chamar a função que vai deletar a transação do banco e já corrige os saldo
+
+        #após excluir vai salvar a transação no banco com mesmo id
+        pass
+            
+    except Exception as e:
+        if session is not None:
+            session.rollback()
+        flash(f'Erro ao tentar atualizar a transação: {e}', 'alert-danger')
+
+    return render_template('edit_transaction.html', transaction=transaction)
 
     
    

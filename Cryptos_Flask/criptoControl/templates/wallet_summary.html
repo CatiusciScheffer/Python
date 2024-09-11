@@ -19,9 +19,9 @@
                     <tr>
                         <td>{{ saldo.carteira }}</td>
                         <td>{{ saldo.crypto }}</td>
-                        <td class="text-end">{{ saldo.quantidade }}</td>
-                        <td class="text-end">{{ saldo.preço | round(2) }}</td>
-                        <td class="text-end">{{ saldo.valor | round(2) }}</td>
+                        <td class="text-end">{{ "%.2f" % (saldo.quantidade | float) }}</td>
+                        <td class="text-end">{{ "%.2f" % (saldo.preço | float) }}</td>
+                        <td class="text-end">{{ "%.2f" % (saldo.valor | float) }}</td>
                     </tr>
                 {% else %}
                     <tr>
@@ -32,7 +32,7 @@
             <tfoot>
                 <tr class="table-dark text-white fw-bold">
                     <td colspan="4" class="text-end">Total</td>
-                    <td class="text-end">{{ total_valor | round(2) }}</td>
+                    <td class="text-end">{{ "%.2f" % (total_valor | float) }}</td>
                 </tr>
             </tfoot>
         </table>

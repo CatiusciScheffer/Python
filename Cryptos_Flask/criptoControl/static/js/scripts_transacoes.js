@@ -19,8 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Função para calcular o total de uma transação
     function calcularTotal(precoInput, quantidadeInput, totalInput) {
-        const preco = parseFloat(precoInput.value) || 0;
-        const quantidade = parseFloat(quantidadeInput.value) || 0;
+        // Substitui vírgulas por pontos
+        const preco = parseFloat(precoInput.value.replace(',', '.')) || 0;
+        const quantidade = parseFloat(quantidadeInput.value.replace(',', '.')) || 0;
         const total = preco * quantidade;
         totalInput.value = total.toFixed(2); // Formata o valor para 2 casas decimais
     }
