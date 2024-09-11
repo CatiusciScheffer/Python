@@ -1,15 +1,17 @@
 from flask import render_template, url_for, flash, request, redirect, jsonify, session, send_file
 from sqlalchemy import func, or_
-from criptoControl.forms import TransactionsForm, AddWalletForm, AddCryptoForm
-from criptoControl.models import db, Wallet, Cryptocurrency, WalletBalance, Transaction, Price
+from criptoControl.forms import TransactionsForm, AddWalletForm, AddCryptoForm,Users
+from criptoControl.models import db, Wallet, Cryptocurrency, WalletBalance, Transaction, Price, User
+from werkzeug.security import check_password_hash
+from flask_login import login_user, current_user, login_required
 from criptoControl.api import get_crypto_payment_price
 from criptoControl import app
 from datetime import datetime
 from sqlalchemy.orm import sessionmaker, joinedload
 import io
 import matplotlib.pyplot as plt
-import trace
 import logging
+import email_validator
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -17,23 +19,52 @@ def create_session():
     return sessionmaker(bind=db.engine)()
 
 #----------------------  INICIO ROTAS -------------------------
-#***** ROTA INDEX *****
-@app.route('/')
+
+# Rota para página de login
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    formLogin = Users()  # Formulário de login
+
+    if formLogin.validate_on_submit():
+        # Verifica se o email existe no banco de dados
+        user = User.query.filter_by(email=formLogin.email.data).first()
+        if user and check_password_hash(user.password_hash, formLogin.password_hash.data):
+            # Se o email e a senha são válidos, faz o login do usuário
+            login_user(user)
+            flash('Login bem-sucedido!', 'alert-success')
+            return redirect(url_for('index'))  # Redireciona para a rota index após o login
+        else:
+            flash('Credenciais inválidas. Verifique seu email e senha.', 'alert-danger')
+
+    return render_template('login.html', formLogin=formLogin)
+
+
+# Rota para a página principal, só acessível após login
+@app.route('/index')
+@login_required  # Garante que apenas usuários logados acessem
 def index():
     formTransactions = TransactionsForm()
     formAddWallet = AddWalletForm()
     formAddCrypto = AddCryptoForm()
     session = create_session()
 
-    try:        
+    try:
         # Busca as informações no banco
         cons_transactions = session.query(Transaction).all()
-        cons_wallets = session.query(Wallet).filter(Wallet.wallet_status=='N').all()
-        cons_crypto = session.query(Cryptocurrency).filter(Cryptocurrency.crypto_status=='N').all()       
+        cons_wallets = session.query(Wallet).filter(Wallet.wallet_status == 'N').all()
+        cons_crypto = session.query(Cryptocurrency).filter(Cryptocurrency.crypto_status == 'N').all()
     finally:
-        session.close()    
-    return render_template('index.html', cons_transactions=cons_transactions, cons_wallets=cons_wallets, cons_crypto=cons_crypto, formTransactions=formTransactions, formAddWallet=formAddWallet, formAddCrypto=formAddCrypto)
+        session.close()
 
+    return render_template(
+        'index.html',
+        cons_transactions=cons_transactions,
+        cons_wallets=cons_wallets,
+        cons_crypto=cons_crypto,
+        formTransactions=formTransactions,
+        formAddWallet=formAddWallet,
+        formAddCrypto=formAddCrypto
+    )
 
 
 #***** ROTA TRANSAÇÕES *****
@@ -169,7 +200,7 @@ def add_wallet():
             wallet_name = formAddWallet.wallet_name.data.upper()
             wallet_network = formAddWallet.wallet_network.data.upper()
             with app.app_context():
-                wallet = Wallet(wallet_user_id=1, wallet_name=wallet_name, wallet_network=wallet_network) #???remover user_id
+                wallet = Wallet(wallet_user_id=current_user.user_id, wallet_name=wallet_name, wallet_network=wallet_network)
                 session.add(wallet)
                 session.commit()
                 flash(f'A Carteira {(formAddWallet.wallet_name.data).upper()} foi adicionada com sucesso', 'alert-success')
@@ -304,7 +335,6 @@ def add_price():
             session.add(crypto_payment_price)
             session.commit()
     except Exception as e:
-        print(f"Erro ao adicionar preço: {e}")
         session.rollback()
     return redirect(url_for('prices'))
 
@@ -333,8 +363,6 @@ def update_prices():
 
 @app.route('/add_transaction', methods=['POST'])
 def add_transaction():
-    print("Entrou na função add_transaction")
-
     session = None
     
     try:
@@ -397,7 +425,6 @@ def add_transaction():
         if session is not None:
             session.rollback()
         flash(f'Erro ao tentar adicionar transação: {e}', 'alert-danger')
-        print(f'Erro ao tentar adicionar transação: {e}')
     
     return redirect(url_for('add_transactions'))
     
@@ -510,7 +537,6 @@ def realizar_compra(session, transaction_date, payment_wallet_id, receiving_wall
         else:
             if fee_wallet_balance and crypto_wallet_balance:
                 saldo_pagto_tran = (crypto_wallet_balance.balance >= crypto_fee_quantity + crypto_payment_quantity)
-                print(saldo_pagto_tran)
 
         # Verifica se tem saldo da crypto da taxa
         if saldo_pagto_tran:
@@ -693,7 +719,7 @@ def realizar_venda(session, transaction_date, payment_wallet_id, receiving_walle
                 saldo_pagto_tran = (fee_wallet_balance.balance >= crypto_fee_quantity) and (crypto_wallet_balance.balance >= crypto_payment_quantity)
         else:
             if fee_wallet_balance and crypto_wallet_balance:
-                saldo_pagto_tran = (fee_wallet_balance.balance + crypto_wallet_balance.balance >= crypto_fee_quantity + crypto_payment_quantity)
+                saldo_pagto_tran = ((fee_wallet_balance.balance + crypto_wallet_balance.balance) >= (crypto_fee_quantity + crypto_payment_quantity))
 
         # Verifica se tem saldo da crypto da taxa
         if saldo_pagto_tran:
@@ -718,8 +744,6 @@ def realizar_venda(session, transaction_date, payment_wallet_id, receiving_walle
                 total_fee=total_fee
             )
             
-            print(f'Transaction: {transaction}')
-
             # Registrar a transação
             session.add(transaction)
             session.commit()
@@ -839,7 +863,7 @@ def realizar_transferencia(
         ).first()
 
         # Verificar se há saldo suficiente para a taxa e a quantidade a ser transferida
-        if payment_wallet_balance and fee_wallet_balance and payment_wallet_balance.balance >= (crypto_receive_quantity + crypto_fee_quantity) and fee_wallet_balance.balance >= crypto_fee_quantity:
+        if payment_wallet_balance and fee_wallet_balance and (payment_wallet_balance.balance >= (crypto_receive_quantity + crypto_fee_quantity)) and fee_wallet_balance.balance >= crypto_fee_quantity:
             # Deduz a quantidade total (transferência + taxa) da carteira de pagamento
             payment_wallet_balance.balance -= crypto_receive_quantity
             fee_wallet_balance.balance -= crypto_fee_quantity
@@ -909,8 +933,7 @@ def delete_transaction():
 
     try:
         transacao_id = request.form.get('transactions_id')
-        print(f"ID da transação recebido: {transacao_id}")  # Imprime o ID recebido
-
+        
         if transacao_id:
             with app.app_context():
                 transaction = session.query(Transaction).filter_by(transactions_id=transacao_id).first()
@@ -930,7 +953,9 @@ def delete_transaction():
 
                     # Busca os saldos
                     wallet_balance_payment = session.query(WalletBalance).filter_by(balance_wallet_id=wallet_id_saida, balance_crypto_id=crypto_payment_id).first()
+                    
                     wallet_balance_fee = session.query(WalletBalance).filter_by(balance_wallet_id=wallet_id_saida, balance_crypto_id=crypto_fee_id).first()
+                   
                     wallet_balance_receive = session.query(WalletBalance).filter_by(balance_wallet_id=wallet_id_recebimento, balance_crypto_id=crypto_receive_id).first()    
                     
                     if wallet_balance_receive:
@@ -955,7 +980,6 @@ def delete_transaction():
                         flash('Saldo Insuficiente para Excluir Recebimento.', 'alert-danger') 
                         
                     if balance:
-                        print("Excluindo transação...")
                         # Exclui a transação
                         session.delete(transaction)
                         session.commit()
@@ -966,7 +990,6 @@ def delete_transaction():
             flash("Transação não encontrada.", 'alert-danger')
 
     except Exception as e:
-        print(f"Erro: {e}")  # Captura o erro
         flash(f'Erro ao tentar excluir transação: {e}', 'alert-danger')
         session.rollback()
 
@@ -1091,27 +1114,9 @@ def grafico():
     return send_file(img, mimetype='image/png')
 
 #-------------------------------------------------------
-#TRACE
 
-
-def trace_function(func, *args, **kwargs):
-    # Cria uma instância de Trace
-    tracer = trace.Trace(count=True, trace=True)
     
-    # Executa a função com rastreamento
-    tracer.runfunc(func, *args, **kwargs)
-    
-    # Obtém os resultados do rastreamento
-    results = tracer.results()
-    
-    # Especifica o nome do arquivo onde os resultados serão salvos
-    output_file = 'trace_output.txt'
-    
-    # Salva os resultados em um arquivo
-    with open(output_file, 'w') as file:
-        results.write_results(file=file, show_missing=True, summary=True)
-    
-    print(f"Resultados do rastreamento foram salvos em {output_file}")
+   
 
 
 

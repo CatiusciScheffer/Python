@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, FloatField, DateField
-from wtforms.validators import DataRequired, Optional, ValidationError
+from wtforms.validators import DataRequired, Optional, Email, Length, ValidationError
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, PasswordField
+import re
 
 
 class TransactionsForm(FlaskForm):
@@ -33,5 +34,18 @@ class AddCryptoForm(FlaskForm):
     crypto_name = StringField('Nome', validators=[DataRequired()])
     crypto_symbol = StringField('Símbolo', validators=[DataRequired()])
 
+def check_password_complexity(form, field):
+    password = field.data
+    if not re.search(r'[A-Z]', password):
+        raise ValidationError('A senha deve conter pelo menos uma letra maiúscula.')
+    if not re.search(r'[\W_]', password): 
+        raise ValidationError('A senha deve conter pelo menos um caractere especial.')
 
-
+class Users(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email(message="Insira um email válido.")])
+    password_hash = PasswordField('Senha', validators=[
+        DataRequired(),
+        Length(min=8, message="A senha deve ter pelo menos 8 caracteres."),
+        check_password_complexity
+    ])
+    btn_user_enter = SubmitField('Entrar')

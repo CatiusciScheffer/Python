@@ -1,13 +1,20 @@
 from criptoControl import db
 from datetime import datetime
+from flask_login import UserMixin
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password_hash = db.Column(db.String, nullable=False)
     user_wallets = db.relationship('Wallet', backref='user', lazy=True)
+
+    def __repr__(self):
+        return f'<User {self.email}>'
+
+    def get_id(self):
+        return self.user_id
 
 class Wallet(db.Model):
     __tablename__ = 'wallets'  # Corrigido aqui para 'wallets'
