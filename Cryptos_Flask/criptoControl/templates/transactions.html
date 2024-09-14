@@ -128,5 +128,7 @@
     </tbody>
   </table>
 </div>
-<script src="{{ url_for('static', filename='js/scripts_consulltaTransacoes.js') }}" defer></script>
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/scripts_consulltaTransacoes.js') }}" defer></script>
+{% endblock %}
 {% endblock %}

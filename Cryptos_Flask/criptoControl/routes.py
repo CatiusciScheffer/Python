@@ -52,7 +52,10 @@ def index():
     try:
         # Busca as informações no banco
         cons_transactions = session.query(Transaction).all()
-        cons_wallets = session.query(Wallet).filter(Wallet.wallet_status == 'N').all()
+        cons_wallets = session.query(Wallet).filter(
+            Wallet.wallet_status == 'N',
+            Wallet.wallet_user_id == current_user.user_id
+        ).all()
         cons_crypto = session.query(Cryptocurrency).filter(Cryptocurrency.crypto_status == 'N').all()
     finally:
         session.close()
@@ -69,21 +72,34 @@ def index():
 
 
 #***** ROTA TRANSAÇÕES *****
+
 @app.route('/transactions')
 @login_required
 def transactions():
+    # Cria uma nova sessão do banco de dados
     session = create_session()
+    
     try:
+        user_id = current_user.user_id  
+        
         cons_transactions = session.query(Transaction).options(
             joinedload(Transaction.payment_wallet),
             joinedload(Transaction.receiving_wallet),
             joinedload(Transaction.crypto_payment),
             joinedload(Transaction.crypto_receive),
             joinedload(Transaction.crypto_fee)
+        ).join(
+            Transaction.receiving_wallet
+        ).filter(
+            Wallet.wallet_user_id == user_id
         ).all()
     finally:
+        # Garante que a sessão seja fechada corretamente
         session.close()
+
+    # Renderiza o template com as transações
     return render_template('transactions.html', cons_transactions=cons_transactions)
+
 
 
 @app.route('/add_transactions')
@@ -97,8 +113,10 @@ def add_transactions():
     try:        
         # Busca as informações no banco
         transactions = db_session.query(Transaction).all()
-        wallets = db_session.query(Wallet).filter(Wallet.wallet_status=='N').all()
-        #cryptos = db_session.query(Cryptocurrency).filter(Cryptocurrency.crypto_status=='N').all()
+        wallets = db_session.query(Wallet).filter(
+            Wallet.wallet_status=='N',
+            Wallet.wallet_user_id == current_user.user_id
+        ).all()
         cryptos = db_session.query(Cryptocurrency).filter(Cryptocurrency.crypto_status=='N').order_by(Cryptocurrency.crypto_symbol).all()
 
         # Popular as informações do banco no HTML
@@ -160,7 +178,8 @@ def prices():
             .join(subquery, (Price.price_crypto_id == subquery.c.price_crypto_id) &
                                 (Price.price_consult_datetime == subquery.c.latest_timestamp))
             .join(Cryptocurrency, Price.price_crypto_id == Cryptocurrency.crypto_id)
-            .filter(Cryptocurrency.crypto_status == 'N')  # Corrigido para filtrar pelo status 'N'
+            .filter(Cryptocurrency.crypto_status == 'N') 
+            .order_by(Cryptocurrency.crypto_symbol)
             .all()
         )
     
@@ -172,7 +191,9 @@ def prices():
 @login_required
 def wallets():
     with app.app_context():
-        wallets = Wallet.query.filter(Wallet.wallet_status != 'S').order_by(Wallet.wallet_name).all()
+        wallets = Wallet.query.filter(
+            Wallet.wallet_status != 'S',
+            Wallet.wallet_user_id == current_user.user_id).order_by(Wallet.wallet_name).all()
     
     return render_template('wallets.html', wallets=wallets)
 
@@ -185,9 +206,43 @@ def cryptos():
         cryptos = Cryptocurrency.query.filter(Cryptocurrency.crypto_status != 'S').order_by(Cryptocurrency.crypto_name).all()
     return render_template('cryptos.html', cryptos=cryptos)
 
+
+@app.route('/balance_wallet')
+@login_required
+def balance_wallet():
+    with app.app_context():
+        session = create_session()
+        try:
+            # Executa a consulta SQL que obtém o nome da carteira, a rede e o saldo total
+            results = session.query(
+                Wallet.wallet_name,
+                Wallet.wallet_network,
+                db.func.sum(WalletBalance.balance).label('total_balance')
+            ).join(WalletBalance, Wallet.wallet_id == WalletBalance.balance_wallet_id
+            ).join(Cryptocurrency, WalletBalance.balance_crypto_id == Cryptocurrency.crypto_id
+            ).join(User, Wallet.wallet_user_id == User.user_id
+            ).filter(
+                Cryptocurrency.crypto_status == 'N',
+                Wallet.wallet_status == 'N',
+                User.user_id == current_user.user_id  # Filtra pelo usuário logado
+            ).group_by(
+                Wallet.wallet_name, Wallet.wallet_network
+            ).order_by(Wallet.wallet_name).all()
+
+            # Soma total de todas as carteiras
+            total_valor = sum([r.total_balance for r in results])
+
+        finally:
+            session.close()
+
+    # Renderiza o template com os dados necessários
+    return render_template('wallet_balance.html', carteiras=results, total_valor=total_valor)
+
+
+
 #----------------------  FIM ROTAS-------------------------
 #****************************************************************
-#----------------------  ATIVIDADE ROTA ADICIONAR TRANSAÇÃO-------------------------
+
 #Pega preço atual da morda para preencher campos tela transsação
 @app.route('/get_price/<int:cryptocurrency_id>', methods=['GET'])
 def get_price(cryptocurrency_id):
@@ -208,8 +263,8 @@ def add_wallet():
     try:
         formAddWallet = AddWalletForm()
         if formAddWallet.validate_on_submit():
-            wallet_name = formAddWallet.wallet_name.data.upper()
-            wallet_network = formAddWallet.wallet_network.data.upper()
+            wallet_name = formAddWallet.wallet_name.data.strip().upper()
+            wallet_network = formAddWallet.wallet_network.data.strip().upper()
             with app.app_context():
                 wallet = Wallet(wallet_user_id=current_user.user_id, wallet_name=wallet_name, wallet_network=wallet_network)
                 session.add(wallet)
@@ -232,7 +287,10 @@ def delete_wallet():
         if wallet_id:
             with app.app_context():
                 # Busca a carteira pelo ID
-                wallet = session.query(Wallet).filter_by(wallet_id=wallet_id).first()
+                wallet = session.query(Wallet).filter(
+                Wallet.wallet_id == wallet_id,
+                Wallet.wallet_user_id == current_user.user_id 
+            ).first()
                 
                 if not wallet:
                     flash(f'Carteira não encontrada.', 'alert-danger')
@@ -274,8 +332,8 @@ def add_crypto():
     try:
         formAddCrypto = AddCryptoForm()
         if formAddCrypto.validate_on_submit():
-            crypto_name = formAddCrypto.crypto_name.data.upper()
-            crypto_symbol = formAddCrypto.crypto_symbol.data.upper()
+            crypto_name = formAddCrypto.crypto_name.data.strip().upper()
+            crypto_symbol = formAddCrypto.crypto_symbol.data.strip().upper()
             with app.app_context():
                 crypto = Cryptocurrency(crypto_name=crypto_name, crypto_symbol=crypto_symbol)
                 session.add(crypto)
@@ -354,94 +412,39 @@ def add_price():
 @app.route('/update_prices', methods=['POST'])
 def update_prices():
     try:
-        COINMARKETCAP_API_KEY = '122d6732-65df-475c-8f1d-d7a95ab45bc5'#ver uma forma de salvar isso depois no banco
+        COINMARKETCAP_API_KEY = '122d6732-65df-475c-8f1d-d7a95ab45bc5'
         with app.app_context():
             session = create_session()
-            crypto = session.query(Cryptocurrency).filter_by(crypto_status='N').all()
-            for crypto in crypto:
-                price = get_crypto_payment_price(COINMARKETCAP_API_KEY, crypto.crypto_symbol)
-                if price is not None:
+            
+            # Obter todos os símbolos das criptomoedas com status 'N'
+            cryptos = session.query(Cryptocurrency).filter_by(crypto_status='N').all()
+            symbols = [crypto.crypto_symbol for crypto in cryptos if crypto.crypto_symbol.isalnum()]
+            
+            # Consultar a API uma vez para todos os símbolos
+            prices = get_crypto_payment_price(COINMARKETCAP_API_KEY, symbols)
+            
+            # Atualizar o banco de dados com os preços obtidos
+            for crypto in cryptos:
+                symbol = crypto.crypto_symbol
+                if symbol in prices:
+                    price = prices[symbol]
                     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     crypto_price = Price(price_crypto_id=crypto.crypto_id, price=price, price_consult_datetime=timestamp)
                     session.add(crypto_price)
-                    flash(f'Preços das cryptos cadastradas atualizado com sucesso', 'alert-success')
+                    flash(f'Preço da criptomoeda {symbol} atualizado com sucesso', 'alert-success')
+                else:
+                    flash(f'Preço para a criptomoeda {symbol} não encontrado', 'alert-warning')
+            
             session.commit()
+    
     except Exception as e:
         flash(f'Erro ao tentar atualizar os preços: {e}', 'alert-danger')
         session.rollback()
+    
     return redirect(url_for('prices'))
 
-'''
-@app.route('/add_transaction', methods=['POST'])
-def add_transaction():
-    session = None
-    
-    try:
-        # Dados gerais da transação
-        transaction_type = request.form.get('transaction_type')
-        transaction_date = request.form.get('transaction_date')
-        
-        # Dados carteiras da transação        
-        receiving_wallet_id = request.form.get('receiving_wallet')
-        payment_wallet_id = request.form.get('payment_wallet')
-        
-        # Dados das moedas pagadoras
-        crypto_payment_id = request.form.get('crypto_payment')
-        crypto_payment_price = request.form.get('crypto_payment_price')
-        crypto_payment_quantity = request.form.get('crypto_payment_quantity')
-        total_paid = request.form.get('total_paid')
-        
-        # Convertendo para float com verificação
-        crypto_payment_price = float(crypto_payment_price) if crypto_payment_price else 0.0
-        crypto_payment_quantity = float(crypto_payment_quantity) if crypto_payment_quantity else 0.0
-        total_paid = float(total_paid) if total_paid else 0.0
-        
-        # Dados da moeda recebedora
-        crypto_receive_id = request.form.get('crypto_receive')
-        crypto_receive_price = request.form.get('crypto_receive_price')
-        crypto_receive_quantity = request.form.get('crypto_receive_quantity')
-        total_received = request.form.get('total_received')
-        
-        # Convertendo para float com verificação
-        crypto_receive_price = float(crypto_receive_price) if crypto_receive_price else 0.0
-        crypto_receive_quantity = float(crypto_receive_quantity) if crypto_receive_quantity else 0.0
-        total_received = float(total_received) if total_received else 0.0
-
-        # Dados da taxa
-        crypto_fee_id = request.form.get('crypto_fee')
-        crypto_fee_price = request.form.get('crypto_fee_price')
-        crypto_fee_quantity = request.form.get('crypto_fee_quantity')
-        total_fee = request.form.get('total_fee')
-        
-        # Convertendo para float com verificação
-        crypto_fee_price = float(crypto_fee_price) if crypto_fee_price else 0.0
-        crypto_fee_quantity = float(crypto_fee_quantity) if crypto_fee_quantity else 0.0
-        total_fee = float(total_fee) if total_fee else 0.0                         
-
-        # Cria a sessão
-        with app.app_context():
-            session = create_session()
-
-            # Realizar operações baseadas no tipo de transação
-            if transaction_type == 'Compra':
-                realizar_compra(session, transaction_date, payment_wallet_id, receiving_wallet_id, crypto_payment_id, crypto_payment_price, crypto_payment_quantity, total_paid, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received, crypto_fee_id, crypto_fee_price, crypto_fee_quantity, total_fee, transaction_type='Compra')
-            elif transaction_type == 'Saldo':
-                enter_balance(session, receiving_wallet_id, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received, transaction_date)
-            elif transaction_type == 'Venda':
-                realizar_venda(session, transaction_date, payment_wallet_id, receiving_wallet_id, crypto_payment_id, crypto_payment_price, crypto_payment_quantity, total_paid, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received, crypto_fee_id, crypto_fee_price, crypto_fee_quantity, total_fee, transaction_type='Venda')
-            elif transaction_type == 'Transferência':
-                realizar_transferencia(session, transaction_date, payment_wallet_id, receiving_wallet_id, crypto_receive_id, crypto_receive_price, crypto_receive_quantity, total_received, crypto_fee_id, crypto_fee_price, crypto_fee_quantity, total_fee, transaction_type='Transferência')
-
-    except Exception as e:
-        if session is not None:
-            session.rollback()
-        flash(f'Erro ao tentar adicionar transação: {e}', 'alert-danger')
-    
-    return redirect(url_for('add_transactions'))'''
 
 # Função normalize_decimal (exemplo)
-from decimal import Decimal, ROUND_HALF_UP
-
 def normalize_decimal(value):
     """Função para substituir vírgulas por pontos em valores numéricos."""
     if isinstance(value, str):
@@ -1121,10 +1124,12 @@ def get_wallet_summary():
         .join(WalletBalance, Wallet.wallet_id == WalletBalance.balance_wallet_id)
         .join(Cryptocurrency, Cryptocurrency.crypto_id == WalletBalance.balance_crypto_id)
         .join(Price, Price.price_crypto_id == Cryptocurrency.crypto_id)
+        .join(User, User.user_id == Wallet.wallet_user_id)
         .join(latest_prices_subquery, 
                (Price.price_crypto_id == latest_prices_subquery.c.price_crypto_id) &
                (Price.price_consult_datetime == latest_prices_subquery.c.latest_timestamp))
         .filter(WalletBalance.balance > 0)
+        .filter(User.user_id == current_user.user_id)
         .order_by(Wallet.wallet_name, Cryptocurrency.crypto_name)
         .all()
     )
@@ -1172,6 +1177,8 @@ def grafico():
         .join(latest_prices_subquery, 
                (Price.price_crypto_id == latest_prices_subquery.c.price_crypto_id) &
                (Price.price_consult_datetime == latest_prices_subquery.c.latest_timestamp))
+        .join(User, User.user_id == Wallet.wallet_user_id)  # Adiciona o join com a tabela User
+        .filter(User.user_id == current_user.user_id)       
         .order_by(Wallet.wallet_name, Cryptocurrency.crypto_name)
         .all()
     )

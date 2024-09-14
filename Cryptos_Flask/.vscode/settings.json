@@ -1,3 +1,5 @@
 {
-    "r.lsp.promptToInstall": false
+    "r.lsp.promptToInstall": false,
+    "pascal.format.indent": 4,
+    "prettier.tabWidth": 4
 }

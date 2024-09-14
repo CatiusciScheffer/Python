@@ -51,8 +51,15 @@
               class="nav-link active"
               aria-current="page"
               href="{{ url_for('wallet_summary', payment_wallet_id=1) }}" 
-              >SALDO</a>          
+              >Saldo Moedas</a>          
         </li>
+        <li class="nav-item">
+          <a
+            class="nav-link active"
+            aria-current="page"
+            href="{{ url_for('balance_wallet') }}" 
+            >Saldo Carteiras</a>          
+      </li>
       </ul>
     </div>
   </div>

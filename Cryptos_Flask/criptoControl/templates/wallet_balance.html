@@ -1,0 +1,32 @@
+{% extends 'index.html' %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Carteiras</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Carteira</th>
+                <th>Rede</th>
+                <th>Saldo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for wallet in carteiras %}
+            <tr>
+                <td>{{ wallet.wallet_name }}</td>
+                <td>{{ wallet.wallet_network }}</td>
+                <td>{{ "%.2f" % (wallet.total_balance | float) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr class="table-dark text-white fw-bold">
+                <td colspan="2" class="text-end">Total Geral</td>
+                <td>{{ "%.2f" % (total_valor | float) }}</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+{% endblock %}
+
