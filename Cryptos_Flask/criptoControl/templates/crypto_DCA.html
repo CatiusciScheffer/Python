@@ -1,0 +1,29 @@
+{% extends 'index.html' %}
+
+{% block body %}
+
+<div class="container mt-4">
+    <h3>DCA</h3>
+    <div class="col-md-8 p-5 text-end">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Carteira</th>
+                    <th>Moeda</th>
+                    <th>DCA</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in dca_compras_data %}
+                <tr>
+                    <td>{{ row['Carteira'] }}</td>
+                    <td>{{ row['Moeda'] }}</td>
+                    <td>{{ "%.2f" % (row['DCA'] | float) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

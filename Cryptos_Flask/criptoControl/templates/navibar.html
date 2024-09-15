@@ -51,15 +51,29 @@
               class="nav-link active"
               aria-current="page"
               href="{{ url_for('wallet_summary', payment_wallet_id=1) }}" 
-              >Saldo Moedas</a>          
+              >Saldo por Carteira/Moedas</a>          
         </li>
         <li class="nav-item">
           <a
             class="nav-link active"
             aria-current="page"
             href="{{ url_for('balance_wallet') }}" 
-            >Saldo Carteiras</a>          
-      </li>
+            >Saldos</a>          
+        </li>
+        <li class="nav-item"></li>
+          <a
+            class="nav-link active"
+            aria-current="page"
+            href="{{ url_for('lucro_prejuizo') }}" 
+            >Lucro/Prejuízo</a>          
+        </li>
+        <li class="nav-item"></li>
+          <a
+            class="nav-link active"
+            aria-current="page"
+            href="{{ url_for('dca_compras') }}" 
+            >DCA</a>          
+        </li>
       </ul>
     </div>
   </div>
