@@ -14,7 +14,7 @@
         </h5>
       </div>
       <div class="modal-body p-4">
-        <form method="POST" action="{{ url_for('add_crypto') }}">
+        <form method="POST" action="{{ url_for('crypto_wallet.add_crypto') }}">
           {{ formAddCrypto.csrf_token }}
           {{ formAddCrypto.hidden_tag() }}
           <fieldset>

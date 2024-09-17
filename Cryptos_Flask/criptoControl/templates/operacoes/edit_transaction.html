@@ -6,7 +6,7 @@
 {% block body %}
 <div class="container mt-4">
     <h4>Editar Transação</h4>
-    <form method="POST" action="{{ url_for('edit_transaction') }}">
+    <form method="POST" action="{{ url_for('transaction.edit_transaction') }}">
         <input type="hidden" name="transaction_id" value="{{ transaction.transactions_id }}">
         
         <div class="form-group">

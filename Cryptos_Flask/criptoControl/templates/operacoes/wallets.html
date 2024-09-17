@@ -20,7 +20,7 @@
                 <td>{{ wallet.wallet_network }}</td>
                 <td>
                     <!-- Formulário para atualizar o status da carteira -->
-                    <form method="POST" action="{{ url_for('delete_wallet') }}" style="display:inline;">
+                    <form method="POST" action="{{ url_for('crypto_wallet.delete_wallet') }}" style="display:inline;">
                         <!-- Campo oculto para passar o ID da carteira -->
                         <input type="hidden" name="wallet_id" value="{{ wallet.wallet_id }}">
                         <!-- Botão de atualizar status -->

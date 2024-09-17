@@ -113,12 +113,12 @@
         </td>
         <td>
           <!-- Formulário para editar a transação -->
-          <a href="{{ url_for('edit_transaction', transaction_id=transaction.transactions_id) }}" class="btn btn-primary btn-sm">Editar</a>
+          <a href="{{ url_for('transaction.edit_transaction', transaction_id=transaction.transactions_id) }}" class="btn btn-primary btn-sm">Editar</a>
           
         </td>
         <td>
           <!-- Formulário para excluir a transação -->
-          <form method="POST" action="{{ url_for('delete_transaction') }}" style="display: inline">
+          <form method="POST" action="{{ url_for('transaction.delete_transaction') }}" style="display: inline">
             <input type="hidden" name="transactions_id" value="{{ transaction.transactions_id }}" />
             <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
           </form>

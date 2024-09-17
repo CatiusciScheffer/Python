@@ -9,7 +9,7 @@
   <div class="p-4">
     <form
       method="POST"
-      action="{{ url_for('add_transaction') }}"
+      action="{{ url_for('transaction.add_transaction') }}"
       id="transactionForm"
     >
       {{ formTransactions.csrf_token }} {{ formTransactions.hidden_tag() }}

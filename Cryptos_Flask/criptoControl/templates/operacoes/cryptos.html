@@ -20,7 +20,7 @@
                 <td>{{ crypto.crypto_symbol }}</td>
                 <td>
                     <!-- Formulário para atualizar o status da crypto -->
-                    <form method="POST" action="{{ url_for('delete_crypto') }}" style="display:inline;">
+                    <form method="POST" action="{{ url_for('crypto_wallet.delete_crypto') }}" style="display:inline;">
                         <!-- Campo oculto para passar o ID da crypto -->
                         <input type="hidden" name="crypto_id" value="{{ crypto.crypto_id }}">
                         <!-- Botão de atualizar status -->

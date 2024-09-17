@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid container">
-    <a class="navbar-brand" href="{{ url_for('index') }}">Home</a>
+    <a class="navbar-brand" href="{{ url_for('main.index') }}">Home</a>
     <button
       class="navbar-toggler"
       type="button"
@@ -18,7 +18,7 @@
           <a
             class="nav-link active"
             aria-current="page"
-            href="{{ url_for('transactions') }}"
+            href="{{ url_for('transaction.transactions') }}"
             >Transações</a
           >
         </li>
@@ -26,7 +26,7 @@
           <a
             class="nav-link active"
             aria-current="page"
-            href="{{ url_for('prices') }}"
+            href="{{ url_for('views.prices') }}"
             >Preços</a
           >
         </li>
@@ -34,7 +34,7 @@
           <a
             class="nav-link active"
             aria-current="page"
-            href="{{ url_for('wallets') }}"
+            href="{{ url_for('views.wallets') }}"
             >Carteiras</a
           >
         </li>
@@ -42,7 +42,7 @@
           <a
             class="nav-link active"
             aria-current="page"
-            href="{{ url_for('cryptos') }}"
+            href="{{ url_for('views.cryptos') }}"
             >Moedas</a
           >
         </li>
@@ -50,28 +50,28 @@
             <a
               class="nav-link active"
               aria-current="page"
-              href="{{ url_for('wallet_summary', payment_wallet_id=1) }}" 
+              href="{{ url_for('views.wallet_summary', payment_wallet_id=1) }}" 
               >Saldo por Carteira/Moedas</a>          
         </li>
         <li class="nav-item">
           <a
             class="nav-link active"
             aria-current="page"
-            href="{{ url_for('balance_wallet') }}" 
+            href="{{ url_for('views.balance_wallet') }}" 
             >Saldos</a>          
         </li>
         <li class="nav-item"></li>
           <a
             class="nav-link active"
             aria-current="page"
-            href="{{ url_for('lucro_prejuizo') }}" 
+            href="{{ url_for('views.lucro_prejuizo') }}" 
             >Lucro/Prejuízo</a>          
         </li>
         <li class="nav-item"></li>
           <a
             class="nav-link active"
             aria-current="page"
-            href="{{ url_for('dca_compras') }}" 
+            href="{{ url_for('views.dca_compras') }}" 
             >DCA</a>          
         </li>
       </ul>

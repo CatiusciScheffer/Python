@@ -28,9 +28,9 @@
     {% block body %}
     <div class="container">
        
-      {% include 'md_add_crypto.html' %}      
-      {% include 'md_add_wallet.html' %}
-      {% include 'md_add_crypto.html' %}
+      {% include 'operacoes/md_add_crypto.html' %}      
+      {% include 'operacoes/md_add_wallet.html' %}
+      {% include 'operacoes/md_add_crypto.html' %}
     </div>
     
     <!--PARTE DOS DASHBOARDS-->
@@ -38,7 +38,7 @@
       <div class="row">
         <div class="col card">
           <p>dashboard</p>
-          <img src="{{ url_for('grafico') }}" alt="Gráfico de Criptomoedas" class="img-fluid">
+          <img src="{{ url_for('main.grafico') }}" alt="Gráfico de Criptomoedas" class="img-fluid">
         </div>
         <div class="col card">
           <p>dashboard</p>
