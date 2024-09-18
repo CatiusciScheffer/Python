@@ -19,7 +19,7 @@
                     <tr>
                         <td>{{ saldo.carteira }}</td>
                         <td>{{ saldo.crypto }}</td>
-                        <td class="text-end">{{ "%.2f" % (saldo.quantidade | float) }}</td>
+                        <td class="text-end">{{ saldo.quantidade | float }}</td>
                         <td class="text-end">{{ "%.2f" % (saldo.preço | float) }}</td>
                         <td class="text-end">{{ "%.2f" % (saldo.valor | float) }}</td>
                     </tr>

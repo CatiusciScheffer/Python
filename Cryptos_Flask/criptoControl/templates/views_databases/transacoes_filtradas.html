@@ -1,0 +1,48 @@
+{% extends 'index.html' %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h2>Transações Filtradas</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tipo de Transação</th>
+                    <th>Criptomoeda (Pagamento)</th>
+                    <th>Quantidade (Pagamento)</th>
+                    <th>Valor (Pagamento)</th>
+                    <th>Criptomoeda (Recebimento)</th>
+                    <th>Quantidade (Recebimento)</th>
+                    <th>Valor (Recebimento)</th>
+                    <th>Carteira de Pagamento</th>
+                    <th>Carteira de Recebimento</th>
+                    <th>Data da Transação</th>
+                    <th>Taxa</th>
+                    <th>Quantidade(Tx)</th>
+                    <th>Valor(Tx)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transacao, pagamento_wallet, pagamento_crypto, recebimento_wallet, recebimento_crypto, fee_crypto in transacoes %}
+                    <tr>
+                        <td>{{ transacao.id }}</td>
+                        <td>{{ transacao.transaction_type }}</td>
+                        <td>{{ pagamento_crypto.crypto_name if pagamento_crypto else '-' }}</td>
+                        <td>{{ transacao.crypto_payment_quantity if transacao.crypto_payment_quantity is not none else '-' }}</td>
+                        <td>{{ "%.2f" | format(transacao.crypto_payment_price) if transacao.crypto_payment_price is not none else '-' }}</td>
+                        <td>{{ recebimento_crypto.crypto_name if recebimento_crypto else '-' }}</td>
+                        <td>{{ transacao.crypto_receive_quantity if transacao.crypto_receive_quantity is not none else '-' }}</td>
+                        <td>{{ "%.2f" | format(transacao.crypto_receive_price) if transacao.crypto_receive_price is not none else '-' }}</td>
+                        <td>{{ pagamento_wallet.wallet_name if pagamento_wallet else '-' }}</td>
+                        <td>{{ recebimento_wallet.wallet_name if recebimento_wallet else '-' }}</td>
+                        <td>{{ transacao.transaction_date.strftime('%d/%m/%Y') if transacao.transaction_date else '-' }}</td>
+                        <td>{{ transacao.crypto_fee.crypto_name if transacao.crypto_fee and transacao.crypto_fee.crypto_name is not none else '-' }}</td>
+                        <td>{{ transacao.crypto_fee_quantity if transacao.crypto_fee_quantity is not none else '-' }}</td>
+                        <td>{{ "%.2f" | format(transacao.crypto_fee_price) if transacao.crypto_fee_price is not none else '-' }}</td>
+
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

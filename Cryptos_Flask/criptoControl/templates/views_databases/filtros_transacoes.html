@@ -1,0 +1,79 @@
+{% extends 'index.html' %}
+
+{% block body %}
+<!-- templates/views_databases/filtros_transacoes.html -->
+<div class="container mt-4">
+    <h2>Filtros de Transações</h2>
+    <form method="GET" action="{{ url_for('views.filter_results') }}">
+        <div class="mb-3">
+            <label for="transaction_type" class="form-label">Tipo de Transação:</label>
+            <select name="transaction_type" id="transaction_type" class="form-select">
+                <option value="">--Todos--</option>
+                <option value="Compra">Compra</option>
+                <option value="Venda">Venda</option>
+                <option value="Transferência">Transferência</option>
+                <option value="Saldo">Saldo</option>
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <label for="crypto_payment_id" class="form-label">Criptomoeda (Pagamento):</label>
+            <select name="crypto_payment_id" id="crypto_payment_id" class="form-select">
+                <option value="">--Selecione--</option>
+                {% for crypto in cryptos %}
+                    <option value="{{ crypto.crypto_id }}">{{ crypto.crypto_symbol }} ({{ crypto.crypto_name }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="crypto_receive_id" class="form-label">Criptomoeda (Recebimento):</label>
+            <select name="crypto_receive_id" id="crypto_receive_id" class="form-select">
+                <option value="">--Selecione--</option>
+                {% for crypto in cryptos %}
+                    <option value="{{ crypto.crypto_id }}">{{ crypto.crypto_symbol }} ({{ crypto.crypto_name }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="payment_wallet_id" class="form-label">Carteira de Pagamento:</label>
+            <select name="payment_wallet_id" id="payment_wallet_id" class="form-select">
+                <option value="">--Selecione--</option>
+                {% for wallet in wallets %}
+                    <option value="{{ wallet.wallet_id }}">{{ wallet.wallet_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="receiving_wallet_id" class="form-label">Carteira de Recebimento:</label>
+            <select name="receiving_wallet_id" id="receiving_wallet_id" class="form-select">
+                <option value="">--Selecione--</option>
+                {% for wallet in wallets %}
+                    <option value="{{ wallet.wallet_id }}">{{ wallet.wallet_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="transaction_date" class="form-label">Data da Transação:</label>
+            <input type="date" name="transaction_date" id="transaction_date" class="form-control">
+        </div>
+
+        <!-- Filtros para taxas -->
+        <div class="mb-3">
+            <label for="crypto_fee_id" class="form-label">Criptomoeda (Taxa):</label>
+            <select name="crypto_fee_id" id="crypto_fee_id" class="form-select">
+                <option value="">--Selecione--</option>
+                {% for crypto in cryptos %}
+                    <option value="{{ crypto.crypto_id }}">{{ crypto.crypto_symbol }} ({{ crypto.crypto_name }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Pesquisar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -13,6 +13,7 @@
     
     {% include 'navibar.html' %} 
     {% include 'naviVert.html' %}
+    
     <div class="container">
       {% with messages = get_flashed_messages(with_categories=True) %}
           {% if messages %}
@@ -26,11 +27,10 @@
     </div>
     
     {% block body %}
-    <div class="container">
-       
+    <!-- Modais de adicionar crypto/carteira -->
+    <div class="container">       
       {% include 'operacoes/md_add_crypto.html' %}      
-      {% include 'operacoes/md_add_wallet.html' %}
-      {% include 'operacoes/md_add_crypto.html' %}
+      {% include 'operacoes/md_add_wallet.html' %}     
     </div>
     
     <!--PARTE DOS DASHBOARDS-->

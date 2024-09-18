@@ -114,7 +114,11 @@ def normalize_decimal(value):
     """Função para substituir vírgulas por pontos em valores numéricos."""
     if isinstance(value, str):
         return value.replace(',', '.')
-    return value
+    elif isinstance(value, (int, float)):
+        return str(value)  # Converte números diretamente para string
+    else:
+        raise ValueError(f"Tipo de valor inesperado: {type(value)}")
+
 
 @transaction_bp.route('/add_transaction', methods=['POST'])
 def add_transaction():
@@ -619,12 +623,34 @@ def realizar_transferencia(
             balance_wallet_id=payment_wallet_id, balance_crypto_id=crypto_fee_id
         ).first()
 
-        # Verificar se há saldo suficiente para a taxa e a quantidade a ser transferida
-        if payment_wallet_balance and fee_wallet_balance and (payment_wallet_balance.balance >= (crypto_receive_quantity + crypto_fee_quantity)) and fee_wallet_balance.balance >= crypto_fee_quantity:
-            # Deduz a quantidade total (transferência + taxa) da carteira de pagamento
-            payment_wallet_balance.balance -= crypto_receive_quantity
-            fee_wallet_balance.balance -= crypto_fee_quantity
+        # Verifica se as carteiras foram encontradas
+        if not payment_wallet_balance:
+            flash(f'Carteira de pagamento não encontrada para a criptomoeda de recebimento.', 'alert-danger')
+            return
+        if not fee_wallet_balance:
+            flash(f'Carteira de pagamento não encontrada para a criptomoeda da taxa.', 'alert-danger')
+            return
 
+        saldo_transferencia = False
+        print(f"Payment Wallet Balance: {payment_wallet_balance.balance}")
+        print(f"Fee Wallet Balance: {fee_wallet_balance.balance}")
+        print(f"Crypto Receive Quantity: {crypto_receive_quantity}")
+        print(f"Crypto Fee Quantity: {crypto_fee_quantity}")
+       
+        # Verificar se há saldo suficiente para a taxa e a quantidade a ser transferida
+        if crypto_receive_id == crypto_fee_id:
+            # Verifica se a soma das duas quantidades cabe no saldo da carteira de pagamento
+            if payment_wallet_balance.balance >= (crypto_receive_quantity + crypto_fee_quantity):
+                saldo_transferencia = True
+                payment_wallet_balance.balance -= (crypto_receive_quantity + crypto_fee_quantity)
+        else:
+            # Verifica se o saldo de ambas as carteiras é suficiente
+            if (float(payment_wallet_balance.balance) >= float(crypto_receive_quantity)) and (float(fee_wallet_balance.balance) >= float(crypto_fee_quantity)):
+                saldo_transferencia = True
+                payment_wallet_balance.balance -= crypto_receive_quantity
+                fee_wallet_balance.balance -= crypto_fee_quantity
+
+        if saldo_transferencia:
             # Cria a transação
             transaction = Transaction(
                 transaction_type=transaction_type, 
@@ -676,12 +702,14 @@ def realizar_transferencia(
                 total_fee=total_fee,
                 transaction_date=transaction_date
             )
-            flash('Saldo Insuficiente!', 'alert-danger')
+            flash(f'Saldo Insuficiente! Saldo taxa: {fee_wallet_balance.balance}, Saldo Moeda Transferência {payment_wallet_balance.balance}', 'alert-danger')
             session.rollback()            
     except Exception as e:
         flash(f'Erro ao realizar transferência: {e}', 'alert-danger')
         session.rollback()
         raise
+
+
 
 
 @transaction_bp.route('/transaction.delete_transaction', methods=['POST'])

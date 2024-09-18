@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const preco = parseFloat(precoInput.value.replace(',', '.')) || 0;
         const quantidade = parseFloat(quantidadeInput.value.replace(',', '.')) || 0;
         const total = preco * quantidade;
-        totalInput.value = total.toFixed(2); // Formata o valor para 2 casas decimais
+        totalInput.value = total.toFixed(10); // Formata o valor para 2 casas decimais
     }
 
     // Função para limpar o campo de quantidade e recalcular o total

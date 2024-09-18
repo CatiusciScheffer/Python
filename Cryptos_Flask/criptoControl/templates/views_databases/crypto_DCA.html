@@ -11,6 +11,8 @@
                     <th>Carteira</th>
                     <th>Moeda</th>
                     <th>DCA</th>
+                    <th>Preço Atual</th>
+                    <th>Situação</th>
                 </tr>
             </thead>
             <tbody>
@@ -19,6 +21,14 @@
                     <td>{{ row['Carteira'] }}</td>
                     <td>{{ row['Moeda'] }}</td>
                     <td>{{ "%.2f" % (row['DCA'] | float) }}</td>
+                    <td>{{ "%.2f" % (row['PrecoAtual'] | float) }}</td>
+                    <td>
+                        {% if row['Situacao'] < 0 %}
+                            <span style="color: red;">{{ "%.2f" % (row['Situacao'] | float) }}</span>
+                        {% else %}
+                            <span>{{ "%.2f" % (row['Situacao'] | float) }}</span>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

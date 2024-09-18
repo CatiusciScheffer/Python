@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, url_for, flash, request, redirect, jsonify, session, send_file
-from sqlalchemy import func, or_
+from sqlalchemy import func, or_, and_
+from sqlalchemy.orm import sessionmaker, joinedload
+from sqlalchemy.sql.functions import coalesce
 from criptoControl.forms import TransactionsForm, AddWalletForm, AddCryptoForm,Users
 from criptoControl.models import db, Wallet, Cryptocurrency, WalletBalance, Transaction, Price, User
 from werkzeug.security import check_password_hash
@@ -7,7 +9,6 @@ from flask_login import login_user, current_user, login_required
 from criptoControl.api import get_crypto_payment_price
 from criptoControl import app
 from datetime import datetime
-from sqlalchemy.orm import sessionmaker, joinedload
 from decimal import Decimal, ROUND_HALF_UP
 import io
 import matplotlib.pyplot as plt
@@ -196,6 +197,7 @@ def lucro_prejuizo():
     )
 
     # Consulta para mostrar o Lucro/Prejuízo
+    # Consulta para mostrar o Lucro/Prejuízo com COALESCE
     lucro_prejuizo_query = (
         db.session.query(
             Wallet.wallet_name.label('Carteira'),
@@ -203,8 +205,10 @@ def lucro_prejuizo():
             func.strftime('%d/%m/%Y', Transaction.transaction_date).label('Data Venda'),
             Transaction.crypto_payment_quantity.label('Quantidade Vendida'),
             Transaction.crypto_payment_price.label('Preço de Venda'),
-            dca_cte.c.dca.label('DCA (Preço Médio de Compra)'),
-            ((Transaction.crypto_payment_price - dca_cte.c.dca) * Transaction.crypto_payment_quantity).label('Lucro/Prejuízo')
+            # Usando COALESCE para substituir valores nulos de DCA por 0
+            coalesce(dca_cte.c.dca, 0).label('DCA (Preço Médio de Compra)'),
+            # Usando COALESCE para calcular Lucro/Prejuízo, evitando valores nulos
+            coalesce((Transaction.crypto_payment_price - dca_cte.c.dca) * Transaction.crypto_payment_quantity, 0).label('Lucro/Prejuízo')
         )
         .join(Wallet, Transaction.payment_wallet_id == Wallet.wallet_id)
         .join(Cryptocurrency, Transaction.crypto_payment_id == Cryptocurrency.crypto_id)
@@ -215,6 +219,7 @@ def lucro_prejuizo():
         .order_by(Transaction.transaction_date)
         .all()
     )
+
 
     # Preparando os dados para o template, usando índices para acessar os itens da tupla
     lucro_prejuizo_data = [
@@ -243,26 +248,46 @@ def lucro_prejuizo():
                            resultado_final=resultado_final)
 
 
+
+
 @views_db_bp.route('/dca_compras')
 @login_required
 def dca_compras():
+    # Subconsulta para obter os preços mais recentes de cada criptomoeda
+    latest_prices_subquery = (
+        db.session.query(
+            Price.price_crypto_id,
+            func.max(Price.price_consult_datetime).label('latest_timestamp')
+        )
+        .group_by(Price.price_crypto_id)
+        .subquery()
+    )
+
     # Consulta SQL para calcular o DCA (Preço Médio de Compra) por carteira e moeda
     dca_query = (
         db.session.query(
             Wallet.wallet_name.label('Carteira'),
             Cryptocurrency.crypto_symbol.label('Moeda'),
             (func.sum(Transaction.crypto_receive_quantity * Transaction.crypto_receive_price) /
-             func.sum(Transaction.crypto_receive_quantity)).label('DCA')
+             func.sum(Transaction.crypto_receive_quantity)).label('DCA'),
+            Price.price.label('PrecoAtual')  # Preço mais recente da moeda
         )
         .join(Wallet, Transaction.receiving_wallet_id == Wallet.wallet_id)
         .join(User, Wallet.wallet_user_id == User.user_id)
         .join(Cryptocurrency, Transaction.crypto_receive_id == Cryptocurrency.crypto_id)
+        # Fazemos a junção com a tabela Price através do crypto_id
+        .join(Price, and_(
+            Price.price_crypto_id == Cryptocurrency.crypto_id,
+            Price.price_consult_datetime == latest_prices_subquery.c.latest_timestamp
+        ))
+        # Junção explícita com a subconsulta
+        .join(latest_prices_subquery, latest_prices_subquery.c.price_crypto_id == Cryptocurrency.crypto_id)
         .filter(or_(
             Transaction.transaction_type == 'Compra',
             Transaction.transaction_type == 'Saldo'
         ))
         .filter(User.user_id == current_user.user_id)  # Usuário logado
-        .group_by(Cryptocurrency.crypto_symbol, Wallet.wallet_name)
+        .group_by(Cryptocurrency.crypto_symbol, Wallet.wallet_name, Price.price)
         .all()
     )
 
@@ -271,13 +296,18 @@ def dca_compras():
         {
             'Carteira': row[0],  # Nome da Carteira
             'Moeda': row[1],     # Símbolo da Moeda
-            'DCA': row[2]        # Preço Médio de Compra
+            'DCA': row[2],       # Preço Médio de Compra (DCA)
+            'PrecoAtual': row[3],  # Preço mais recente da moeda
+            'Situacao': row[3] - row[2]  # Diferença entre Preço Atual e DCA
         }
         for row in dca_query
     ]
 
     # Renderiza o template com os dados
     return render_template('views_databases/crypto_DCA.html', dca_compras_data=dca_compras_data)
+
+
+
 
 
 # ************ MOSTRAR SALDOS DE MOEDA POR CARTERIA ****************
@@ -334,3 +364,87 @@ def get_wallet_summary():
         'preço': row.preço,
         'valor': row.valor
     } for row in query], total_valor
+
+
+@views_db_bp.route('/filtros_transacoes')
+@login_required
+def filtros_transacoes():
+    # Obter todas as criptomoedas e carteiras do banco de dados
+    cryptos = Cryptocurrency.query.all()
+    wallets = Wallet.query.all()
+
+    return render_template('views_databases/filtros_transacoes.html', 
+                           cryptos=cryptos, wallets=wallets)
+    
+    
+@views_db_bp.route('/filter_results', methods=['GET'])
+@login_required
+def filter_results():
+    # Capturar os filtros do formulário
+    transaction_type = request.args.get('transaction_type')
+    crypto_payment_id = request.args.get('crypto_payment_id')
+    crypto_receive_id = request.args.get('crypto_receive_id')
+    payment_wallet_id = request.args.get('payment_wallet_id')
+    receiving_wallet_id = request.args.get('receiving_wallet_id')
+    transaction_date = request.args.get('transaction_date')
+    crypto_fee_id = request.args.get('crypto_fee_id')
+    
+
+    # Obter o usuário logado
+    current_user_id = current_user.user_id
+
+    # Criar alias para tabelas
+    PaymentCrypto = db.aliased(Cryptocurrency, name='payment_crypto')
+    ReceiveCrypto = db.aliased(Cryptocurrency, name='receive_crypto')
+    FeeCrypto = db.aliased(Cryptocurrency, name='fee_crypto')
+    PaymentWallet = db.aliased(Wallet, name='payment_wallet')
+    ReceiveWallet = db.aliased(Wallet, name='receive_wallet')
+
+    # Criar a consulta básica com junções
+    # Adapte a consulta para incluir o atributo correto
+    query = db.session.query(Transaction, PaymentWallet, PaymentCrypto, ReceiveWallet, ReceiveCrypto, FeeCrypto).join(
+        PaymentWallet, Transaction.payment_wallet_id == PaymentWallet.wallet_id, isouter=True
+    ).join(
+        PaymentCrypto, Transaction.crypto_payment_id == PaymentCrypto.crypto_id, isouter=True
+    ).join(
+        ReceiveWallet, Transaction.receiving_wallet_id == ReceiveWallet.wallet_id, isouter=True
+    ).join(
+        ReceiveCrypto, Transaction.crypto_receive_id == ReceiveCrypto.crypto_id, isouter=True
+    ).join(
+        FeeCrypto, Transaction.crypto_fee_id == FeeCrypto.crypto_id, isouter=True
+    ).filter(
+        (PaymentWallet.wallet_user_id == current_user_id) | (ReceiveWallet.wallet_user_id == current_user_id)
+    )
+
+# Filtros adicionais
+
+
+    # Aplicar os filtros dinamicamente
+    if transaction_type:
+        query = query.filter(Transaction.transaction_type == transaction_type)
+    if crypto_payment_id:
+        query = query.filter(Transaction.crypto_payment_id == crypto_payment_id)
+    if crypto_receive_id:
+        query = query.filter(Transaction.crypto_receive_id == crypto_receive_id)
+    if payment_wallet_id:
+        query = query.filter(Transaction.payment_wallet_id == payment_wallet_id)
+    if receiving_wallet_id:
+        query = query.filter(Transaction.receiving_wallet_id == receiving_wallet_id)
+    if transaction_date:
+        query = query.filter(Transaction.transaction_date == transaction_date)
+    if crypto_fee_id:
+        query = query.filter(Transaction.crypto_fee_id == crypto_fee_id)
+    
+
+    # Executar a consulta
+    transacoes_filtradas = query.all()
+    
+    # Renderizar os resultados no template
+    return render_template('views_databases/transacoes_filtradas.html', transacoes=transacoes_filtradas)
+
+
+
+
+
+
+

@@ -4,7 +4,7 @@
 <!-- Página para Adicionar Transação -->
 <div class="container">
   <div class="text-center pt-4">
-    <h5 class="text-center">Adicionar Transação</h5>
+    <h4 class="text-center">Adicionar Transação</h4>
   </div>
   <div class="p-4">
     <form
@@ -15,9 +15,9 @@
       {{ formTransactions.csrf_token }} {{ formTransactions.hidden_tag() }}
       
       <div class="card container mb-1">
-        <div class="row justify-content-center">
+        <div class="row justify-content-center mt-3">
           <div class="col mb-3">
-            {{ formTransactions.transaction_type.label }}
+            <h5>{{ formTransactions.transaction_type.label }}</h5>
             {{ formTransactions.transaction_type(class="form-select", id="transaction_type") }}
           </div>
           <div class="col mb-3">
@@ -27,9 +27,44 @@
           </div>
         </div>
       </div>
-      <div class="card container">
+      <div class="card container mb-2" id="section_crypto_received" style="background-color: #0b5dd717;">
+        <h5 class="mt-3">Dados Recebimento</h5>
+        <div class="card container text-center mb-3">
+          <div class="row">
+            <div class="col mb-3">
+              {{ formTransactions.crypto_receive.label }}
+              {{ formTransactions.crypto_receive(class="form-select", id="crypto_receive") }}
+              <input
+                type="hidden"
+                name="payment_wallet_id"
+                id="payment_wallet_id"
+                value="{{ formTransactions.payment_wallet.data }}"
+              />
+              <input
+                type="hidden"
+                name="carteriaRecebimentoTransacao_id"
+                id="carteriaRecebimentoTransacao_id"
+                value="{{ formTransactions.receiving_wallet.data }}"
+              />
+            </div>
+            <div class="col mb-3">
+              {{ formTransactions.crypto_receive_price.label }}
+              {{ formTransactions.crypto_receive_price(class="form-control", id="crypto_receive_price") }}
+            </div>
+            <div class="col mb-3">
+              {{ formTransactions.crypto_receive_quantity.label }}
+              {{ formTransactions.crypto_receive_quantity(class="form-control", id="crypto_receive_quantity") }}
+            </div>
+            <div class="col mb-3">
+              {{ formTransactions.total_received.label }}
+              {{ formTransactions.total_received(class="form-control bg-light border border-secondary", readonly=True, id="total_received") }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card container" style="background-color: #ad181811;">
         <div id="section_crypto_payment">
-          <h6 class="mt-3">Dados Transação</h6>
+          <h5 class="mt-3">Dados Pagamento</h5>
           <div class="card container text-center mb-1">
             <div class="row">
               <div class="col mb-3">
@@ -58,7 +93,7 @@
           </div>
         </div>
         <div id="section_crypto_fee">
-          <h6>Sobre a Taxa</h6>
+          <h5 class="mt-3">Sobre a Taxa</h5>
           <div class="card container text-center mb-3">
             <div class="row">
               <div class="col mb-3">
@@ -91,46 +126,11 @@
               </div>
             </div>
           </div>
-        </div>
-        <div id="section_crypto_received">
-          <h6>Dados Recebimento/Converção Moeda</h6>
-          <div class="card container text-center mb-3">
-            <div class="row">
-              <div class="col mb-3">
-                {{ formTransactions.crypto_receive.label }}
-                {{ formTransactions.crypto_receive(class="form-select", id="crypto_receive") }}
-                <input
-                  type="hidden"
-                  name="payment_wallet_id"
-                  id="payment_wallet_id"
-                  value="{{ formTransactions.payment_wallet.data }}"
-                />
-                <input
-                  type="hidden"
-                  name="carteriaRecebimentoTransacao_id"
-                  id="carteriaRecebimentoTransacao_id"
-                  value="{{ formTransactions.receiving_wallet.data }}"
-                />
-              </div>
-              <div class="col mb-3">
-                {{ formTransactions.crypto_receive_price.label }}
-                {{ formTransactions.crypto_receive_price(class="form-control", id="crypto_receive_price") }}
-              </div>
-              <div class="col mb-3">
-                {{ formTransactions.crypto_receive_quantity.label }}
-                {{ formTransactions.crypto_receive_quantity(class="form-control", id="crypto_receive_quantity") }}
-              </div>
-              <div class="col mb-3">
-                {{ formTransactions.total_received.label }}
-                {{ formTransactions.total_received(class="form-control bg-light border border-secondary", readonly=True, id="total_received") }}
-              </div>
-            </div>
-          </div>
-        </div>
+        </div>        
       </div>
-      <h6 class="mt-1">Locais da Transação</h6>
+      <h5 class="mt-1 mt-3">Locais da Transação</h5>
       <div class="card container text-center">
-        <div class="row">
+        <div class="row mt-2">
           <div class="col mb-3" id="saida_wallet_container">
             {{ formTransactions.payment_wallet.label }}
             {{ formTransactions.payment_wallet(class="form-select", id="payment_wallet") }}
