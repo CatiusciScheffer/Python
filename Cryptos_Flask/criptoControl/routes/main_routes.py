@@ -4,11 +4,6 @@ from criptoControl.forms import TransactionsForm, AddWalletForm, AddCryptoForm,U
 from criptoControl.models import db, Wallet, Cryptocurrency, WalletBalance, Transaction, Price, User
 from werkzeug.security import check_password_hash
 from flask_login import login_user, current_user, login_required
-from criptoControl.api import get_crypto_payment_price
-from criptoControl import app
-from datetime import datetime
-from sqlalchemy.orm import sessionmaker, joinedload
-from decimal import Decimal, ROUND_HALF_UP
 import io
 import matplotlib.pyplot as plt
 import logging

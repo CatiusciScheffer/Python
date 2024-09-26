@@ -1,5 +1,5 @@
 CRYPTOS_FLASK
-    --criptoControl
+    |--criptoControl
         |--routes
             |__init__.py
             |auth_routes.py
@@ -28,7 +28,9 @@ CRYPTOS_FLASK
             |views_databases
                 |--crypto_DCA.html
                 |--crypto_lucroXprejuizo.html
+                |--filtros_transacoes.html
                 |--prices.html
+                |--transacoes_filtradas.html
                 |--wallet_ballances.html
                 |--wallet_summary.html
             |--index.html
@@ -44,5 +46,7 @@ CRYPTOS_FLASK
         |--crypto_data.db
     |--migrations
         |-- arquivos e pastas do migration
+    |--tests                <-- Diretório para os testes
+        |--test_transactions.py
     |main.py
     |requirements.txt

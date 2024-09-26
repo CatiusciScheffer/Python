@@ -7,7 +7,6 @@ from criptoControl.models import db, Wallet, Cryptocurrency, WalletBalance, Tran
 from werkzeug.security import check_password_hash
 from flask_login import login_user, current_user, login_required
 from criptoControl.api import get_crypto_payment_price
-from criptoControl import app
 from datetime import datetime
 from decimal import Decimal, ROUND_HALF_UP
 import io

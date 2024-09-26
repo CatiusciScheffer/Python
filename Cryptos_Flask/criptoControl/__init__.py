@@ -14,10 +14,13 @@ app = Flask(__name__)
 bootstrap = Bootstrap5(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///crypto_data.db'
+#app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/lbite/Documents/CryptoControl/crypto_data.db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True  
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')  
-app.config['COINMARKETCAP_API_KEY'] = os.getenv('COINMARKETCAP_API_KEY')  
+app.config['SECRET_KEY'] = 'e264a5c0acf609e7f3ac1100562cf084' 
+app.config['COINMARKETCAP_API_KEY'] = '122d6732-65df-475c-8f1d-d7a95ab45bc5' 
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -28,12 +31,12 @@ login_manager.login_view = 'auth.login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    from criptoControl.models import User  # Importa User aqui
+    from criptoControl.models import User 
     return User.query.get(int(user_id))
 
-def initialize_database():
-    with app.app_context():
-        db.create_all()
+# def initialize_database():
+#    with app.app_context():
+#        db.create_all()
 
 
 # Registrar os blueprints
@@ -44,7 +47,7 @@ from criptoControl.routes.crud_crypto_wallet import crypto_wallet_bp
 from criptoControl.routes.update_price import update_price_bp
 from criptoControl.routes.views_databases import views_db_bp
 
-from criptoControl import routes
+#from criptoControl import routes
 
 
 app.register_blueprint(auth_bp)

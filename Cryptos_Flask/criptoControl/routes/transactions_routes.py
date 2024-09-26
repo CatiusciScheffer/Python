@@ -297,7 +297,7 @@ def realizar_compra(session, transaction_date, payment_wallet_id, receiving_wall
                 saldo_pagto_tran = (fee_wallet_balance.balance >= crypto_fee_quantity) and (crypto_wallet_balance.balance >= crypto_payment_quantity)
         else:
             if fee_wallet_balance and crypto_wallet_balance:
-                saldo_pagto_tran = (crypto_wallet_balance.balance >= crypto_fee_quantity + crypto_payment_quantity)
+                saldo_pagto_tran = (crypto_wallet_balance.balance >= (crypto_fee_quantity + crypto_payment_quantity))
 
         # Verifica se tem saldo da crypto da taxa
         if saldo_pagto_tran:
@@ -480,7 +480,7 @@ def realizar_venda(session, transaction_date, payment_wallet_id, receiving_walle
                 saldo_pagto_tran = (fee_wallet_balance.balance >= crypto_fee_quantity) and (crypto_wallet_balance.balance >= crypto_payment_quantity)
         else:
             if fee_wallet_balance and crypto_wallet_balance:
-                saldo_pagto_tran = ((fee_wallet_balance.balance + crypto_wallet_balance.balance) >= (crypto_fee_quantity + crypto_payment_quantity))
+                saldo_pagto_tran = (crypto_wallet_balance.balance >= (crypto_fee_quantity + crypto_payment_quantity))
 
         # Verifica se tem saldo da crypto da taxa
         if saldo_pagto_tran:
@@ -759,7 +759,7 @@ def delete_transaction():
                                 session.add(wallet_balance_fee)
                                 session.add(wallet_balance_fee)                        
 
-                        session.add(wallet_balance_receive)                        
+                        #session.add(wallet_balance_receive)                        
                     else:
                         balance = False
                         flash('Saldo Insuficiente para Excluir Recebimento.', 'alert-danger') 
@@ -783,6 +783,8 @@ def delete_transaction():
         session.close()
 
     return redirect(url_for('transaction.transactions'))
+
+
 
 
 @transaction_bp.route('/add_transactions/<int:transaction_id>', methods=['GET', 'POST'])
