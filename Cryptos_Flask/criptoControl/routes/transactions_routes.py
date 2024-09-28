@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, url_for, flash, request, redirect, session, jsonify
+from flask import Blueprint, render_template, url_for, flash, request, redirect, session, jsonify, request
 from criptoControl.forms import TransactionsForm, AddWalletForm, AddCryptoForm
 from criptoControl.models import db, Wallet, Cryptocurrency, WalletBalance, Transaction, Price, User
 from flask_login import current_user, login_required
 from sqlalchemy.orm import sessionmaker, joinedload
 from datetime import datetime
+from math import ceil
 
 
 transaction_bp = Blueprint('transaction', __name__)
@@ -12,7 +13,7 @@ def create_session():
     return sessionmaker(bind=db.engine)()
 
 
-@transaction_bp.route('/transactions')
+'''@transaction_bp.route('/transactions')
 @login_required
 def transactions():
     # Cria uma nova sessão do banco de dados
@@ -31,13 +32,68 @@ def transactions():
             Transaction.receiving_wallet
         ).filter(
             Wallet.wallet_user_id == user_id
+        ).order_by(
+            Transaction.transaction_date.desc(),
+            Transaction.transactions_id.desc()
         ).all()
     finally:
         # Garante que a sessão seja fechada corretamente
         session.close()
 
     # Renderiza o template com as transações
-    return render_template('operacoes/transactions.html', cons_transactions=cons_transactions)
+    return render_template('operacoes/transactions.html', cons_transactions=cons_transactions)'''
+    
+
+@transaction_bp.route('/transactions')
+@login_required
+def transactions():
+    # Cria uma nova sessão do banco de dados
+    session = create_session()
+    
+    try:
+        user_id = current_user.user_id  
+        
+        # Captura o número da página atual da query string, padrão é 1
+        page = request.args.get('page', 1, type=int)
+        per_page = 10  # Número de transações por página
+        
+        # Cria a consulta base
+        query = session.query(Transaction).options(
+            joinedload(Transaction.payment_wallet),
+            joinedload(Transaction.receiving_wallet),
+            joinedload(Transaction.crypto_payment),
+            joinedload(Transaction.crypto_receive),
+            joinedload(Transaction.crypto_fee)
+        ).join(
+            Transaction.receiving_wallet
+        ).filter(
+            Wallet.wallet_user_id == user_id
+        ).order_by(
+            Transaction.transaction_date.desc(),
+            Transaction.transactions_id.desc()
+        )
+        
+        # Total de transações antes da paginação
+        total_transactions = query.count()
+        
+        # Aplica a paginação
+        cons_transactions = query.limit(per_page).offset((page - 1) * per_page).all()
+        
+        # Calcula o total de páginas
+        total_pages = ceil(total_transactions / per_page)
+
+    finally:
+        # Garante que a sessão seja fechada corretamente
+        session.close()
+
+    # Renderiza o template com as transações e informações de paginação
+    return render_template(
+        'operacoes/transactions.html', 
+        cons_transactions=cons_transactions,
+        current_page=page,
+        total_pages=total_pages
+    )
+
 
 
 #Pega preço atual da morda para preencher campos tela transsação

@@ -334,7 +334,7 @@ def get_wallet_summary():
     query = (
         db.session.query(
             Wallet.wallet_name.label('carteira'),
-            Cryptocurrency.crypto_name.label('crypto'),
+            Cryptocurrency.crypto_symbol.label('crypto'),
             WalletBalance.balance.label('quantidade'),
             Price.price.label('preço'),
             (WalletBalance.balance * Price.price).label('valor')
@@ -348,7 +348,7 @@ def get_wallet_summary():
                (Price.price_consult_datetime == latest_prices_subquery.c.latest_timestamp))
         .filter(WalletBalance.balance > 0)
         .filter(User.user_id == current_user.user_id)
-        .order_by(Wallet.wallet_name, Cryptocurrency.crypto_name)
+        .order_by(Wallet.wallet_name, Cryptocurrency.crypto_symbol)
         .all()
     )
     
@@ -375,7 +375,7 @@ def filtros_transacoes():
     return render_template('views_databases/filtros_transacoes.html', 
                            cryptos=cryptos, wallets=wallets)
     
-    
+
 @views_db_bp.route('/filter_results', methods=['GET'])
 @login_required
 def filter_results():
@@ -387,7 +387,6 @@ def filter_results():
     receiving_wallet_id = request.args.get('receiving_wallet_id')
     transaction_date = request.args.get('transaction_date')
     crypto_fee_id = request.args.get('crypto_fee_id')
-    
 
     # Obter o usuário logado
     current_user_id = current_user.user_id
@@ -400,7 +399,6 @@ def filter_results():
     ReceiveWallet = db.aliased(Wallet, name='receive_wallet')
 
     # Criar a consulta básica com junções
-    # Adapte a consulta para incluir o atributo correto
     query = db.session.query(Transaction, PaymentWallet, PaymentCrypto, ReceiveWallet, ReceiveCrypto, FeeCrypto).join(
         PaymentWallet, Transaction.payment_wallet_id == PaymentWallet.wallet_id, isouter=True
     ).join(
@@ -415,31 +413,48 @@ def filter_results():
         (PaymentWallet.wallet_user_id == current_user_id) | (ReceiveWallet.wallet_user_id == current_user_id)
     )
 
-# Filtros adicionais
+    # Criar uma lista para armazenar as condições de filtro
+    conditions = []
 
-
-    # Aplicar os filtros dinamicamente
+    # Adicionar os filtros dinamicamente à lista
     if transaction_type:
-        query = query.filter(Transaction.transaction_type == transaction_type)
-    if crypto_payment_id:
-        query = query.filter(Transaction.crypto_payment_id == crypto_payment_id)
-    if crypto_receive_id:
-        query = query.filter(Transaction.crypto_receive_id == crypto_receive_id)
-    if payment_wallet_id:
-        query = query.filter(Transaction.payment_wallet_id == payment_wallet_id)
-    if receiving_wallet_id:
-        query = query.filter(Transaction.receiving_wallet_id == receiving_wallet_id)
+        conditions.append(Transaction.transaction_type == transaction_type)
     if transaction_date:
-        query = query.filter(Transaction.transaction_date == transaction_date)
+        conditions.append(Transaction.transaction_date == transaction_date)
+
+    # Condições para criptomoedas e carteiras (com OR)
+    crypto_conditions = []
+    if crypto_payment_id:
+        crypto_conditions.append(Transaction.crypto_payment_id == crypto_payment_id)
+    if crypto_receive_id:
+        crypto_conditions.append(Transaction.crypto_receive_id == crypto_receive_id)
     if crypto_fee_id:
-        query = query.filter(Transaction.crypto_fee_id == crypto_fee_id)
-    
+        crypto_conditions.append(Transaction.crypto_fee_id == crypto_fee_id)
+
+    wallet_conditions = []
+    if payment_wallet_id:
+        wallet_conditions.append(Transaction.payment_wallet_id == payment_wallet_id)
+    if receiving_wallet_id:
+        wallet_conditions.append(Transaction.receiving_wallet_id == receiving_wallet_id)
+
+    # Aplicar as condições de criptomoedas e carteiras com OR
+    if crypto_conditions:
+        conditions.append(or_(*crypto_conditions))
+    if wallet_conditions:
+        conditions.append(or_(*wallet_conditions))
+
+    # Aplicar todos os filtros com AND
+    if conditions:
+        query = query.filter(and_(*conditions))
 
     # Executar a consulta
     transacoes_filtradas = query.all()
-    
+
     # Renderizar os resultados no template
     return render_template('views_databases/transacoes_filtradas.html', transacoes=transacoes_filtradas)
+
+
+
 
 
 

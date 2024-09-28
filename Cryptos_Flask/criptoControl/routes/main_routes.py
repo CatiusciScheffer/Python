@@ -87,6 +87,7 @@ def grafico():
         .join(User, User.user_id == Wallet.wallet_user_id)  # Adiciona o join com a tabela User
         .filter(User.user_id == current_user.user_id)       
         .order_by(Wallet.wallet_name, Cryptocurrency.crypto_name)
+        .limit(15)
         .all()
     )
     
