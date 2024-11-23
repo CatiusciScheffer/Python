@@ -1,15 +1,15 @@
 {% extends 'index.html' %}
 {% block body %}
 
-<!-- Página para Adicionar Transação -->
+<!-- Página para Editar Transação -->
 <div class="container">
   <div class="text-center">
-    <h4 class="text-center">Adicionar Transação</h4>
+    <h4 class="text-center">Editar Transação</h4>
   </div>
   <div>
     <form
       method="POST"
-      action="{{ url_for('transaction.add_transaction') }}"
+      action="{{ url_for('transaction.edit_transaction') }}"
       id="transactionForm"
     >
       {{ formTransactions.csrf_token }} {{ formTransactions.hidden_tag() }}

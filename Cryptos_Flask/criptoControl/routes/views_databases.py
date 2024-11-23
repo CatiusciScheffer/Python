@@ -295,9 +295,9 @@ def dca_compras():
         {
             'Carteira': row[0],  # Nome da Carteira
             'Moeda': row[1],     # Símbolo da Moeda
-            'DCA': row[2],       # Preço Médio de Compra (DCA)
-            'PrecoAtual': row[3],  # Preço mais recente da moeda
-            'Situacao': row[3] - row[2]  # Diferença entre Preço Atual e DCA
+            'DCA': float(row[2]),       # Preço Médio de Compra (DCA)
+            'PrecoAtual': float(row[3]),  # Preço mais recente da moeda
+            'Situacao': float(row[3]) - float(row[2])  # Diferença entre Preço Atual e DCA
         }
         for row in dca_query
     ]

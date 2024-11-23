@@ -43,7 +43,7 @@ def transactions():
     # Renderiza o template com as transações
     return render_template('operacoes/transactions.html', cons_transactions=cons_transactions)'''
     
-
+#Página que lista as transações
 @transaction_bp.route('/transactions')
 @login_required
 def transactions():
@@ -109,6 +109,7 @@ def get_price(cryptocurrency_id):
         return jsonify({'price': 0})
     
 
+#Fromulário de adicionar transação
 @transaction_bp.route('/add_transactions')
 @login_required
 def add_transactions(): 
@@ -175,7 +176,7 @@ def normalize_decimal(value):
     else:
         raise ValueError(f"Tipo de valor inesperado: {type(value)}")
 
-
+#função chamada no formulário de adicionar transação para inserir a transação no banco
 @transaction_bp.route('/add_transaction', methods=['POST'])
 def add_transaction():
     session = None
@@ -712,7 +713,10 @@ def realizar_transferencia(
                 transaction_type=transaction_type, 
                 transaction_date=datetime.strptime(transaction_date, '%Y-%m-%d'), 
                 payment_wallet_id=payment_wallet_id, 
-                receiving_wallet_id=receiving_wallet_id, 
+                receiving_wallet_id=receiving_wallet_id,
+                crypto_payment_id=crypto_receive_id, 
+                crypto_payment_price=crypto_receive_price, 
+                crypto_payment_quantity=crypto_receive_quantity, 
                 crypto_receive_id=crypto_receive_id, 
                 crypto_receive_price=crypto_receive_price, 
                 crypto_receive_quantity=crypto_receive_quantity, 
@@ -769,6 +773,7 @@ def realizar_transferencia(
 
 
 @transaction_bp.route('/transaction.delete_transaction', methods=['POST'])
+@login_required
 def delete_transaction():
     session = create_session()
 
@@ -843,27 +848,57 @@ def delete_transaction():
 
 
 
-@transaction_bp.route('/add_transactions/<int:transaction_id>', methods=['GET', 'POST'])
+@transaction_bp.route('/transactions/edit_transaction', methods=['GET', 'POST'])
 @login_required
-def edit_transaction(transaction_id):
-    session = None
-    transaction = None
-    
-    try:
-        #estou na rota que consulta o banco e mostra as trsnsaçãoes existentes, nesta página tem o botão de excluir que deve pegar nesta tabela  o id da transação
+def edit_transaction(transaction_id): 
+    formTransactions = TransactionsForm()
+    formAddWallet = AddWalletForm()
+    formAddCrypto = AddCryptoForm()
+    db_session_edit = create_session() 
 
-        # com id em mãos deve buscar os dados da referida transação no banco
+    try:        
+        # Busca as informações no banco
+        transactions = db_session_edit.query(Transaction).all()
+        wallets = db_session_edit.query(Wallet).filter(
+            Wallet.wallet_status=='N',
+            Wallet.wallet_user_id == current_user.user_id
+        ).all()
+        cryptos = db_session_edit.query(Cryptocurrency).filter(Cryptocurrency.crypto_status=='N').order_by(Cryptocurrency.crypto_symbol).all()
 
-        #abrir a página add_transactions.html que é o formulário das transações e preencher o mesmo com dados do banco conforme id
+        # Popular as informações do banco no HTML
+        formTransactions.crypto_payment.choices = [('', '')] + [(crypto.crypto_id, f"{crypto.crypto_symbol} - ({crypto.crypto_name})") for crypto in cryptos]
+        
+        formTransactions.crypto_fee.choices = [('', '')] + [(crypto.crypto_id, f"{crypto.crypto_symbol} - ({crypto.crypto_name})") for crypto in cryptos]
+        
+        formTransactions.crypto_receive.choices = [('', '')] + [(crypto.crypto_id, f"{crypto.crypto_symbol} - ({crypto.crypto_name})") for crypto in cryptos]
+        
+        formTransactions.payment_wallet.choices = [('', '')] + [(wallet.wallet_id, wallet.wallet_name) for wallet in wallets]
+        
+        formTransactions.receiving_wallet.choices = [('', '')] + [(wallet.wallet_id, wallet.wallet_name) for wallet in wallets]
 
-        # estando com o formulário preenchido quando usuário clicar no botão, vai chamar a função que vai deletar a transação do banco e já corrige os saldo
-
-        #após excluir vai salvar a transação no banco com mesmo id
-        pass
+        # Verificar se existem dados armazenados na sessão para recuperar preenchimento
+        if 'form_data' in session:
+            form_data = session.pop('form_data')  # Use `session` directly from Flask
             
-    except Exception as e:
-        if session is not None:
-            session.rollback()
-        flash(f'Erro ao tentar atualizar a transação: {e}', 'alert-danger')
+            # Preencher o formulário com os dados recuperados
+            formTransactions.transaction_type.data = form_data.get('transaction_type')
+            formTransactions.transaction_date.data = form_data.get('transaction_date')
+            formTransactions.receiving_wallet.data = form_data.get('receiving_wallet_id')
+            formTransactions.payment_wallet.data = form_data.get('payment_wallet_id')
+            formTransactions.crypto_payment.data = form_data.get('crypto_payment_id')
+            formTransactions.crypto_payment_price.data = form_data.get('crypto_payment_price')
+            formTransactions.crypto_payment_quantity.data = form_data.get('crypto_payment_quantity')
+            formTransactions.total_paid.data = form_data.get('total_paid')
+            formTransactions.crypto_receive.data = form_data.get('crypto_receive_id')
+            formTransactions.crypto_receive_price.data = form_data.get('crypto_receive_price')
+            formTransactions.crypto_receive_quantity.data = form_data.get('crypto_receive_quantity')
+            formTransactions.total_received.data = form_data.get('total_received')
+            formTransactions.crypto_fee.data = form_data.get('crypto_fee_id')
+            formTransactions.crypto_fee_price.data = form_data.get('crypto_fee_price')
+            formTransactions.crypto_fee_quantity.data = form_data.get('crypto_fee_quantity')
+            formTransactions.total_fee.data = form_data.get('total_fee')
 
-    return render_template('operacoes/edit_transaction.html', transaction=transaction)
+    finally:
+        db_session_edit.close() 
+
+    return render_template('operacoes/edit_transactions.html', transactions=transactions, wallets=wallets, cryptos=cryptos, formTransactions=formTransactions, formAddWallet=formAddWallet, formAddCrypto=formAddCrypto)

@@ -12,7 +12,7 @@ JOIN
     cryptocurrencies c ON t.crypto_receive_id = c.crypto_id
 WHERE 
     t.transaction_type = 'Compra' OR t.transaction_type = 'Saldo'
-    AND u.user_id = 9001
+    AND u.user_id = 9000
 GROUP BY 
     c.crypto_symbol, w.wallet_name;
 

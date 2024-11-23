@@ -4,23 +4,26 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap5
 from dotenv import load_dotenv
+from config import Config
 import os
 
-# Carregar variáveis de ambiente do arquivo .env
-load_dotenv()
 
 app = Flask(__name__)
 
+# Configuração da aplicação usando o arquivo config.py
+app.config.from_object(Config)
+
 bootstrap = Bootstrap5(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///crypto_data.db'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///crypto_data.db'
 #app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/lbite/Documents/CryptoControl/crypto_data.db'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/USER/Documents/LEANDRO/crypto_data.db'
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ECHO'] = True  
-app.config['SECRET_KEY'] = 'e264a5c0acf609e7f3ac1100562cf084' 
-app.config['COINMARKETCAP_API_KEY'] = '122d6732-65df-475c-8f1d-d7a95ab45bc5' 
+#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+#app.config['SQLALCHEMY_ECHO'] = True  
+#app.config['SECRET_KEY'] = 'e264a5c0acf609e7f3ac1100562cf084' 
+#app.config['COINMARKETCAP_API_KEY'] = '122d6732-65df-475c-8f1d-d7a95ab45bc5' 
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)

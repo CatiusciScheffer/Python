@@ -20,7 +20,7 @@ CRYPTOS_FLASK
             |operacoes
                 |--add_transactions.html
                 |--cryptos.html
-                |--edit_transaction.html
+                |--edit_transactions.html
                 |--md_add_crypto.html
                 |--md_add_wallet.html
                 |--transactions.html
@@ -38,6 +38,7 @@ CRYPTOS_FLASK
             |--navert.html
         |__init__.py
         |api.py
+        |config.py
         |forms.py
         |models.py
         |routes.py
@@ -50,3 +51,13 @@ CRYPTOS_FLASK
         |--test_transactions.py
     |main.py
     |requirements.txt
+    |update_prices_task.py
+
+
+pyinstaller --onefile --noconsole --add-data "criptoControl/templates;criptoControl/templates" --add-data "criptoControl/static;criptoControl/static" --add-data ".env;." --add-data "crypto_data.db;." main.py
+
+
+pyinstaller --onefile --noconsole --add-data "criptoControl/templates;criptoControl/templates" --add-data "criptoControl/static;criptoControl/static" main.py
+
+
+pyinstaller --onefile --noconsole --add-data "criptoControl/templates;criptoControl/templates" --add-data "criptoControl/static;criptoControl/static" --add-data ".env;." main.py
