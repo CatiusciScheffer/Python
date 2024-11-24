@@ -54,10 +54,3 @@ CRYPTOS_FLASK
     |update_prices_task.py
 
 
-pyinstaller --onefile --noconsole --add-data "criptoControl/templates;criptoControl/templates" --add-data "criptoControl/static;criptoControl/static" --add-data ".env;." --add-data "crypto_data.db;." main.py
-
-
-pyinstaller --onefile --noconsole --add-data "criptoControl/templates;criptoControl/templates" --add-data "criptoControl/static;criptoControl/static" main.py
-
-
-pyinstaller --onefile --noconsole --add-data "criptoControl/templates;criptoControl/templates" --add-data "criptoControl/static;criptoControl/static" --add-data ".env;." main.py

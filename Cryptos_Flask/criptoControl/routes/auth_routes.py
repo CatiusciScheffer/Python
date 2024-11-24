@@ -3,7 +3,6 @@ from criptoControl.forms import Users
 from criptoControl.models import User
 from werkzeug.security import check_password_hash
 from flask_login import login_user
-from criptoControl import db
 
 
 auth_bp = Blueprint('auth', __name__)

@@ -1,17 +1,9 @@
-from flask import Blueprint, render_template, url_for, flash, request, redirect, jsonify, session, send_file
-from sqlalchemy import func, or_
-from criptoControl.forms import TransactionsForm, AddWalletForm, AddCryptoForm,Users
-from criptoControl.models import db, Wallet, Cryptocurrency, WalletBalance, Transaction, Price, User
-from werkzeug.security import check_password_hash
-from flask_login import login_user, current_user, login_required
+from flask import Blueprint, url_for, flash, request, redirect
+from criptoControl.models import db, Cryptocurrency, Price
 from criptoControl.api import get_crypto_payment_price
 from datetime import datetime
-from sqlalchemy.orm import sessionmaker, joinedload
-from decimal import Decimal, ROUND_HALF_UP
-import io
-import matplotlib.pyplot as plt
+from sqlalchemy.orm import sessionmaker
 import logging
-import email_validator
 
 
 update_price_bp = Blueprint('update_price', __name__)
@@ -20,30 +12,6 @@ logging.basicConfig(level=logging.DEBUG)
 
 def create_session():
     return sessionmaker(bind=db.engine)()
-
-
-# VER PARA ADICIONAR PREÇO MANUALMENTE!!!!!!!!!!!???????????????????????
-@update_price_bp.route('/add_price', methods=['POST'])
-def add_price():
-    session = None
-    try:
-        crypto_id = request.form['cryptocurrency_id']
-        price = float(request.form['price'])
-        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        session = create_session()
-        crypto_payment_price = Price(cryptocurrency_id=crypto_id, price=price,timestamp=timestamp)
-        session.add(crypto_payment_price)
-        session.commit()
-    except Exception as e:
-        if session:
-            session.rollback()
-        flash(f'Erro ao tentar atualizar os preços: {e}', 'alert-danger')
-    
-    finally:
-        if session:
-            session.close()
-    
-    return redirect(url_for('views.prices'))
 
 
 #Atualiza os preços das cryptos cadastradas pela API

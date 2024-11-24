@@ -1,18 +1,10 @@
-from flask import Blueprint, render_template, url_for, flash, request, redirect, jsonify, session, send_file
+from flask import Blueprint, render_template, flash, request
 from sqlalchemy import func, or_, and_
 from sqlalchemy.orm import sessionmaker, joinedload
 from sqlalchemy.sql.functions import coalesce
-from criptoControl.forms import TransactionsForm, AddWalletForm, AddCryptoForm,Users
 from criptoControl.models import db, Wallet, Cryptocurrency, WalletBalance, Transaction, Price, User
-from werkzeug.security import check_password_hash
-from flask_login import login_user, current_user, login_required
-from criptoControl.api import get_crypto_payment_price
-from datetime import datetime
-from decimal import Decimal, ROUND_HALF_UP
-import io
-import matplotlib.pyplot as plt
+from flask_login import current_user, login_required
 import logging
-import email_validator
 
 
 views_db_bp = Blueprint('views', __name__)

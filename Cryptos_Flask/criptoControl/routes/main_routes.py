@@ -1,13 +1,10 @@
-from flask import Blueprint, render_template, url_for, flash, request, redirect, jsonify, session, send_file
-from sqlalchemy import func, or_
-from criptoControl.forms import TransactionsForm, AddWalletForm, AddCryptoForm,Users
+from flask import Blueprint, render_template, send_file
+from sqlalchemy import func
+from criptoControl.forms import TransactionsForm, AddWalletForm, AddCryptoForm
 from criptoControl.models import db, Wallet, Cryptocurrency, WalletBalance, Transaction, Price, User
-from werkzeug.security import check_password_hash
-from flask_login import login_user, current_user, login_required
+from flask_login import current_user, login_required
 import io
 import matplotlib.pyplot as plt
-import logging
-import email_validator
 
 
 main_bp = Blueprint('main', __name__)

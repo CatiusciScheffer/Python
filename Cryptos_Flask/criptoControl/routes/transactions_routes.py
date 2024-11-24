@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, url_for, flash, request, redirect, session, jsonify, request
 from criptoControl.forms import TransactionsForm, AddWalletForm, AddCryptoForm
-from criptoControl.models import db, Wallet, Cryptocurrency, WalletBalance, Transaction, Price, User
+from criptoControl.models import db, Wallet, Cryptocurrency, WalletBalance, Transaction, Price
 from flask_login import current_user, login_required
 from sqlalchemy.orm import sessionmaker, joinedload
 from datetime import datetime
@@ -13,36 +13,7 @@ def create_session():
     return sessionmaker(bind=db.engine)()
 
 
-'''@transaction_bp.route('/transactions')
-@login_required
-def transactions():
-    # Cria uma nova sessão do banco de dados
-    session = create_session()
-    
-    try:
-        user_id = current_user.user_id  
-        
-        cons_transactions = session.query(Transaction).options(
-            joinedload(Transaction.payment_wallet),
-            joinedload(Transaction.receiving_wallet),
-            joinedload(Transaction.crypto_payment),
-            joinedload(Transaction.crypto_receive),
-            joinedload(Transaction.crypto_fee)
-        ).join(
-            Transaction.receiving_wallet
-        ).filter(
-            Wallet.wallet_user_id == user_id
-        ).order_by(
-            Transaction.transaction_date.desc(),
-            Transaction.transactions_id.desc()
-        ).all()
-    finally:
-        # Garante que a sessão seja fechada corretamente
-        session.close()
-
-    # Renderiza o template com as transações
-    return render_template('operacoes/transactions.html', cons_transactions=cons_transactions)'''
-    
+   
 #Página que lista as transações
 @transaction_bp.route('/transactions')
 @login_required
@@ -771,7 +742,7 @@ def realizar_transferencia(
 
 
 
-
+# **********   DELETE TRANSACTION *******  DELETE   ************************************************
 @transaction_bp.route('/transaction.delete_transaction', methods=['POST'])
 @login_required
 def delete_transaction():
@@ -846,59 +817,4 @@ def delete_transaction():
     return redirect(url_for('transaction.transactions'))
 
 
-
-
-@transaction_bp.route('/transactions/edit_transaction', methods=['GET', 'POST'])
-@login_required
-def edit_transaction(transaction_id): 
-    formTransactions = TransactionsForm()
-    formAddWallet = AddWalletForm()
-    formAddCrypto = AddCryptoForm()
-    db_session_edit = create_session() 
-
-    try:        
-        # Busca as informações no banco
-        transactions = db_session_edit.query(Transaction).all()
-        wallets = db_session_edit.query(Wallet).filter(
-            Wallet.wallet_status=='N',
-            Wallet.wallet_user_id == current_user.user_id
-        ).all()
-        cryptos = db_session_edit.query(Cryptocurrency).filter(Cryptocurrency.crypto_status=='N').order_by(Cryptocurrency.crypto_symbol).all()
-
-        # Popular as informações do banco no HTML
-        formTransactions.crypto_payment.choices = [('', '')] + [(crypto.crypto_id, f"{crypto.crypto_symbol} - ({crypto.crypto_name})") for crypto in cryptos]
-        
-        formTransactions.crypto_fee.choices = [('', '')] + [(crypto.crypto_id, f"{crypto.crypto_symbol} - ({crypto.crypto_name})") for crypto in cryptos]
-        
-        formTransactions.crypto_receive.choices = [('', '')] + [(crypto.crypto_id, f"{crypto.crypto_symbol} - ({crypto.crypto_name})") for crypto in cryptos]
-        
-        formTransactions.payment_wallet.choices = [('', '')] + [(wallet.wallet_id, wallet.wallet_name) for wallet in wallets]
-        
-        formTransactions.receiving_wallet.choices = [('', '')] + [(wallet.wallet_id, wallet.wallet_name) for wallet in wallets]
-
-        # Verificar se existem dados armazenados na sessão para recuperar preenchimento
-        if 'form_data' in session:
-            form_data = session.pop('form_data')  # Use `session` directly from Flask
-            
-            # Preencher o formulário com os dados recuperados
-            formTransactions.transaction_type.data = form_data.get('transaction_type')
-            formTransactions.transaction_date.data = form_data.get('transaction_date')
-            formTransactions.receiving_wallet.data = form_data.get('receiving_wallet_id')
-            formTransactions.payment_wallet.data = form_data.get('payment_wallet_id')
-            formTransactions.crypto_payment.data = form_data.get('crypto_payment_id')
-            formTransactions.crypto_payment_price.data = form_data.get('crypto_payment_price')
-            formTransactions.crypto_payment_quantity.data = form_data.get('crypto_payment_quantity')
-            formTransactions.total_paid.data = form_data.get('total_paid')
-            formTransactions.crypto_receive.data = form_data.get('crypto_receive_id')
-            formTransactions.crypto_receive_price.data = form_data.get('crypto_receive_price')
-            formTransactions.crypto_receive_quantity.data = form_data.get('crypto_receive_quantity')
-            formTransactions.total_received.data = form_data.get('total_received')
-            formTransactions.crypto_fee.data = form_data.get('crypto_fee_id')
-            formTransactions.crypto_fee_price.data = form_data.get('crypto_fee_price')
-            formTransactions.crypto_fee_quantity.data = form_data.get('crypto_fee_quantity')
-            formTransactions.total_fee.data = form_data.get('total_fee')
-
-    finally:
-        db_session_edit.close() 
-
-    return render_template('operacoes/edit_transactions.html', transactions=transactions, wallets=wallets, cryptos=cryptos, formTransactions=formTransactions, formAddWallet=formAddWallet, formAddCrypto=formAddCrypto)
+# ******    Implementar função de editar transação ********************************
