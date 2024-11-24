@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 import os
 
 
-
 # Carregar variáveis do .env
 load_dotenv()
 
@@ -16,7 +15,7 @@ app = Flask(__name__)
 bootstrap = Bootstrap5(app)
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///crypto_data.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///instance/crypto_data.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///crypto_data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True 
 
@@ -24,12 +23,9 @@ app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'uma_chave_secreta_padrao')
 app.config['COINMARKETCAP_API_KEY'] = os.getenv('COINMARKETCAP_API_KEY')
 
-# Inicializar extensões
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-
-# Configurar login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'auth.login' 

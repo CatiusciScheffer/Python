@@ -1,10 +1,13 @@
-from flask import Blueprint, url_for, flash, request, redirect
+from flask import Blueprint, url_for, flash, redirect
 from criptoControl.models import db, Cryptocurrency, Price
 from criptoControl.api import get_crypto_payment_price
 from datetime import datetime
 from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
+import os
 import logging
 
+load_dotenv()
 
 update_price_bp = Blueprint('update_price', __name__)
 
@@ -19,7 +22,7 @@ def create_session():
 def update_prices():
     session = None
     try:
-        COINMARKETCAP_API_KEY = '122d6732-65df-475c-8f1d-d7a95ab45bc5'
+        COINMARKETCAP_API_KEY = os.getenv('COINMARKETCAP_API_KEY')
         session = create_session()
             
         # Obter todos os símbolos das criptomoedas com status 'N'

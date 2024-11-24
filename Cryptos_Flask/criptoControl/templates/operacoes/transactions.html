@@ -7,6 +7,8 @@
             <h5>Lista de Transações</h5>
             <!-- Botão de Filtro -->
             <a href="{{ url_for('views.filtros_transacoes') }}" class="btn btn-secondary">Filtrar Transações</a>
+            <a href="{{ url_for('transaction.add_transactions') }}" class="btn btn-primary">+ Transação</a
+        >
         </div>
     </caption>
     <table class="table table-sm mb-2">
@@ -139,25 +141,6 @@
                     {% else %}
                     <!-- Exibe um espaço em branco -->
                     {% endif %}
-                </td>
-                <td>
-                    <!-- Formulário para editar a transação -->
-                     <!-- botão de editar lógica a implementar
-                    <form
-                        method="POST"
-                        action="{{ url_for('transaction.edit_transaction', transaction_id=transaction.transactions_id) }}"
-                        style="display: inline"
-                    >
-                        <input
-                            type="hidden"
-                            name="transactions_id"
-                            value="{{ transaction.transactions_id }}"
-                        />
-                        <button type="submit" class="btn btn-danger btn-sm">
-                            Editar
-                        </button>
-                    </form>
-                    -->
                 </td>
                 <td>
                     <!-- Formulário para excluir a transação -->

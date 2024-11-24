@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG)
 @crypto_wallet_bp.route('/add_wallet', methods=['GET', 'POST'])
 @login_required
 def add_wallet():
-    formAddWallet = AddWalletForm()
+    formAddWallet = AddWalletForm()  # Criação do formulário
     if formAddWallet.validate_on_submit():
         wallet_name = formAddWallet.wallet_name.data.strip().upper()
         wallet_network = formAddWallet.wallet_network.data.strip().upper()
@@ -28,6 +28,7 @@ def add_wallet():
         return redirect(url_for('views.wallets'))
 
     return render_template('operacoes/add_wallet.html', formAddWallet=formAddWallet)
+
 
 # Remover Carteira
 @crypto_wallet_bp.route('/delete_wallet', methods=['POST'])

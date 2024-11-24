@@ -1,0 +1,26 @@
+{% extends 'index.html' %} {% block body %}
+
+<div class="container">
+  <div class="text-center pt-4">
+    <h5 class="text-center">Adicionar Carteira</h5>
+  </div>
+  <div class="modal-body p-4">
+    <form method="POST" action="{{ url_for('crypto_wallet.add_wallet') }}">
+      {{ formAddWallet.csrf_token }} {{ formAddWallet.hidden_tag() }}
+      <fieldset>
+        <div class="card container text-center p-4">
+          {{ formAddWallet.wallet_name.label }} {{
+          formAddWallet.wallet_name(class="form-select") }} {{
+          formAddWallet.wallet_network.label }} {{
+          formAddWallet.wallet_network(class="form-select") }}
+        </div>
+      </fieldset>
+      <div class="d-grid gap-3 mt-3">
+        <button type="submit" class="btn btn-primary">
+          Adicionar Carteira
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -13,7 +13,24 @@
 {% block body %}
     
     <div class="container">
-        <h4 class="mt-4">Tabela de Preços Atuais das Moedas</h4>
+        <caption>
+            <div>
+                <h4 class="mt-4">Tabela de Preços Atuais das Moedas</h4>
+                <!--link que atualiza preço com API via formulário-->
+                <form
+                    id="atualizar-prices-form"
+                    action="{{ url_for('update_price.update_prices') }}"
+                    method="POST"
+                    style="display: none">
+                    </form>
+                <a
+                    class="btn btn-primary"
+                    href="#"
+                    onclick="document.getElementById('atualizar-prices-form').submit();"
+                    >Atualizar Preços
+                </a>
+            </div>
+        </caption>
         <table class="table">
             <thead>
                 <tr>

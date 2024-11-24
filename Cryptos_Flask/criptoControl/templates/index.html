@@ -1,62 +1,48 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cryptos</title>
-    
-    {{ bootstrap.load_css() }}
 
-    {% block head %} {% endblock %}
-  </head>
-  <body>
-    
-    {% include 'navibar.html' %} 
-    {% include 'naviVert.html' %}
-    
+    {{ bootstrap.load_css() }} {{ bootstrap.load_js() }} {% block head %} {% endblock %}
+</head>
+
+<body>
+    {% include 'navibar.html' %}
+
     <div class="container">
-      {% with messages = get_flashed_messages(with_categories=True) %}
-          {% if messages %}
-              {% for category, message in messages %}
-                  <div class="alert {{ category }}">
-                      {{ message }}
-                  </div>
-              {% endfor %}
-          {% endif %}
-      {% endwith %}
+        {% with messages = get_flashed_messages(with_categories=True) %} {%
+        if messages %} {% for category, message in messages %}
+        <div class="alert {{ category }}">{{ message }}</div>
+        {% endfor %} {% endif %} {% endwith %}
     </div>
-    
+
     {% block body %}
-    <!-- Modais de adicionar crypto/carteira -->
-    <div class="container">       
-      {% include 'operacoes/md_add_crypto.html' %}      
-      {% include 'operacoes/md_add_wallet.html' %}     
-    </div>
-    
+
     <!--PARTE DOS DASHBOARDS-->
     <div class="container col">
-      <div class="row">
-        <div class="col card">
-          <p>dashboard</p>
-          <img src="{{ url_for('main.grafico') }}" alt="Gráfico de Criptomoedas" class="img-fluid">
+        <div class="row">
+            <div class="col card">
+                <p>dashboard</p>
+                <img src="{{ url_for('main.grafico') }}" alt="Gráfico de Criptomoedas" class="img-fluid" />
+            </div>
+            <div class="col card">
+                <p>dashboard</p>
+            </div>
         </div>
-        <div class="col card">
-          <p>dashboard</p>
+        <div class="row">
+            <div class="col card">
+                <p>dashboard</p>
+            </div>
+            <div class="col card">
+                <p>dashboard</p>
+            </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col card">
-          <p>dashboard</p>
-        </div>
-        <div class="col card">
-          <p>dashboard</p>
-        </div>
-      </div>
     </div>
-    {% endblock %}
+    {% endblock %} {% block scripts %} {{ bootstrap.load_js() }} {% endblock
+    %}
+</body>
 
-    {% block scripts %}
-      {{ bootstrap.load_js() }}
-    {% endblock %}
-  </body>
 </html>

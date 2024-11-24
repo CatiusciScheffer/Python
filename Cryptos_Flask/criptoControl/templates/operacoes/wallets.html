@@ -2,34 +2,43 @@
 
 {% block body %}
 <div class="container">
-    
-    <h4 class="mt-4">Carteiras Cadastradas</h4>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Rede</th>
-                <th>Ação</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for wallet in wallets %}
-            <tr>
-                <!-- Use as propriedades dos objetos Wallet -->
-                <td>{{ wallet.wallet_name }}</td>
-                <td>{{ wallet.wallet_network }}</td>
-                <td>
-                    <!-- Formulário para atualizar o status da carteira -->
-                    <form method="POST" action="{{ url_for('crypto_wallet.delete_wallet') }}" style="display:inline;">
-                        <!-- Campo oculto para passar o ID da carteira -->
-                        <input type="hidden" name="wallet_id" value="{{ wallet.wallet_id }}">
-                        <!-- Botão de atualizar status -->
-                        <button type="submit" class="btn btn-danger btn-sm">Excluir/Inativar</button>
-                    </form>                    
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+
+  <caption>
+    <div class="mt-4 mb-4 d-flex justify-content-between align-items-center">
+      <h4>Carteiras Cadastradas</h4>
+      <!-- Botão de Filtro -->
+      <a href="{{ url_for('crypto_wallet.add_wallet') }}" class="btn btn-secondary">Adicionar Carteira</a>
+    </div>
+  </caption>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Rede</th>
+        <th>Ação</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for wallet in wallets %}
+      <tr>
+        <!-- Use as propriedades dos objetos Wallet -->
+        <td>{{ wallet.wallet_name }}</td>
+        <td>{{ wallet.wallet_network }}</td>
+        <td>
+          <!-- Formulário para atualizar o status da carteira -->
+          <form method="POST" action="{{ url_for('crypto_wallet.delete_wallet') }}" style="display:inline;">
+
+            <!-- Campo oculto para passar o ID da carteira -->
+            <input type="hidden" name="wallet_id" value="{{ wallet.wallet_id }}">
+            <!-- Botão de atualizar status -->
+            <button type="submit" class="btn btn-danger btn-sm">Excluir/Inativar</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
+
 {% endblock %}

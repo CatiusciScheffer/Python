@@ -20,9 +20,8 @@ CRYPTOS_FLASK
             |operacoes
                 |--add_transactions.html
                 |--cryptos.html
-                |--edit_transactions.html
-                |--md_add_crypto.html
-                |--md_add_wallet.html
+                |--add_crypto.html
+                |--add_wallet.html
                 |--transactions.html
                 |--wallets.html
             |views_databases
@@ -38,19 +37,13 @@ CRYPTOS_FLASK
             |--navert.html
         |__init__.py
         |api.py
-        |config.py
         |forms.py
         |models.py
         |routes.py
     |--env
     |--instance
         |--crypto_data.db
-    |--migrations
-        |-- arquivos e pastas do migration
-    |--tests                <-- Diretório para os testes
-        |--test_transactions.py
     |main.py
     |requirements.txt
-    |update_prices_task.py
 
 

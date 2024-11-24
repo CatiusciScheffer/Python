@@ -1,0 +1,25 @@
+{% extends 'index.html' %} {% block body %}
+<div class="container">
+  <div class="text-center pt-4">
+    <h5 class="text-center" id="moedasModalLabel">Adicionar Moedas</h5>
+  </div>
+  <div class="modal-body p-4">
+    <form method="POST" action="{{ url_for('crypto_wallet.add_crypto') }}">
+      {{ formAddCrypto.csrf_token }} {{ formAddCrypto.hidden_tag() }}
+      <fieldset>
+        <div class="card container text-center p-4">
+          {{ formAddCrypto.crypto_name.label }} {{
+          formAddCrypto.crypto_name(class="form-select") }} {{
+          formAddCrypto.crypto_symbol.label }} {{
+          formAddCrypto.crypto_symbol(class="form-select") }}
+        </div>
+      </fieldset>
+      <div class="d-grid gap-3 mt-3">
+        <button type="submit" class="btn btn-primary">
+          Adicionar Moedas
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
