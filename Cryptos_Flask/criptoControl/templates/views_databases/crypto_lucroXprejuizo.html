@@ -3,55 +3,54 @@
 {% block body %}
 
 <div class="container mt-4">
-    <h3>Lucro / Prejuízo (Venda)</h3>
-    <div class="col-md-8 p-5 text-end">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Carteira</th>
-                    <th>Moeda</th>
-                    <th>Dt.Venda</th>
-                    <th>Qtd.Vendida</th>
-                    <th>Pç.Venda</th>
-                    <th>DCA</th>
-                    <th>Lucro/Prejuízo</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in lucro_prejuizo_data %}
-                <tr>
-                    <td>{{ row['Carteira'] }}</td>
-                    <td>{{ row['Moeda'] }}</td>
-                    <td>{{ row['Data Venda'] }}</td>
-                    <td>{{ "%.2f" % (row['Quantidade Vendida'] | float) }}</td>
-                    <td>{{ "%.2f" % (row['Preço de Venda']| float) }}</td>
-                    <td>{{ "%.2f" % (row['DCA (Preço Médio de Compra)'] | float) }}</td>
-                    <td>
-                        {% if row['Lucro/Prejuízo'] < 0 %}
-                            <span style="color: red;">{{ "%.2f" % (row['Lucro/Prejuízo'] | float) }}</span>
-                        {% else %}
-                            {{ "%.2f" % (row['Lucro/Prejuízo'] | float) }}
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            <!-- Linha de total -->
-            <tfoot>
-                <tr>
-                    <td colspan="6"><strong>{{ resultado_final }}:</strong></td>
-                    <td>
-                        {% if total_lucro_prejuizo < 0 %}
-                            <span style="color: red;">{{ "%.2f" % (total_lucro_prejuizo | float) }}</span> ({{ resultado_final }})
-                        {% else %}
-                            <span>{{ "%.2f" % (total_lucro_prejuizo | float) }}</span> 
-                        {% endif %}
-                    </td>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
+  <h3>Lucro / Prejuízo (Venda)</h3>
+  <div class="col-md-8 p-5 text-end">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Carteira</th>
+          <th>Moeda</th>
+          <th>Dt.Venda</th>
+          <th>Qtd.Vendida</th>
+          <th>Pç.Venda</th>
+          <th>DCA</th>
+          <th>Lucro/Prejuízo</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in lucro_prejuizo_data %}
+        <tr>
+          <td>{{ row['Carteira'] }}</td>
+          <td>{{ row['Moeda'] }}</td>
+          <td>{{ row['Data Venda'] }}</td>
+          <td>{{ "%.2f" % (row['Quantidade Vendida'] | float) }}</td>
+          <td>{{ "%.2f" % (row['Preço de Venda']| float) }}</td>
+          <td>{{ "%.2f" % (row['DCA (Preço Médio de Compra)'] | float) }}</td>
+          <td>
+            {% if row['Lucro/Prejuízo'] < 0 %} <span style="color: red;">{{ "%.2f" % (row['Lucro/Prejuízo'] | float)
+              }}</span>
+              {% else %}
+              {{ "%.2f" % (row['Lucro/Prejuízo'] | float) }}
+              {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <!-- Linha de total -->
+      <tfoot>
+        <tr>
+          <td colspan="6"><strong>{{ resultado_final }}:</strong></td>
+          <td>
+            {% if total_lucro_prejuizo < 0 %} <span style="color: red;">{{ "%.2f" % (total_lucro_prejuizo | float)
+              }}</span> ({{ resultado_final }})
+              {% else %}
+              <span>{{ "%.2f" % (total_lucro_prejuizo | float) }}</span>
+              {% endif %}
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 </div>
 
 {% endblock %}
-

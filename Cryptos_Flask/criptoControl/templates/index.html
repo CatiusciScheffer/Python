@@ -2,47 +2,49 @@
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cryptos</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cryptos</title>
 
-    {{ bootstrap.load_css() }} {{ bootstrap.load_js() }} {% block head %} {% endblock %}
+  {{ bootstrap.load_css() }} {{ bootstrap.load_js() }} {% block head %} {% endblock %}
 </head>
 
-<body>
-    {% include 'navibar.html' %}
+<body class="d-flex flex-column" style="height: 100vh;">
+  {% include 'navibar.html' %}
 
-    <div class="container">
-        {% with messages = get_flashed_messages(with_categories=True) %} {%
-        if messages %} {% for category, message in messages %}
-        <div class="alert {{ category }}">{{ message }}</div>
-        {% endfor %} {% endif %} {% endwith %}
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=True) %} {%
+    if messages %} {% for category, message in messages %}
+    <div class="alert {{ category }}">{{ message }}</div>
+    {% endfor %} {% endif %} {% endwith %}
+  </div>
+
+  {% block body %}
+
+  <!--PARTE DOS DASHBOARDS-->
+  <div class="container col">
+    <div class="row">
+      <div class="col card">
+        <p>dashboard</p>
+        <img src="{{ url_for('main.grafico') }}" alt="Gráfico de Criptomoedas" class="img-fluid" />
+      </div>
+      <div class="col card">
+        <p>dashboard</p>
+      </div>
     </div>
-
-    {% block body %}
-
-    <!--PARTE DOS DASHBOARDS-->
-    <div class="container col">
-        <div class="row">
-            <div class="col card">
-                <p>dashboard</p>
-                <img src="{{ url_for('main.grafico') }}" alt="Gráfico de Criptomoedas" class="img-fluid" />
-            </div>
-            <div class="col card">
-                <p>dashboard</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col card">
-                <p>dashboard</p>
-            </div>
-            <div class="col card">
-                <p>dashboard</p>
-            </div>
-        </div>
+    <div class="row">
+      <div class="col card">
+        <p>dashboard</p>
+      </div>
+      <div class="col card">
+        <p>dashboard</p>
+      </div>
     </div>
-    {% endblock %} {% block scripts %} {{ bootstrap.load_js() }} {% endblock
-    %}
+  </div>
+  {% endblock %} {% block scripts %} {{ bootstrap.load_js() }} {% endblock
+  %}
 </body>
-
+<footer class="bg-light text-center fs-6 py-3 mt-auto">
+  <p>&copy; 2024 Controle de suas Criptomoedas - Catiusci P.C. Scheffer - Contato: 55 51 98127-9781. Todos os direitos reservados.</p>
+</footer>
 </html>

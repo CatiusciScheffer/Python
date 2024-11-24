@@ -1,61 +1,63 @@
-{% extends 'index.html' %}
-
-{% block body %}
+{% extends 'index.html' %} {% block body %}
 <div class="container mt-4">
-    <h1>Saldo Geral</h1>
+  <h1>Saldo Geral</h1>
 
-    <!-- Saldos em Dólar -->
-    <div class="row">
-        <div class="row-md-4 mb-4">
-            <hr>
-            <h3 class="fw-bold">U$ {{ "%.2f" % (total_valor_dolar | float) }}</h3>
-        </div>
-
-        <div class="col-md-8 p-5">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Carteira</th>
-                        <th>Valor Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for wallet in carteiras_dolar %}
-                    <tr>
-                        <td>{{ wallet.carteira }}</td>
-                        <td>{{ "%.2f" % (wallet.valor_total | float) }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+  <!-- Saldos em Dólar -->
+  <div class="row">
+    <div class="row-md-4 mb-4">
+      <hr />
+      <h3 class="fw-bold">
+        U$ {{ "%.2f" % (total_valor_dolar | float) }}
+      </h3>
     </div>
 
-    <!-- Saldos em Real -->
-    <div class="row">
-        <div class="row-md-4 mb-4">
-            <hr>
-            <h3 class="fw-bold">R$ {{ "%.2f" % (total_valor_real | float) }}</h3>
-        </div>
-
-        <div class="col-md-8 p-5">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Carteira</th>
-                        <th>Valor Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for wallet in carteiras_real %}
-                    <tr>
-                        <td>{{ wallet.carteira }}</td>
-                        <td>{{ "%.2f" % (wallet.valor_total | float) }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <div class="col-md-8 p-5">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Carteira</th>
+            <th>Valor Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for wallet in carteiras_dolar %}
+          <tr>
+            <td>{{ wallet.carteira }}</td>
+            <td>{{ "%.2f" % (wallet.valor_total | float) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
+  </div>
+
+  <!-- Saldos em Real -->
+  <div class="row">
+    <div class="row-md-4 mb-4">
+      <hr />
+      <h3 class="fw-bold">
+        R$ {{ "%.2f" % (total_valor_real | float) }}
+      </h3>
+    </div>
+
+    <div class="col-md-8 p-5">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Carteira</th>
+            <th>Valor Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for wallet in carteiras_real %}
+          <tr>
+            <td>{{ wallet.carteira }}</td>
+            <td>{{ "%.2f" % (wallet.valor_total | float) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 {% endblock %}

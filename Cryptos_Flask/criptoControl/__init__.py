@@ -14,7 +14,7 @@ app = Flask(__name__)
 
 bootstrap = Bootstrap5(app)
 
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///crypto_data.db'
+
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///crypto_data.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True 

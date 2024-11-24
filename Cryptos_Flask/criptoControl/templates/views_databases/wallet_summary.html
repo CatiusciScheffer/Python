@@ -1,40 +1,40 @@
 {% extends 'index.html' %}
 
 {% block body %}
-    <div class="container mt-4">
-        <!-- Tabela de Saldos da Carteira -->
-        <h4>Saldo de Moedas por Carteiras</h4>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Carteira</th>
-                    <th>Moeda</th>
-                    <th class="text-end">Quantidade</th>
-                    <th class="text-end">Preço Atual</th>
-                    <th class="text-end">Valor</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for saldo in saldos %}
-                    <tr>
-                        <td>{{ saldo.carteira }}</td>
-                        <td>{{ saldo.crypto }}</td>
-                        <td class="text-end">{{ saldo.quantidade | float }}</td>
-                        <td class="text-end">{{ "%.2f" % (saldo.preço | float) }}</td>
-                        <td class="text-end">{{ "%.2f" % (saldo.valor | float) }}</td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="5">Nenhum dado disponível.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot>
-                <tr class="table-dark text-white fw-bold">
-                    <td colspan="4" class="text-end">Total</td>
-                    <td class="text-end">{{ "%.2f" % (total_valor | float) }}</td>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
+<div class="container mt-4">
+  <!-- Tabela de Saldos da Carteira -->
+  <h4>Saldo de Moedas por Carteiras</h4>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Carteira</th>
+        <th>Moeda</th>
+        <th class="text-end">Quantidade</th>
+        <th class="text-end">Preço Atual</th>
+        <th class="text-end">Valor</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for saldo in saldos %}
+      <tr>
+        <td>{{ saldo.carteira }}</td>
+        <td>{{ saldo.crypto }}</td>
+        <td class="text-end">{{ saldo.quantidade | float }}</td>
+        <td class="text-end">{{ "%.2f" % (saldo.preço | float) }}</td>
+        <td class="text-end">{{ "%.2f" % (saldo.valor | float) }}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="5">Nenhum dado disponível.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr class="table-dark text-white fw-bold">
+        <td colspan="4" class="text-end">Total</td>
+        <td class="text-end">{{ "%.2f" % (total_valor | float) }}</td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
 {% endblock %}

@@ -1,78 +1,36 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid container">
     <a class="navbar-brand" href="{{ url_for('main.index') }}">Home</a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarNav"
-      aria-controls="navbarNav"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a
-            class="nav-link active"
-            aria-current="page"
-            href="{{ url_for('transaction.transactions') }}"
-            >Transações</a
-          >
+          <a class="nav-link active" aria-current="page" href="{{ url_for('transaction.transactions') }}">Transações</a>
         </li>
         <li class="nav-item">
-          <a
-            class="nav-link active"
-            aria-current="page"
-            href="{{ url_for('views.prices') }}"
-            >Preços</a
-          >
+          <a class="nav-link active" aria-current="page" href="{{ url_for('views.prices') }}">Preços</a>
         </li>
         <li class="nav-item">
-          <a
-            class="nav-link active"
-            aria-current="page"
-            href="{{ url_for('views.wallets') }}"
-            >Carteiras</a
-          >
+          <a class="nav-link active" aria-current="page" href="{{ url_for('views.wallets') }}">Carteiras</a>
         </li>
         <li class="nav-item">
-          <a
-            class="nav-link active"
-            aria-current="page"
-            href="{{ url_for('views.cryptos') }}"
-            >Moedas</a
-          >
+          <a class="nav-link active" aria-current="page" href="{{ url_for('views.cryptos') }}">Moedas</a>
         </li>
         <li class="nav-item">
-            <a
-              class="nav-link active"
-              aria-current="page"
-              href="{{ url_for('views.wallet_summary', payment_wallet_id=1) }}" 
-              >Saldo por Carteira/Moedas</a>          
+          <a class="nav-link active" aria-current="page"
+            href="{{ url_for('views.wallet_summary', payment_wallet_id=1) }}">Saldo por Carteira/Moedas</a>
         </li>
         <li class="nav-item">
-          <a
-            class="nav-link active"
-            aria-current="page"
-            href="{{ url_for('views.balance_wallet') }}" 
-            >Saldos</a>          
+          <a class="nav-link active" aria-current="page" href="{{ url_for('views.balance_wallet') }}">Saldos</a>
         </li>
         <li class="nav-item"></li>
-          <a
-            class="nav-link active"
-            aria-current="page"
-            href="{{ url_for('views.lucro_prejuizo') }}" 
-            >Lucro/Prejuízo</a>          
+        <a class="nav-link active" aria-current="page" href="{{ url_for('views.lucro_prejuizo') }}">Lucro/Prejuízo</a>
         </li>
         <li class="nav-item"></li>
-          <a
-            class="nav-link active"
-            aria-current="page"
-            href="{{ url_for('views.dca_compras') }}" 
-            >DCA</a>          
+        <a class="nav-link active" aria-current="page" href="{{ url_for('views.dca_compras') }}">DCA</a>
         </li>
       </ul>
     </div>

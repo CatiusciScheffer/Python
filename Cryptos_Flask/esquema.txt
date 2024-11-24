@@ -39,7 +39,6 @@ CRYPTOS_FLASK
         |api.py
         |forms.py
         |models.py
-        |routes.py
     |--env
     |--instance
         |--crypto_data.db
